@@ -8,7 +8,7 @@ const RootComponent = () => {
         <div className="bg-background">
             <div className="flex">
                 <SideBar />
-                <div>
+                <div className="flex flex-col flex-1">
                     <Header />
                     <Outlet />
                 </div>
