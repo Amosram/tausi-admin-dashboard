@@ -1,12 +1,21 @@
-import { Link, Outlet, createRootRoute } from '@tanstack/react-router'
+import Header from "@/components/layout/Header";
+import SideBar from "@/components/layout/SideBar";
+import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
 const RootComponent = () => {
     return (
-        <div>
-            <Link to="/">Home</Link>
-            <TanStackRouterDevtools />
-            <Outlet />
+        <div className="bg-background">
+            <div className="flex">
+                <SideBar />
+                <div>
+                    <Header />
+                    <Outlet />
+                </div>
+            </div>
+
+            <TanStackRouterDevtools position="bottom-right" />
+
         </div>
     )
 };
