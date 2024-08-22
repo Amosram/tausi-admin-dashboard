@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import ImageOfGirl from './assets/tausi-girl.avif'
-import TausiLogo from './assets/Artboard 1 copy 9.png'
-import ShowPasswordIcon from './assets/show.png'
-import HidePasswordIcon from './assets/icons8-hide-password-50.png'
+import ImageOfGirl from '../assets/tausi-girl.avif'
+import TausiLogo from '../assets/Artboard 1 copy 9.png'
+import ShowPasswordIcon from '../assets/show.png'
+import HidePasswordIcon from '../assets/icons8-hide-password-50.png'
 
 const login: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
