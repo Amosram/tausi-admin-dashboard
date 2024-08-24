@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
-import ImageOfGirl from '../assets/tausi-girl.avif'
-import TausiLogo from '../assets/Artboard 1 copy 9.png'
-import ShowPasswordIcon from '../assets/show.png'
-import HidePasswordIcon from '../assets/icons8-hide-password-50.png'
+import React, { useState } from "react";
+import ImageOfGirl from "../assets/tausi-girl.avif";
+import TausiLogo from "../assets/Artboard 1 copy 9.png";
+import ShowPasswordIcon from "../assets/show.png";
+import HidePasswordIcon from "../assets/icons8-hide-password-50.png";
+import { createFileRoute } from "@tanstack/react-router";
 
 const login: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -24,13 +25,11 @@ const login: React.FC = () => {
 
       {/* Right side with the logo and form */}
       <div className="w-1/2 flex flex-col justify-center items-center bg-white p-12">
-        <img
-          src={TausiLogo}
-          alt="Tausi Logo"
-          className="w-32 mb-8"
-        />
+        <img src={TausiLogo} alt="Tausi Logo" className="w-32 mb-8" />
         <h1 className="text-2xl font-semibold mb-4">Login To Your Account</h1>
-        <h2 className="text-sm text-gray-500 text-center mb-6">Enter Your Email Address And Password To Access Admin Panel.</h2>
+        <h2 className="text-sm text-gray-500 text-center mb-6">
+          Enter Your Email Address And Password To Access Admin Panel.
+        </h2>
         <form className="flex flex-col w-full max-w-sm">
           <input
             type="email"
@@ -51,11 +50,7 @@ const login: React.FC = () => {
             />
           </div>
           <div className="flex items-center mb-6">
-            <input
-              type="checkbox"
-              id="remember-me-checkbox"
-              className="mr-2"
-            />
+            <input type="checkbox" id="remember-me-checkbox" className="mr-2" />
             <label htmlFor="remember-me-checkbox" className="text-sm">
               Remember Me
             </label>
@@ -72,7 +67,9 @@ const login: React.FC = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default login;
+export const Route = createFileRoute("/login")({
+  component: login,
+});
