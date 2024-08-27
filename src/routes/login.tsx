@@ -4,6 +4,9 @@ import TausiLogo from "../assets/Artboard 1 copy 9.png";
 import ShowPasswordIcon from "../assets/show.png";
 import HidePasswordIcon from "../assets/icons8-hide-password-50.png";
 import { createFileRoute } from "@tanstack/react-router";
+import { useFormik } from "formik";
+import { basicSchema } from "@/schemas/basicSchema";
+import { error } from "console";
 
 const login: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -11,7 +14,20 @@ const login: React.FC = () => {
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
-
+  const onSubmit = () => {
+    console.log("submitted");
+  };
+  const { values, errors, handleChange, handleSubmit, handleBlur, touched } =
+    useFormik({
+      initialValues: {
+        email: "",
+        password: "",
+      },
+      validationSchema: basicSchema,
+      onSubmit: () => {},
+    });
+  console.log(values);
+  console.log(errors);
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Left side with the girl image */}
@@ -30,18 +46,30 @@ const login: React.FC = () => {
         <h2 className="text-sm text-gray-500 text-center mb-6">
           Enter Your Email Address And Password To Access Admin Panel.
         </h2>
-        <form className="flex flex-col w-full max-w-sm">
+        <form onSubmit={handleSubmit} className="flex flex-col w-full max-w-sm">
           <input
-            type="email"
+            name="email"
+            id="email"
             placeholder="Email"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.email}
             className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
+          {touched.email && errors.email ? <p>{errors.email}</p> : null}
           <div className="relative w-full mb-4">
             <input
+              name="password"
+              id="password"
               type={passwordVisible ? "text" : "password"}
               placeholder="Password"
+              onChange={handleChange}
+              value={values.password}
               className="w-full p-3 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
+            {touched.password && errors.password ? (
+              <p>{errors.password} </p>
+            ) : null}
             <img
               src={passwordVisible ? ShowPasswordIcon : HidePasswordIcon}
               alt="Toggle Password"
