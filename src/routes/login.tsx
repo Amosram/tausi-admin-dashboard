@@ -3,19 +3,25 @@ import ImageOfGirl from "../assets/tausi-girl.avif";
 import TausiLogo from "../assets/Artboard 1 copy 9.png";
 import ShowPasswordIcon from "../assets/show.png";
 import HidePasswordIcon from "../assets/icons8-hide-password-50.png";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useFormik } from "formik";
-import { basicSchema } from "@/schemas/basicSchema";
-import { error } from "console";
+import * as yup from "yup";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { RootState } from "@/redux/store";
+import { setUser } from "@/redux/reducers/userSlice";
+import { TausiUser } from "@/models/user";
+import { useNavigate } from "react-router";
+const basicSchema = yup.object().shape({
+  email: yup.string().email("Enter a valid email").required("Required"),
+  password: yup.string().required("Required"),
+});
 
 const login: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-
+  let navigate = useNavigate();
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
-  };
-  const onSubmit = () => {
-    console.log("submitted");
   };
   const { values, errors, handleChange, handleSubmit, handleBlur, touched } =
     useFormik({
@@ -24,10 +30,52 @@ const login: React.FC = () => {
         password: "",
       },
       validationSchema: basicSchema,
-      onSubmit: () => {},
+      onSubmit: () => {
+        const auth = getAuth();
+        signInWithEmailAndPassword(auth, values.email, values.password)
+          .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            console.log("Signed in");
+            navigate("/");
+
+            /*             const userState = useAppSelector((state: RootState) => state.user);
+            console.log(userState);
+            const dispatch = useAppDispatch();
+            const tausiUser: TausiUser = {
+              createdAt: undefined,
+              deactivatedAt: null,
+              deactivatedBy: null,
+              deactivatedReason: null,
+              deletedAt: null,
+              deletedReason: null,
+              email: values.email,
+              emailVerified: false,
+              fcmToken: "",
+              id: "",
+              isActive: true,
+              isDeleted: false,
+              latitude: "",
+              locationAddress: "",
+              longitude: "",
+              name: "",
+              phoneNumber: "",
+              phoneVerified: false,
+              profilePicturePath: "",
+              profilePictureUrl: "",
+              updatedAt: undefined,
+              sessionData: undefined,
+            }; 
+            () => dispatch(setUser(tausiUser));
+            console.log(userState);*/
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorMessage);
+          });
+      },
     });
-  console.log(values);
-  console.log(errors);
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Left side with the girl image */}
