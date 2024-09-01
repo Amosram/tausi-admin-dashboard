@@ -8,7 +8,6 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { RootState } from "@/redux/store";
 import { setUser } from "@/redux/reducers/userSlice";
 import { TausiUser } from "@/models/user";
 import { useNavigate } from "react-router";
@@ -20,7 +19,8 @@ const basicSchema = yup.object().shape({
 const login: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errorCode, setErrorCode] = useState("");
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -37,16 +37,39 @@ const login: React.FC = () => {
           .then((userCredential) => {
             // Signed in
             const user = userCredential.user;
-            console.log("Signed in");
+            const tausiUser: TausiUser = {
+              createdAt: undefined,
+              deactivatedAt: null,
+              deactivatedBy: null,
+              deactivatedReason: null,
+              deletedAt: null,
+              deletedReason: null,
+              email: values.email,
+              emailVerified: false,
+              fcmToken: "",
+              id: "",
+              isActive: true,
+              isDeleted: false,
+              latitude: "",
+              locationAddress: "",
+              longitude: "",
+              name: "",
+              phoneNumber: "",
+              phoneVerified: false,
+              profilePicturePath: "",
+              profilePictureUrl: "",
+              updatedAt: undefined,
+              sessionData: undefined,
+            };
+            {
+              () => dispatch(setUser(tausiUser));
+            }
             navigate("/");
           })
           .catch((error) => {
             setErrorCode(error.code);
             const errorMessage = error.message;
           });
-        console.log("Attempting to call appdispatch");
-        const dispatch = useAppDispatch();
-        console.log("Called app disaf");
         const tausiUser: TausiUser = {
           createdAt: undefined,
           deactivatedAt: null,
@@ -71,11 +94,9 @@ const login: React.FC = () => {
           updatedAt: undefined,
           sessionData: undefined,
         };
-        console.log("attempting to set user");
         {
           () => dispatch(setUser(tausiUser));
         }
-        console.log("sets user");
       },
     });
   return (
