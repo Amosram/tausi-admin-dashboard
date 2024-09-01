@@ -19,6 +19,7 @@ const basicSchema = yup.object().shape({
 
 const login: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [errorCode, setErrorCode] = useState("");
   let navigate = useNavigate();
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -38,42 +39,43 @@ const login: React.FC = () => {
             const user = userCredential.user;
             console.log("Signed in");
             navigate("/");
-
-            /*             const userState = useAppSelector((state: RootState) => state.user);
-            console.log(userState);
-            const dispatch = useAppDispatch();
-            const tausiUser: TausiUser = {
-              createdAt: undefined,
-              deactivatedAt: null,
-              deactivatedBy: null,
-              deactivatedReason: null,
-              deletedAt: null,
-              deletedReason: null,
-              email: values.email,
-              emailVerified: false,
-              fcmToken: "",
-              id: "",
-              isActive: true,
-              isDeleted: false,
-              latitude: "",
-              locationAddress: "",
-              longitude: "",
-              name: "",
-              phoneNumber: "",
-              phoneVerified: false,
-              profilePicturePath: "",
-              profilePictureUrl: "",
-              updatedAt: undefined,
-              sessionData: undefined,
-            }; 
-            () => dispatch(setUser(tausiUser));
-            console.log(userState);*/
           })
           .catch((error) => {
-            const errorCode = error.code;
+            setErrorCode(error.code);
             const errorMessage = error.message;
-            console.log(errorMessage);
           });
+        console.log("Attempting to call appdispatch");
+        const dispatch = useAppDispatch();
+        console.log("Called app disaf");
+        const tausiUser: TausiUser = {
+          createdAt: undefined,
+          deactivatedAt: null,
+          deactivatedBy: null,
+          deactivatedReason: null,
+          deletedAt: null,
+          deletedReason: null,
+          email: values.email,
+          emailVerified: false,
+          fcmToken: "",
+          id: "",
+          isActive: true,
+          isDeleted: false,
+          latitude: "",
+          locationAddress: "",
+          longitude: "",
+          name: "",
+          phoneNumber: "",
+          phoneVerified: false,
+          profilePicturePath: "",
+          profilePictureUrl: "",
+          updatedAt: undefined,
+          sessionData: undefined,
+        };
+        console.log("attempting to set user");
+        {
+          () => dispatch(setUser(tausiUser));
+        }
+        console.log("sets user");
       },
     });
   return (
@@ -131,6 +133,9 @@ const login: React.FC = () => {
               Remember Me
             </label>
           </div>
+          {errorCode == "auth/invalid-credential" ? (
+            <p>Email or password is incorrect</p>
+          ) : null}
           <button
             type="submit"
             className="p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600"
