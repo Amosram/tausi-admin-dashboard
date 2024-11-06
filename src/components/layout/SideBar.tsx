@@ -3,12 +3,13 @@ import { BsArrowLeftShort } from "react-icons/bs";
 import { IoIosWallet } from "react-icons/io";
 import { GoHomeFill } from "react-icons/go";
 import { FaShoppingCart } from "react-icons/fa";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useLocation } from 'react-router-dom';
+
 
 const SideBar = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const router = useRouterState()
-    const routName = router.location.pathname;
+    const router = useLocation();
+    const routName = router.pathname;
 
 
     const menuItems = [

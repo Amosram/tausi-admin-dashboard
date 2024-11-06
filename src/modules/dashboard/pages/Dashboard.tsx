@@ -1,110 +1,12 @@
 import React, { useState } from 'react';
-import TausiLogo from '../assets/tausiLogo.png'; 
-import dashboardIcon from '../assets/dashboardIcon.png';
-import orderIcon from '../assets/ordersIcon.png';
-import revenueIcon from '../assets/revenueIcon.png';
-import userIcon from '../assets/usersIcon.png';
-import applicationIcon from '../assets/applicationIcon.png';
-import messengingIcon from '../assets/messengingIcon.png';
-import settingsIcon from '../assets/settingsIcon.png';
-import bellIcon from '../assets/bellIcon.png';
-import messagingNotificationIcon from '../assets/messagingNotificationIcon.png';
-import searchIcon from '../assets/searchIcon.png';
-import menuIcon from '../assets/menuIcon.png';
-
 
 const DashBoard: React.FC = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState('Monthly');
   const [selectedRevenueTimeframe, setSelectedRevenueTimeframe] = useState('Monthly');
   return (
     <div className="flex h-screen overflow-hidden bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-1/5 bg-white space-y-8">
-        {/* Logo */}
-        <div className="flex items-center justify-center mb-10 pt-5">
-          <img src={TausiLogo} alt="Tausi Logo" className="w-24" />
-        </div>
-        {/* Sidebar Menu */}
-        <ul className="space-y-6 text-base">
-          <li className="relative flex items-center bg-orange-50 text-orange-500 pr-0 pl-4 py-2 w-full">
-            <div className="flex items-center flex-grow">
-              <img src={dashboardIcon} alt="icon" className="w-6 h-6 mr-2" />
-              <span className="whitespace-nowrap">Dashboard</span>
-            </div>
-            <span className="absolute inset-y-0 right-0 w-2 bg-orange-600 rounded-md"></span> 
-          </li>
-          <li className="flex items-center hover:text-orange-500">
-            <img src={orderIcon} alt="icon" className="w-6 h-6 mr-2" />
-            <span className="whitespace-nowrap">Orders</span>
-          </li>
-          <li className="flex items-center hover:text-orange-500">
-            <img src={revenueIcon} alt="icon" className="w-6 h-6 mr-2" />
-            <span className="whitespace-nowrap">Revenues</span>
-          </li>
-          <li className="flex items-center hover:text-orange-500">
-            <img src={userIcon} alt="icon" className="w-6 h-6 mr-2" /> 
-            <span className="whitespace-nowrap">Users</span>
-          </li>
-          <li className="flex items-center hover:text-orange-500">
-            <img src={applicationIcon} alt="icon" className="w-6 h-6 mr-2" /> 
-            <span className="whitespace-nowrap">Applications</span>
-          </li>
-          <li className="flex items-center hover:text-orange-500">
-            <img src={messengingIcon} alt="icon" className="w-6 h-6 mr-2" />
-            <span className="whitespace-nowrap">Messaging</span>
-          </li>
-          <li className="flex items-center hover:text-orange-500">
-            <img src={settingsIcon} alt="icon" className="w-6 h-6 mr-2" /> 
-            <span className="whitespace-nowrap">Settings</span>
-          </li>
-        </ul>
-      </div>
-
       {/* Main content */}
       <div className="flex-1 flex flex-col">
-        {/* Top Bar */}
-        <div className="w-full bg-white p-4 shadow-md flex items-center justify-between">
-          
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <img src={menuIcon} alt="Menu Icon" className="w-5 h-5 text-gray-500" />
-            </div>
-            <div className="relative">
-              <div className="text-gray-600 font-bold">DashBoard</div>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4"></div>
-            {/* Search Bar */}
-            <div className="relative max-w-xs w-full mr-4">
-              <input
-                type="text"
-                className="border rounded-lg p-2 w-full bg-gray-100 pl-4 pr-10 text-gray-700"
-              />
-              <span className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-              <img src={searchIcon} alt="Search Icon" className="w-5 h-5 text-gray-500" />
-              </span>
-          </div>
-          <div className="flex items-center space-x-4">
-            {/* Notifications */}
-            <div className="relative">
-              {/* notification code = <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 absolute top-0 right-0">2</span>*/}
-              <img src={messagingNotificationIcon} alt="Notification Icon" className="w-6 h-6 cursor-pointer" />
-            </div>
-            <div className="relative">
-              {/*<span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 absolute top-0 right-0">2</span>*/}
-              <img src={bellIcon} alt="Bell Icon" className="w-6 h-6 cursor-pointer" />
-            </div>
-            {/* Avatar */}
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gray-300 rounded-md cursor-pointer"></div>
-              <div className="flex flex-col">
-                <span className="text-gray-700">Franklin</span>
-                <span className="text-gray-500 text-sm">Admin</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div className="flex-1 grid grid-cols-2 gap-6 p-6">
           {/* Left side */}
           <div className="space-y-6">

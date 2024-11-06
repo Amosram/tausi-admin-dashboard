@@ -3,20 +3,20 @@ import ImageOfGirl from "../assets/tausi-girl.avif";
 import TausiLogo from "../assets/Artboard 1 copy 9.png";
 import ShowPasswordIcon from "../assets/show.png";
 import HidePasswordIcon from "../assets/icons8-hide-password-50.png";
-import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setUser } from "@/redux/reducers/userSlice";
 import { TausiUser } from "@/models/user";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
+
 const basicSchema = yup.object().shape({
   email: yup.string().email("Enter a valid email").required("Required"),
   password: yup.string().required("Required"),
 });
 
-const login: React.FC = () => {
+const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errorCode, setErrorCode] = useState("");
   const navigate = useNavigate();
@@ -61,9 +61,9 @@ const login: React.FC = () => {
               updatedAt: undefined,
               sessionData: undefined,
             };
-            {
-              () => dispatch(setUser(tausiUser));
-            }
+            // {
+            //   () => dispatch(setUser(tausiUser));
+            // }
             navigate("/");
           })
           .catch((error) => {
@@ -94,9 +94,9 @@ const login: React.FC = () => {
           updatedAt: undefined,
           sessionData: undefined,
         };
-        {
-          () => dispatch(setUser(tausiUser));
-        }
+        // {
+        //   () => dispatch(setUser(tausiUser));
+        // }
       },
     });
   return (
@@ -104,7 +104,7 @@ const login: React.FC = () => {
       {/* Left side with the girl image */}
       <div className="w-1/2 h-full">
         <img
-          src={ImageOfGirl}
+          src="/tausi-girl.avif"
           alt="Image of a girl"
           className="w-full h-full object-cover rounded-tr-3xl rounded-br-3xl"
         />
@@ -112,7 +112,7 @@ const login: React.FC = () => {
 
       {/* Right side with the logo and form */}
       <div className="w-1/2 flex flex-col justify-center items-center bg-white p-12">
-        <img src={TausiLogo} alt="Tausi Logo" className="w-32 mb-8" />
+        <img src="/tausi-logo.png" alt="Tausi Logo" className="w-32 mb-8" />
         <h1 className="text-2xl font-semibold mb-4">Login To Your Account</h1>
         <h2 className="text-sm text-gray-500 text-center mb-6">
           Enter Your Email Address And Password To Access Admin Panel.
@@ -142,7 +142,7 @@ const login: React.FC = () => {
               <p>{errors.password} </p>
             ) : null}
             <img
-              src={passwordVisible ? ShowPasswordIcon : HidePasswordIcon}
+              src={passwordVisible ? "/show.png" : "/icons8-hide-password-50.png"}
               alt="Toggle Password"
               className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer w-5 h-5"
               onClick={togglePasswordVisibility}
@@ -171,11 +171,6 @@ const login: React.FC = () => {
     </div>
   );
 };
-
-export const Route = createFileRoute("/login")({
-  component: login,
-});
-
 
 export default Login;
 
