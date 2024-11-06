@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
-const firebaseConfig = {
+export const firebaseConfig = {
     apiKey: "AIzaSyCveGQtLfYySfu1YP0v5cvWxmDsReB3JqA",
     authDomain: "tausi-app.firebaseapp.com",
     projectId: "tausi-app",
