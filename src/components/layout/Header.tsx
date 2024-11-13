@@ -3,6 +3,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoExitOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { SidebarTrigger } from '../ui/sidebar';
 
 const Header = () => {
 
@@ -18,7 +19,7 @@ const Header = () => {
 
         <div className="flex items-center space-x-3">
           <div className="relative">
-            <img src="/menuIcon.png" alt="Menu Icon" className="w-5 h-5 text-gray-500" />
+          <SidebarTrigger />
           </div>
           <div className="relative">
             <div className="text-gray-600 font-bold">DashBoard</div>
