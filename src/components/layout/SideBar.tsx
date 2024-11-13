@@ -38,7 +38,16 @@ const SideBar = () => {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <img src="/tausi_logo-2.png" alt="Logo" className="w-32 mx-auto py-2" />
+        <img
+          src="/tausi_logo-2.png"
+          alt="Logo"
+          className="w-32 mx-auto py-2 dark:hidden"
+        />
+        <img
+          src="/tausi_logo.png"
+          alt="Logo"
+          className="w-32 mx-auto py-2 dark:block hidden"
+        />
       </SidebarHeader>
       <SidebarContent className="mt-2 overflow-y-auto custom-scrollbar">
         <SidebarGroupContent>
@@ -53,13 +62,13 @@ const SideBar = () => {
                       px-5 py-5 hover:bg-primary-extralight 
                       ${
                         pathname === link
-                          ? "bg-primary-extralight border-r-8 border-primary text-primary"
-                          : "text-black"
+                          ? "bg-primary-extralight border-r-8 border-primary dark:border-[#ef3e23] text-primary dark:text-[#ef3e23]"
+                          : "text-black dark:text-primary hover:dark:text-black"
                       }
                     `}
                   >
                     <span className="text-2xl">{icon}</span>
-                    <p className="font-semibold text-lg transition-all duration-300">
+                    <p className="font-semibold text-lg">
                       {title}
                     </p>
                   </Link>
@@ -73,8 +82,8 @@ const SideBar = () => {
                             hover:bg-primary-extralight 
                             ${
                               pathname === link
-                                ? "bg-primary-extralight border-r-8 border-primary text-primary"
-                                : "text-black"
+                                ? "bg-primary-extralight border-r-8 border-primary dark:border-[#ef3e23] text-primary dark:text-[#ef3e23]"
+                                : "text-black dark:text-primary hover:dark:text-black"
                             }
                           `}
                         >
@@ -93,7 +102,7 @@ const SideBar = () => {
         </SidebarGroupContent>
       </SidebarContent>
       {open ? (
-        <SidebarFooter className="flex items-center border-t border-gray-300">
+        <SidebarFooter className="flex items-center border-t border-gray-300 dark:text-black">
           <div className="px-3 py-2 bg-primary-superlight flex gap-2 items-center">
             <img src="/tausi-logo.png" alt="Footer Logo" className="w-8 h-8" />
             <div className="flex flex-col gap-1 text-sm">
@@ -103,10 +112,10 @@ const SideBar = () => {
           </div>
         </SidebarFooter>
       ) : (
-        <SidebarFooter className="border-t border-gray-300">
+        <SidebarFooter className="border-t border-gray-300 dark:text-black">
           <div className="flex flex-col items-center ">
             <img src="/tausi-logo.png" alt="Footer Logo" className="w-6 h-6" />
-            <p className="text-[12px] text-center font-semibold">&copy; 2022</p>
+            <p className="text-[12px] text-center font-semibold dark:hidden">&copy; 2022</p>
           </div>
         </SidebarFooter>
       )}

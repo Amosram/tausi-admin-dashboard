@@ -198,7 +198,7 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[--sidebar-width] bg-white p-0 text-black [&>button]:hidden"
+            className="w-[--sidebar-width] bg-sidebar p-0 text-black [&>button]:hidden"
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -278,7 +278,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <GiHamburgerMenu className="text-black"/>
+      <GiHamburgerMenu className="dark:text-black"/>
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
