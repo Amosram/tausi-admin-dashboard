@@ -1,7 +1,17 @@
-import React from 'react';
+import { DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { FaChevronDown } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { IoExitOutline } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    navigate("/auth/login");
+  }
+
   return (
     <header className="sticky top-0 bg-white border-b border-slate-200 z-30 flex justify-between w-full shadow-sm px-4 py-6">
       <div className="w-full bg-white hadow-md flex items-center justify-between">
@@ -42,6 +52,41 @@ const Header = () => {
               <span className="text-gray-700">Franklin</span>
               <span className="text-gray-500 text-sm">Admin</span>
             </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="flex gap-4 items-center ml-5 mr-5 pr-5 cursor-pointer">
+                  <FaChevronDown
+                    className="text-gray-400 text-sm"
+                    size={12}
+                  />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="
+                min-w-[200px]
+                mt-8
+                mr-5
+                rounded-md
+              bg-white
+                p-[5px]
+                shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]
+                will-change-[opacity,transform]
+                data-[side=bottom]:animate-slideUpAndFade
+                data-[side=left]:animate-slideRightAndFade
+                data-[side=right]:animate-slideLeftAndFade
+                data-[side=top]:animate-slideDownAndFade
+                "
+                sideOffset={5}
+              >
+                <DropdownMenuItem onClick={handleLogout} className="flex items-center justify-between p-2 cursor-pointer">
+                  Logout
+                  <IoExitOutline
+                  className="mr-2 text-red-500"
+                  />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
           </div>
         </div>
       </div>
@@ -49,4 +94,4 @@ const Header = () => {
   )
 }
 
-export default Header
+export default Header;
