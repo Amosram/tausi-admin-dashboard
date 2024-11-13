@@ -29,7 +29,7 @@ const Header = () => {
         <div className="relative max-w-xs w-full mr-4">
           <input
             type="text"
-            className="border rounded-lg p-2 w-full bg-gray-100 pl-4 pr-10 text-gray-700"
+            className="border rounded-2xl p-2 w-full bg-gray-100 pl-4 pr-10 text-gray-700"
           />
           <span className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
             <img src="/searchIcon.png" alt="Search Icon" className="w-5 h-5 text-gray-500" />
