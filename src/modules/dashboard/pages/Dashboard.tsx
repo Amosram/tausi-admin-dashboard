@@ -42,16 +42,16 @@ const DashBoard: React.FC = () => {
                       selectedTimeframe === 'Daily' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
                     }`}
                     style={{ fontSize: 'clamp(0.75rem, 1.5vw, 1rem)' }}  // Font scaling with clamp
-                    > 
+                  >
                     Daily
                   </button>
                   <button
                     onClick={() => setSelectedTimeframe('Weekly')}
                     className={`px-2 py-1 flex-1 min-w-0 rounded-full ${
-                     selectedTimeframe === 'Weekly' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
+                      selectedTimeframe === 'Weekly' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
                     }`}
                     style={{ fontSize: 'clamp(0.75rem, 1.5vw, 1rem)' }}  // Font scaling with clamp
-                    >
+                  >
                     Weekly
                   </button>
                   <button
@@ -60,7 +60,7 @@ const DashBoard: React.FC = () => {
                       selectedTimeframe === 'Monthly' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
                     }`}
                     style={{ fontSize: 'clamp(0.75rem, 1.5vw, 1rem)' }}  // Font scaling with clamp
-                    >
+                  >
                     Monthly
                   </button>
                 </div>
@@ -134,7 +134,7 @@ const DashBoard: React.FC = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex space-x-10 mb-4"> 
+              <div className="flex space-x-10 mb-4">
                 <div className="flex items-center">
                   <span className="w-3 h-3 bg-red-500 rounded-sm inline-block mr-2"></span>
                   <span className="text-gray-600">Income</span>
