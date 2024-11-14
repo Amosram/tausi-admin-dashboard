@@ -1,3 +1,4 @@
+import BeauticianProfiles from '@/components/layout/BeuticianProfile';
 import OngoingOrders from '@/components/layout/OngoingOrders';
 import OrdersChart from '@/components/layout/OrdersChart';
 import React, { useState } from 'react';
@@ -91,7 +92,9 @@ const DashBoard: React.FC = () => {
             {/* Top Rated Beauticians */}
             <div className="bg-white p-4 rounded-lg shadow-md sm:p-6">
               <div className="text-lg font-bold sm:text-xl mb-4">Top Rated Beauticians</div>
-              <div className="h-40 bg-white-300 rounded-lg"></div>
+              <div className="bg-white-300 rounded-lg">
+                <BeauticianProfiles />
+              </div>
             </div>
           </div>
 
