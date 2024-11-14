@@ -1,6 +1,7 @@
 import BeauticianProfiles from '@/components/layout/BeuticianProfile';
 import OngoingOrders from '@/components/layout/OngoingOrders';
 import OrdersChart from '@/components/layout/OrdersChart';
+import RevenueChart from '@/components/layout/RevenueChart';
 import React, { useState } from 'react';
 
 const DashBoard: React.FC = () => {
@@ -154,7 +155,9 @@ const DashBoard: React.FC = () => {
                   <span className="text-sm sm:text-base text-gray-600">Expense</span>
                 </div>
               </div>
-              <div style={{ height: '340px' }} className="bg-white-300 rounded-lg"></div>
+              <div className="bg-white-300 rounded-lg">
+                <RevenueChart />
+              </div>
             </div>
           </div>
         </div>
