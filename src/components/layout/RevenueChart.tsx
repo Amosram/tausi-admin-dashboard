@@ -23,7 +23,7 @@ const monthlyData: RevenueData[] = [
   { date: '13', income: 33000, expense: 7345 },
 ];
 
-// Define the custom tooltip component
+// custom tooltip component
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
@@ -42,7 +42,6 @@ const RevenueChart: React.FC = () => {
 
   const handleTimeFrameChange = (frame: 'daily' | 'weekly' | 'monthly') => {
     setTimeFrame(frame);
-    // Optionally update data here based on timeFrame
   };
 
   return (
