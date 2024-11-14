@@ -1,3 +1,4 @@
+import OngoingOrders from '@/components/layout/OngoingOrders';
 import OrdersChart from '@/components/layout/OrdersChart';
 import React, { useState } from 'react';
 
@@ -41,7 +42,7 @@ const DashBoard: React.FC = () => {
                   <button
                     onClick={() => setSelectedTimeframe('Daily')}
                     className={`px-2 py-1 flex-1 rounded-full ${
-                      selectedTimeframe === 'Daily' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
+                      selectedTimeframe === 'Daily' ? 'bg-red-500 text-white' : 'bg-white text-gray-700'
                     }`}
                     style={{ fontSize: 'clamp(0.75rem, 1vw, 1rem)' }}
                   >
@@ -50,7 +51,7 @@ const DashBoard: React.FC = () => {
                   <button
                     onClick={() => setSelectedTimeframe('Weekly')}
                     className={`px-2 py-1 flex-1 rounded-full ${
-                      selectedTimeframe === 'Weekly' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
+                      selectedTimeframe === 'Weekly' ? 'bg-red-500 text-white' : 'bg-white text-gray-700'
                     }`}
                     style={{ fontSize: 'clamp(0.75rem, 1vw, 1rem)' }}
                   >
@@ -59,7 +60,7 @@ const DashBoard: React.FC = () => {
                   <button
                     onClick={() => setSelectedTimeframe('Monthly')}
                     className={`px-2 py-1 flex-1 rounded-full ${
-                      selectedTimeframe === 'Monthly' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
+                      selectedTimeframe === 'Monthly' ? 'bg-red-500 text-white' : 'bg-white text-gray-700'
                     }`}
                     style={{ fontSize: 'clamp(0.75rem, 1vw, 1rem)' }}
                   >
@@ -99,7 +100,9 @@ const DashBoard: React.FC = () => {
             {/* Ongoing Orders */}
             <div className="bg-white p-4 rounded-lg shadow-md sm:p-6">
               <div className="text-lg font-bold sm:text-xl mb-4">Ongoing Orders</div>
-              <div className="h-96 bg-white-300 rounded-lg"></div>
+              <div className="bg-white-300 rounded-lg">
+                <OngoingOrders />
+              </div>
             </div>
 
             {/* Revenue */}
@@ -112,7 +115,7 @@ const DashBoard: React.FC = () => {
                   <button
                     onClick={() => setSelectedRevenueTimeframe('Daily')}
                     className={`px-2 py-1 flex-1 rounded-full ${
-                      selectedRevenueTimeframe === 'Daily' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
+                      selectedRevenueTimeframe === 'Daily' ? 'bg-red-500 text-white' : 'bg-white text-gray-700'
                     }`}
                     style={{ fontSize: 'clamp(0.75rem, 1vw, 1rem)' }}
                   >
@@ -121,7 +124,7 @@ const DashBoard: React.FC = () => {
                   <button
                     onClick={() => setSelectedRevenueTimeframe('Weekly')}
                     className={`px-2 py-1 flex-1 rounded-full ${
-                      selectedRevenueTimeframe === 'Weekly' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
+                      selectedRevenueTimeframe === 'Weekly' ? 'bg-red-500 text-white' : 'bg-white text-gray-700'
                     }`}
                     style={{ fontSize: 'clamp(0.75rem, 1vw, 1rem)' }}
                   >
@@ -130,7 +133,7 @@ const DashBoard: React.FC = () => {
                   <button
                     onClick={() => setSelectedRevenueTimeframe('Monthly')}
                     className={`px-2 py-1 flex-1 rounded-full ${
-                      selectedRevenueTimeframe === 'Monthly' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
+                      selectedRevenueTimeframe === 'Monthly' ? 'bg-red-500 text-white' : 'bg-white text-gray-700'
                     }`}
                     style={{ fontSize: 'clamp(0.75rem, 1vw, 1rem)' }}
                   >
