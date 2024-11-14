@@ -9,6 +9,12 @@ const LoginLazy = lazy(() => import("@/modules/auth/pages/Login"));
 
 // Dashboard
 const DashboardLazy = lazy(() => import("@/modules/dashboard/pages/Dashboard"));
+const OrdersLazy = lazy(() => import("@/modules/orders/pages/Orders"));
+const RevenueLazy = lazy(() => import("@/modules/revenue/pages/Revenue"));
+const UsersLazy = lazy(() => import("@/modules/users/pages/Users"));
+const ApplicationsLazy = lazy(() => import("@/modules/applications/pages/Applications"));
+const MessagingLazy = lazy(() => import("@/modules/messaging/pages/Messaging"));
+const SettingsLazy = lazy(() => import("@/modules/settings/pages/Settings"));
 
 export const routes: RouteObject[] = [
   {
@@ -26,7 +32,55 @@ export const routes: RouteObject[] = [
             <DashboardLazy />
           </Suspense>
         )
-      }
+      },
+      {
+        path: "/orders",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <OrdersLazy />
+          </Suspense>
+        )
+      },
+      {
+        path: "/revenue",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <RevenueLazy />
+          </Suspense>
+        )
+      },
+      {
+        path: "/users",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <UsersLazy />
+          </Suspense>
+        )
+      },
+      {
+        path: "/applications",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ApplicationsLazy />
+          </Suspense>
+        )
+      },
+      {
+        path: "/messaging",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <MessagingLazy />
+          </Suspense>
+        )
+      },
+      {
+        path: "/settings",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <SettingsLazy />
+          </Suspense>
+        )
+      },
     ]
   },
   {
