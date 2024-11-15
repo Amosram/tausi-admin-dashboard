@@ -13,7 +13,7 @@ const RevenueStats = () => {
 
   return (
     <div className="p-6 space-y-6 bg-gray-50">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full">
         {revenueData.map((item) => (
           <div
             key={item.period}
@@ -24,7 +24,6 @@ const RevenueStats = () => {
                 <FileSearch2 className="h-5 w-5 text-red-500" />
               </div>
               <span><p className="text-2xl text-black font-medium capitalize">{item.period}</p></span>
-              {/* Radix UI Popover for more options */}
               <Popover.Root>
                 <Popover.Trigger asChild>
          
