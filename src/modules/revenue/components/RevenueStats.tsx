@@ -12,7 +12,7 @@ const RevenueStats = () => {
   ];
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50">
+    <div className="p-0 space-y-6 bg-gray-50">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full">
         {revenueData.map((item) => (
           <div
@@ -46,11 +46,11 @@ const RevenueStats = () => {
             </div>
           </div>
         ))}
-        <div className="grid grid-cols-2">
-          <div className="flex flex-col items-center pt-8 m-4 bg-red-100 p-4 rounded-2xl shadow-md border border-gray-200">
-            <FileUp className=" text-red-500 bg-red-500 p-2 rounded-full cursor-pointer" size={40}
+        <div className="bg-red-100 p-4 rounded-2xl shadow-md border border-gray-200">
+          <div className="flex flex-col items-center mt-10">
+            <FileUp className="text-red-500 bg-red-500 p-2 rounded-full cursor-pointer" size={40}
               fill='#fff'/>
-            <p className="text-2xl text-black mt-2 items-center ml-4">Export Data</p>
+            <p className="text-2xl text-black mt-2">Export Data</p>
           </div>
         </div>
       </div>
