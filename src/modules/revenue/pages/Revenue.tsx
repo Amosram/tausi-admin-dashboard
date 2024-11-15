@@ -2,6 +2,7 @@ import React from 'react';
 import RevenueStats from '../components/RevenueStats';
 import RevenueChart from '@/components/layout/RevenueChart';
 import RevenueCategory from '../components/RevenueCategory';
+import RevenueByLocation from '../components/RevenueByLocation';
 
 const Revenue = () => {
   return (
@@ -10,6 +11,7 @@ const Revenue = () => {
       <div className="grid md:grid-cols-2 gap-6">
         <RevenueChart />
         <RevenueCategory />
+        <RevenueByLocation />
       </div>
     </div>
   );
