@@ -23,8 +23,8 @@ const monthlyData: RevenueData[] = [
   { date: '13', income: 33000, expense: 7345 },
 ];
 
-// custom tooltip component
-const CustomTooltip = ({ active, payload, label }: any) => {
+// Custom tooltip component
+const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-2 rounded-lg shadow-lg text-center">
@@ -46,7 +46,26 @@ const RevenueChart: React.FC = () => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
-      <div className="flex justify-between items-center mt-4 text-sm">
+      {/* Header Section */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-bold">Revenue</h2>
+        <div className="flex items-center gap-2 bg-gray-100 rounded-full">
+          {['daily', 'weekly', 'monthly'].map((frame) => (
+            <button
+              key={frame}
+              onClick={() => handleTimeFrameChange(frame as 'daily' | 'weekly' | 'monthly')}
+              className={`px-4 py-2 rounded-full ${
+                timeFrame === frame ? 'bg-red-500 text-white' : 'text-gray-700'
+              }`}
+            >
+              {frame.charAt(0).toUpperCase() + frame.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Income and Expense Details */}
+      <div className="flex justify-between items-center text-sm mb-4">
         <div className="flex items-center gap-2">
           <span className="text-red-500">■</span>
           <span>Income</span>
@@ -60,19 +79,16 @@ const RevenueChart: React.FC = () => {
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={300}
-        className="mt-6">
+      {/* Chart Section */}
+      <ResponsiveContainer width="100%" height={300}>
         <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" />
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
-          <Legend verticalAlign="top" align="left"
-            height={36} />
-          <Bar dataKey="income" fill="#ff4500"
-            barSize={20} />
-          <Bar dataKey="expense" fill="#888888"
-            barSize={20} />
+          <Legend verticalAlign="top" align="left" height={36} />
+          <Bar dataKey="income" fill="#ff4500" barSize={20} />
+          <Bar dataKey="expense" fill="#888888" barSize={20} />
         </BarChart>
       </ResponsiveContainer>
     </div>
