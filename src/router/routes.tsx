@@ -3,6 +3,7 @@ import React, { lazy, Suspense } from "react";
 import Layout from "@/components/layout";
 import { Outlet, RouteObject } from "react-router-dom";
 import Loader from "@/components/layout/Loader";
+import { Toaster } from "@/components/ui/toaster";
 
 // Auth
 const LoginLazy = lazy(() => import("@/modules/auth/pages/Login"));
@@ -22,6 +23,7 @@ export const routes: RouteObject[] = [
     element: (
       <Layout>
         <Outlet />
+        <Toaster />
       </Layout>
     ),
     children: [
