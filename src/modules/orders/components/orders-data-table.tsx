@@ -10,7 +10,8 @@ import {
   getFilteredRowModel,
   ColumnFiltersState,
 } from "@tanstack/react-table";
-
+import { useState, useCallback } from "react";
+import { ChevronDown, ChevronUp, ChevronsUpDown, Clock } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -18,23 +19,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-
+} from "../../../components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../../components/ui/dropdown-menu";
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationLink,
-} from "@/components/ui/pagination";
-
-import { Button } from "@/components/ui/button";
-import { useState, useCallback } from "react";
-import { ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
+} from "../../../components/ui/pagination";
+import { Button } from "../../../components/ui/button";
+import { OrdersTableSearch } from "./order-search";
 
 interface OrdersDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
+
+type SortOption = "newest" | "oldest";
 
 const STATUS_OPTIONS = [
   { label: "All Statuses", value: null },
@@ -47,7 +53,7 @@ export function OrdersDataTable<TData, TValue>({
   columns,
   data,
 }: OrdersDataTableProps<TData, TValue>) {
-  // State management
+  const [filteredData, setFilteredData] = useState(data);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -55,17 +61,26 @@ export function OrdersDataTable<TData, TValue>({
     pageIndex: 0,
     pageSize: 10,
   });
+  const [sortOption, setSortOption] = useState<SortOption>("oldest");
 
-  // Put actions column last
   const reorderedColumns = [...columns].sort((a, b) => {
     if (a.id === "actions") return 1;
     if (b.id === "actions") return -1;
     return 0;
   });
 
-  // Table configuration
+  const handleSortOptionChange = (option: SortOption) => {
+    setSortOption(option);
+    setSorting([
+      {
+        id: "orderDate",
+        desc: option === "oldest",
+      },
+    ]);
+  };
+
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns: reorderedColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -83,7 +98,6 @@ export function OrdersDataTable<TData, TValue>({
     },
   });
 
-  // Event handlers
   const handleStatusFilter = useCallback((status: string | null) => {
     setColumnFilters((filters) => {
       const newFilters = filters.filter((f) => f.id !== "status");
@@ -94,7 +108,6 @@ export function OrdersDataTable<TData, TValue>({
     });
   }, []);
 
-  // Render helpers
   const renderSortIcon = (header: any) => {
     if (!header.column.getCanSort()) return null;
 
@@ -111,26 +124,6 @@ export function OrdersDataTable<TData, TValue>({
       </div>
     );
   };
-
-  const renderStatusFilters = () => (
-    <div className="flex gap-2 mb-4">
-      {STATUS_OPTIONS.map((status) => (
-        <Button
-          key={status.label}
-          variant={
-            status.value ===
-            (columnFilters.find((f) => f.id === "status")?.value ?? null)
-              ? "default"
-              : "outline"
-          }
-          onClick={() => handleStatusFilter(status.value)}
-          className="px-4 py-2"
-        >
-          {status.label}
-        </Button>
-      ))}
-    </div>
-  );
 
   const renderPagination = () => (
     <Pagination>
@@ -167,6 +160,58 @@ export function OrdersDataTable<TData, TValue>({
     </Pagination>
   );
 
+  const renderTableControls = () => (
+    <div className="flex items-center justify-between mb-4">
+      <div className="flex gap-2">
+        {STATUS_OPTIONS.map((status) => (
+          <Button
+            key={status.label}
+            variant={
+              status.value ===
+              (columnFilters.find((f) => f.id === "status")?.value ?? null)
+                ? "default"
+                : "outline"
+            }
+            onClick={() => handleStatusFilter(status.value)}
+            className="px-4 py-2"
+          >
+            {status.label}
+          </Button>
+        ))}
+      </div>
+
+      <div className="flex-1 mx-6">
+        <OrdersTableSearch data={data} onSearch={setFilteredData} />
+      </div>
+
+      <div className="flex">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild className=" outline-none">
+            <Button variant="outline" className="gap-2">
+              <Clock className="h-4 w-4" />
+              {sortOption === "newest" ? "Newest First" : "Oldest First"}
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={() => handleSortOptionChange("newest")}
+              className={sortOption === "newest" ? "bg-accent" : ""}
+            >
+              Newest First
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleSortOptionChange("oldest")}
+              className={sortOption === "oldest" ? "bg-accent" : ""}
+            >
+              Oldest First
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  );
+
   // Styles
   const getHeaderClassName = (headerId: string) =>
     `px-4 py-2 text-left ${
@@ -184,7 +229,7 @@ export function OrdersDataTable<TData, TValue>({
 
   return (
     <div className="space-y-4 p-4">
-      {renderStatusFilters()}
+      {renderTableControls()}
 
       <div className="rounded-lg border shadow-md relative">
         <div className="overflow-x-auto custom-scrollbar">
