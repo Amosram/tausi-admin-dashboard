@@ -11,5 +11,6 @@ export const transformToTableData = (
     location: appointment.locationAddress,
     contact: appointment.client.phoneNumber,
     status: appointment.status,
+    startTime: appointment.appointmentStartTime,
   }));
 };

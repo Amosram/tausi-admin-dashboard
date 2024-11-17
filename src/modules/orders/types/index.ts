@@ -120,4 +120,5 @@ export interface OrdersTableData {
   location: string;
   contact: string;
   status: string;
+  startTime: string;
 }

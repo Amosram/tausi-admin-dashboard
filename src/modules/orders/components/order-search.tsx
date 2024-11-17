@@ -76,7 +76,7 @@ export function OrdersTableSearch({
           placeholder="Search orders..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-8 pr-8"
+          className="pl-8 pr-8 border-black/40 border focus:border-none bg-secondary md:rounded-3xl"
         />
       </div>
     </div>

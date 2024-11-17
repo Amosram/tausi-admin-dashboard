@@ -8,7 +8,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 
 const Orders: React.FC = () => {
   const { toast } = useToast();
-  const { open } = useSidebar();
+  const { open, isMobile } = useSidebar();
   const dispatch = useAppDispatch();
   const { data, loading, error, lastUpdated, isInitialized } = useAppSelector(
     (state) => state.orders
@@ -46,14 +46,19 @@ const Orders: React.FC = () => {
   if (error && !data.length) return <div>Error: {error}</div>;
   if (!data.length) return <div>No orders found.</div>;
 
+  if (isMobile) {
+    return (
+      <div className="max-w-[100vw] w-full">
+        {loading && <p className="text-sm text-blue-500 mb-4">Refreshing...</p>}
+        <div className="w-full">
+          <OrdersDataTable columns={columns} data={data} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ maxWidth: open ? "calc(100vw - 18rem)" : "calc(100vw - 4rem)" }}>
-      <h1 className="text-xl font-bold mb-4">Orders</h1>
-      {lastUpdated && (
-        <p className="text-sm text-gray-500 mb-4">
-          Last updated: {lastUpdated}
-        </p>
-      )}
       {loading && <p className="text-sm text-blue-500 mb-4">Refreshing...</p>}
       <div className="w-full">
         <OrdersDataTable columns={columns} data={data} />

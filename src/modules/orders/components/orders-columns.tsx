@@ -1,4 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
 import { OrdersTableData } from "../types";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -8,6 +9,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { FaPhoneAlt } from "react-icons/fa";
+
+const getStatusBadge = (status: string) => {
+  switch (status) {
+    case "completed":
+      return <Badge className="bg-transparent border-2 font-semibold text-md border-green-500 text-green-500">{status}</Badge>;
+    case "pending":
+      return <Badge className="bg-transparent border-2 font-semibold text-md border-blue-500 text-blue-500">{status}</Badge>;
+    case "cancelled":
+      return <Badge className="bg-transparent border-2 font-semibold text-md border-red-500 text-red-500">{status}</Badge>;
+    default:
+      return <Badge className="bg-transparent border-2 font-semibold text-md border-gray-500 text-gray-500">{status}</Badge>;
+  }
+};
 
 const TruncatedCell = ({ content }: { content: string | null | undefined }) => {
   if (!content) return <span>-</span>;
@@ -16,6 +32,18 @@ const TruncatedCell = ({ content }: { content: string | null | undefined }) => {
       {content}
     </span>
   );
+};
+
+const formatDate = (orderDate: unknown, startTime: unknown) => {
+  const orderDateString = orderDate as string;
+  const startTimeString = startTime as string;
+
+  const dateObject = new Date(orderDateString);
+  const formattedDate = format(dateObject, "MMM dd, yyyy");
+
+  const formattedTime = startTimeString;
+  
+  return `${formattedDate} at ${formattedTime}`;
 };
 
 export const columns: ColumnDef<OrdersTableData>[] = [
@@ -58,13 +86,19 @@ export const columns: ColumnDef<OrdersTableData>[] = [
   {
     accessorKey: "orderDate",
     header: "Order Date",
-    cell: ({ row }) => <TruncatedCell content={row.getValue("orderDate")} />,
+    cell: ({ row }) => {
+      const orderDate = row.getValue("orderDate");
+      const startTime = row.original.startTime;
+      return <span>{formatDate(orderDate, startTime)}</span>;
+    },
     enableSorting: true,
   },
   {
     accessorKey: "serviceProvider",
     header: "Service Provider",
-    cell: ({ row }) => <TruncatedCell content={row.getValue("serviceProvider")} />,
+    cell: ({ row }) => (
+      <TruncatedCell content={row.getValue("serviceProvider")} />
+    ),
   },
   {
     accessorKey: "category",
@@ -79,11 +113,20 @@ export const columns: ColumnDef<OrdersTableData>[] = [
   {
     accessorKey: "contact",
     header: "Contact",
-    cell: ({ row }) => <TruncatedCell content={row.getValue("contact")} />,
+    cell: ({ row }) => {
+      const contact = row.getValue("contact") as string;
+      return (
+        <div className="flex items-center space-x-2">
+          <FaPhoneAlt className="text-gray-500" />
+          <span>{contact}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "status",
     header: "Status",
+    cell: ({ row }) => getStatusBadge(row.getValue("status")),
   },
   {
     id: "actions",
@@ -95,13 +138,19 @@ export const columns: ColumnDef<OrdersTableData>[] = [
             <MoreVertical className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => console.log("View:", row.original)}>
+            <DropdownMenuItem
+              onClick={() => console.log("View:", row.original)}
+            >
               View details
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => console.log("Edit:", row.original)}>
+            <DropdownMenuItem
+              onClick={() => console.log("Edit:", row.original)}
+            >
               Edit order
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => console.log("Delete:", row.original)}>
+            <DropdownMenuItem
+              onClick={() => console.log("Delete:", row.original)}
+            >
               Delete order
             </DropdownMenuItem>
           </DropdownMenuContent>

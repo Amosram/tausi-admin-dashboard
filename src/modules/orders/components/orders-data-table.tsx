@@ -29,8 +29,11 @@ import {
 import {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "../../../components/ui/pagination";
 import { Button } from "../../../components/ui/button";
 import { OrdersTableSearch } from "./order-search";
@@ -125,44 +128,119 @@ export function OrdersDataTable<TData, TValue>({
     );
   };
 
-  const renderPagination = () => (
-    <Pagination>
-      <PaginationContent className="flex items-center gap-2">
-        <PaginationItem>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="px-4 py-2"
-          >
-            Previous
-          </Button>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink className="text-sm text-muted-foreground w-full">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="px-4 py-2"
-          >
-            Next
-          </Button>
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
-  );
+  const renderPagination = () => {
+    const currentPage = table.getState().pagination.pageIndex + 1; // 1-based index
+    const totalPages = table.getPageCount();
+
+    const getPageNumbers = () => {
+      const pages = [];
+      if (currentPage > 1) pages.push(currentPage - 1);
+      pages.push(currentPage);
+      if (currentPage + 1 <= totalPages) pages.push(currentPage + 1);
+      if (currentPage + 2 <= totalPages) pages.push(currentPage + 2);
+
+      return pages;
+    };
+
+    const pageNumbers = getPageNumbers();
+
+    return (
+      <Pagination>
+        <PaginationContent className="flex items-center gap-2">
+          {/* Skip 5 pages backward */}
+          <PaginationItem>
+            {currentPage > 5 && (
+              <PaginationLink
+                onClick={() => table.setPageIndex(currentPage - 6)}
+                className="px-3 py-1 text-muted-foreground hover:underline cursor-pointer"
+              >
+                {"<< 5"}
+              </PaginationLink>
+            )}
+          </PaginationItem>
+
+          {/* Previous Page */}
+          <PaginationItem>
+            {table.getCanPreviousPage() ? (
+              <PaginationPrevious
+                onClick={() => table.previousPage()}
+                className="px-4 py-2 bg-primary text-white hover:bg-primary-light cursor-pointer"
+              >
+                Previous
+              </PaginationPrevious>
+            ) : (
+              <span className="px-4 py-2 text-muted-foreground opacity-50">
+                Previous
+              </span>
+            )}
+          </PaginationItem>
+
+          {/* Ellipsis for pages before the range */}
+          {pageNumbers[0] > 2 && (
+            <PaginationItem className="md:block hidden">
+              <PaginationEllipsis />
+            </PaginationItem>
+          )}
+
+          {/* Dynamic Page Links */}
+          {pageNumbers.map((page) => (
+            <PaginationItem key={page} className="md:block hidden">
+              <PaginationLink
+                onClick={() => table.setPageIndex(page - 1)}
+                isActive={page === currentPage}
+                className={`px-3 py-1 ${
+                  page === currentPage
+                    ? "bg-primary text-white hover:bg-primary hover:text-white"
+                    : "text-muted-foreground hover:bg-primary-light cursor-pointer"
+                }`}
+              >
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+
+          {/* Ellipsis for pages after the range */}
+          {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
+            <PaginationItem className="md:block hidden">
+              <PaginationEllipsis />
+            </PaginationItem>
+          )}
+
+          {/* Next Page */}
+          <PaginationItem>
+            {table.getCanNextPage() ? (
+              <PaginationNext
+                onClick={() => table.nextPage()}
+                className="px-4 py-2 bg-primary text-white hover:bg-primary-light cursor-pointer"
+              >
+                Next
+              </PaginationNext>
+            ) : (
+              <span className="px-4 py-2 text-muted-foreground opacity-50">
+                Next
+              </span>
+            )}
+          </PaginationItem>
+
+          {/* Skip 5 pages forward */}
+          <PaginationItem>
+            {currentPage + 5 <= totalPages && (
+              <PaginationLink
+                onClick={() => table.setPageIndex(currentPage + 4)}
+                className="px-3 py-1 text-muted-foreground hover:underline cursor-pointer"
+              >
+                {"5 >>"}
+              </PaginationLink>
+            )}
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    );
+  };
 
   const renderTableControls = () => (
-    <div className="flex items-center justify-between mb-4">
-      <div className="flex gap-2">
+    <div className="flex items-center justify-between mb-4 md:flex-row flex-col md:gap-0 gap-4">
+      <div className="flex gap-2 md:flex-row flex-col md:w-auto w-full">
         {STATUS_OPTIONS.map((status) => (
           <Button
             key={status.label}
@@ -173,21 +251,21 @@ export function OrdersDataTable<TData, TValue>({
                 : "outline"
             }
             onClick={() => handleStatusFilter(status.value)}
-            className="px-4 py-2"
+            className="px-4 py-2 md:rounded-3xl"
           >
             {status.label}
           </Button>
         ))}
       </div>
 
-      <div className="flex-1 mx-6">
+      <div className="flex-1 mx-6 md:w-auto w-full">
         <OrdersTableSearch data={data} onSearch={setFilteredData} />
       </div>
 
-      <div className="flex">
+      <div className="flex md:w-auto w-full">
         <DropdownMenu>
           <DropdownMenuTrigger asChild className=" outline-none">
-            <Button variant="outline" className="gap-2">
+            <Button variant="light" className="gap-2 w-full md:rounded-3xl">
               <Clock className="h-4 w-4" />
               {sortOption === "newest" ? "Newest First" : "Oldest First"}
               <ChevronDown className="h-4 w-4" />
@@ -303,8 +381,8 @@ export function OrdersDataTable<TData, TValue>({
         </div>
       </div>
 
-      <div className="flex items-center justify-between pt-4 px-10">
-        <div className="text-sm text-primary">
+      <div className="flex items-center justify-between pt-4 px-10 md:flex-row flex-col md:gap-0 gap-4">
+        <div className="text-sm text-black">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>

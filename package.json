@@ -27,6 +27,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
+    "date-fns": "^4.1.0",
     "firebase": "^10.12.5",
     "formik": "^2.4.6",
     "i18next": "^23.12.3",
