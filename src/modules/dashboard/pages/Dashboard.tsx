@@ -92,7 +92,7 @@ const DashBoard: React.FC = () => {
 
             {/* Top Rated Beauticians */}
             <div className="bg-white p-4 rounded-lg shadow-md sm:p-6">
-              <div className="text-lg font-bold sm:text-xl mb-4">Top Rated Beauticians</div>
+              {/* <div className="text-lg font-bold sm:text-xl mb-4">Top Rated Beauticians</div> */}
               <div className="bg-white-300 rounded-lg">
                 <BeauticianProfiles />
               </div>
@@ -103,7 +103,7 @@ const DashBoard: React.FC = () => {
           <div className="space-y-4 sm:space-y-6">
             {/* Ongoing Orders */}
             <div className="bg-white p-4 rounded-lg shadow-md sm:p-6">
-              <div className="text-lg font-bold sm:text-xl mb-4">Ongoing Orders</div>
+              {/* <div className="text-lg font-bold sm:text-xl mb-4">Ongoing Orders</div> */}
               <div className="bg-white-300 rounded-lg">
                 <OngoingOrders />
               </div>
@@ -112,10 +112,10 @@ const DashBoard: React.FC = () => {
             {/* Revenue */}
             <div className="bg-white p-4 rounded-lg shadow-md relative sm:p-6">
               <div className="flex justify-between items-center mb-4">
-                <div className="text-lg font-bold sm:text-xl">Revenue</div>
+                {/* <div className="text-lg font-bold sm:text-xl">Revenue</div> */}
 
                 {/* Timeframe buttons */}
-                <div className="flex space-x-2 flex-grow w-full max-w-xs sm:max-w-sm flex-wrap">
+                {/* <div className="flex space-x-2 flex-grow w-full max-w-xs sm:max-w-sm flex-wrap">
                   <button
                     onClick={() => setSelectedRevenueTimeframe('Daily')}
                     className={`px-2 py-1 flex-1 rounded-full ${
@@ -143,9 +143,9 @@ const DashBoard: React.FC = () => {
                   >
                     Monthly
                   </button>
-                </div>
+                </div> */}
               </div>
-              <div className="flex space-x-4 mb-4">
+              {/* <div className="flex space-x-4 mb-4">
                 <div className="flex items-center">
                   <span className="w-3 h-3 bg-red-500 rounded-sm inline-block mr-2"></span>
                   <span className="text-sm sm:text-base text-gray-600">Income</span>
@@ -154,7 +154,7 @@ const DashBoard: React.FC = () => {
                   <span className="w-3 h-3 bg-gray-500 rounded-sm inline-block mr-2"></span>
                   <span className="text-sm sm:text-base text-gray-600">Expense</span>
                 </div>
-              </div>
+              </div> */}
               <div className="bg-white-300 rounded-lg">
                 <RevenueChart />
               </div>
