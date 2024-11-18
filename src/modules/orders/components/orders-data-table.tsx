@@ -11,7 +11,15 @@ import {
   ColumnFiltersState,
 } from "@tanstack/react-table";
 import { useState, useCallback } from "react";
-import { ChevronDown, ChevronUp, ChevronsUpDown, Clock } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  ChevronsUpDown,
+  Clock,
+  FileDown,
+  Printer,
+  Share2,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -37,6 +45,7 @@ import {
 } from "../../../components/ui/pagination";
 import { Button } from "../../../components/ui/button";
 import { OrdersTableSearch } from "./order-search";
+import { exportSelectedRows, printSelectedRows, shareSelectedRows } from "../utils/table-actions";
 
 interface OrdersDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -44,6 +53,7 @@ interface OrdersDataTableProps<TData, TValue> {
 }
 
 type SortOption = "newest" | "oldest";
+type PageSizeOption = 5 | 10 | 20;
 
 const STATUS_OPTIONS = [
   { label: "All Statuses", value: null },
@@ -51,6 +61,8 @@ const STATUS_OPTIONS = [
   { label: "Ongoing", value: "pending" },
   { label: "Cancelled", value: "cancelled" },
 ] as const;
+
+const PAGE_SIZE_OPTIONS: PageSizeOption[] = [5, 10, 20];
 
 export function OrdersDataTable<TData, TValue>({
   columns,
@@ -62,7 +74,7 @@ export function OrdersDataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 10 as PageSizeOption,
   });
   const [sortOption, setSortOption] = useState<SortOption>("oldest");
 
@@ -80,6 +92,14 @@ export function OrdersDataTable<TData, TValue>({
         desc: option === "oldest",
       },
     ]);
+  };
+
+  const handlePageSizeChange = (size: PageSizeOption) => {
+    setPagination((prev) => ({
+      ...prev,
+      pageSize: size,
+      pageIndex: 0,
+    }));
   };
 
   const table = useReactTable({
@@ -129,7 +149,7 @@ export function OrdersDataTable<TData, TValue>({
   };
 
   const renderPagination = () => {
-    const currentPage = table.getState().pagination.pageIndex + 1; // 1-based index
+    const currentPage = table.getState().pagination.pageIndex + 1;
     const totalPages = table.getPageCount();
 
     const getPageNumbers = () => {
@@ -147,7 +167,6 @@ export function OrdersDataTable<TData, TValue>({
     return (
       <Pagination>
         <PaginationContent className="flex items-center gap-2">
-          {/* Skip 5 pages backward */}
           <PaginationItem>
             {currentPage > 5 && (
               <PaginationLink
@@ -158,8 +177,6 @@ export function OrdersDataTable<TData, TValue>({
               </PaginationLink>
             )}
           </PaginationItem>
-
-          {/* Previous Page */}
           <PaginationItem>
             {table.getCanPreviousPage() ? (
               <PaginationPrevious
@@ -174,15 +191,11 @@ export function OrdersDataTable<TData, TValue>({
               </span>
             )}
           </PaginationItem>
-
-          {/* Ellipsis for pages before the range */}
           {pageNumbers[0] > 2 && (
             <PaginationItem className="md:block hidden">
               <PaginationEllipsis />
             </PaginationItem>
           )}
-
-          {/* Dynamic Page Links */}
           {pageNumbers.map((page) => (
             <PaginationItem key={page} className="md:block hidden">
               <PaginationLink
@@ -198,15 +211,11 @@ export function OrdersDataTable<TData, TValue>({
               </PaginationLink>
             </PaginationItem>
           ))}
-
-          {/* Ellipsis for pages after the range */}
           {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
             <PaginationItem className="md:block hidden">
               <PaginationEllipsis />
             </PaginationItem>
           )}
-
-          {/* Next Page */}
           <PaginationItem>
             {table.getCanNextPage() ? (
               <PaginationNext
@@ -221,8 +230,6 @@ export function OrdersDataTable<TData, TValue>({
               </span>
             )}
           </PaginationItem>
-
-          {/* Skip 5 pages forward */}
           <PaginationItem>
             {currentPage + 5 <= totalPages && (
               <PaginationLink
@@ -290,7 +297,6 @@ export function OrdersDataTable<TData, TValue>({
     </div>
   );
 
-  // Styles
   const getHeaderClassName = (headerId: string) =>
     `px-4 py-2 text-left ${
       headerId === "actions"
@@ -305,6 +311,96 @@ export function OrdersDataTable<TData, TValue>({
         : ""
     }`;
 
+  const renderSelectedRowsHeader = () => {
+    const selectedRowsCount = Object.keys(rowSelection).length;
+    const selectedRows = table.getSelectedRowModel().rows;
+
+    return (
+      <TableRow className="bg-primary/10">
+        <TableHead colSpan={columns.length} className="px-4 py-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Button size="sm" onClick={() => setRowSelection({})}>
+                Clear Selection
+              </Button>
+              <div className="text-sm font-semibold">
+                {selectedRowsCount} Selected
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() =>
+                  printSelectedRows(selectedRows, columns, flexRender)
+                }
+                title="Print Selected Rows"
+              >
+                <Printer className="h-5 w-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() =>
+                  shareSelectedRows(selectedRows.map((row) => row.original))
+                }
+                title="Share Selected Rows"
+              >
+                <Share2 className="h-5 w-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() =>
+                  exportSelectedRows(
+                    selectedRows.map((row) => row.original),
+                    columns
+                  )
+                }
+                title="Export Selected Rows"
+              >
+                <FileDown className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        </TableHead>
+      </TableRow>
+    );
+  };
+
+  const renderTableHeader = (headerGroup: any) => {
+    if (Object.keys(rowSelection).length > 0) {
+      return renderSelectedRowsHeader();
+    }
+
+    return (
+      <TableRow key={headerGroup.id}>
+        {headerGroup.headers.map((header) => (
+          <TableHead key={header.id} className={getHeaderClassName(header.id)}>
+            {header.isPlaceholder ? null : (
+              <div
+                className={`flex items-center gap-2 ${
+                  header.column.getCanSort() ? "cursor-pointer select-none" : ""
+                }`}
+                onClick={
+                  header.column.getCanSort()
+                    ? header.column.getToggleSortingHandler()
+                    : undefined
+                }
+              >
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext()
+                )}
+                {renderSortIcon(header)}
+              </div>
+            )}
+          </TableHead>
+        ))}
+      </TableRow>
+    );
+  };
+
   return (
     <div className="space-y-4 p-4">
       {renderTableControls()}
@@ -313,37 +409,9 @@ export function OrdersDataTable<TData, TValue>({
         <div className="overflow-x-auto custom-scrollbar">
           <Table>
             <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead
-                      key={header.id}
-                      className={getHeaderClassName(header.id)}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <div
-                          className={`flex items-center gap-2 ${
-                            header.column.getCanSort()
-                              ? "cursor-pointer select-none"
-                              : ""
-                          }`}
-                          onClick={
-                            header.column.getCanSort()
-                              ? header.column.getToggleSortingHandler()
-                              : undefined
-                          }
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {renderSortIcon(header)}
-                        </div>
-                      )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
+              {table
+                .getHeaderGroups()
+                .map((headerGroup) => renderTableHeader(headerGroup))}
             </TableHeader>
             <TableBody>
               {table.getRowModel().rows?.length ? (
@@ -382,11 +450,31 @@ export function OrdersDataTable<TData, TValue>({
       </div>
 
       <div className="flex items-center justify-between pt-4 px-10 md:flex-row flex-col md:gap-0 gap-4">
-        <div className="text-sm text-black">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-black">
+            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
+          </span>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="ml-2">
+                {pageSize} per page <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              {PAGE_SIZE_OPTIONS.map((size) => (
+                <DropdownMenuItem
+                  key={size}
+                  onSelect={() => handlePageSizeChange(size)}
+                  className={pageSize === size ? "bg-accent" : ""}
+                >
+                  {size} per page
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        {renderPagination()}
+        <div className="flex items-center space-x-2">{renderPagination()}</div>
       </div>
     </div>
   );

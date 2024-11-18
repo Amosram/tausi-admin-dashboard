@@ -3,6 +3,33 @@ export interface Coordinates {
   y: number;
 }
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  profilePictureUrl: string;
+  profilePicturePath: string;
+  bio: string | null;
+  locationAddress: string | null;
+  isActive: boolean;
+  deactivatedAt: string | null;
+  deactivatedBy: string | null;
+  deactivatedReason: string | null;
+  phoneVerified: boolean;
+  emailVerified: boolean;
+  isDeleted: boolean;
+  deletedAt: string | null;
+  deletedReason: string | null;
+  createdAt: string;
+  updatedAt: string;
+  latitude: number | null;
+  longitude: number | null;
+  coordinates: Coordinates;
+  fcmToken: string;
+};
+
+
 export interface Client {
   id: string;
   name: string;
@@ -36,6 +63,7 @@ export interface Professional {
   resumePath: string | null;
   isVerified: boolean;
   isActive: boolean;
+  user?: User;
   termsAndConditions: boolean;
   deactivatedAt: string | null;
   deactivatedBy: string | null;

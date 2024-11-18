@@ -1,5 +1,5 @@
-import { fetchAppointments } from "@/modules/orders/api";
-import { OrdersTableData } from "@/modules/orders/types";
+import { fetchAppointmentById, fetchAppointments } from "@/modules/orders/api";
+import { Appointment, OrdersTableData } from "@/modules/orders/types";
 import { transformToTableData } from "@/modules/orders/utils/transform-orders-data";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
@@ -7,6 +7,7 @@ import storage from "redux-persist/lib/storage";
 
 interface OrdersState {
   data: OrdersTableData[];
+  currentOrder: Appointment | null;
   loading: boolean;
   error: string | null;
   lastUpdated: string | null;
@@ -15,6 +16,7 @@ interface OrdersState {
 
 const initialState: OrdersState = {
   data: [],
+  currentOrder: null,
   loading: false,
   error: null,
   lastUpdated: null,
@@ -33,12 +35,27 @@ export const fetchOrders = createAsyncThunk(
   }
 );
 
+export const fetchOrderDetails = createAsyncThunk(
+  "orders/fetchOrderDetails",
+  async (orderId: string, { rejectWithValue }) => {
+    try {
+      const appointment = await fetchAppointmentById(orderId);
+      return appointment;
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Failed to fetch order details.");
+    }
+  }
+);
+
 const ordersSlice = createSlice({
   name: "orders",
   initialState,
   reducers: {
     setInitialized: (state) => {
       state.isInitialized = true;
+    },
+    clearCurrentOrder: (state) => {
+      state.currentOrder = null;
     },
   },
   extraReducers: (builder) => {
@@ -55,6 +72,18 @@ const ordersSlice = createSlice({
       .addCase(fetchOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(fetchOrderDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchOrderDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentOrder = action.payload;
+      })
+      .addCase(fetchOrderDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
@@ -66,5 +95,5 @@ const ordersPersistConfig = {
   blacklist: ["loading", "error"],
 };
 
-export const { setInitialized } = ordersSlice.actions;
+export const { setInitialized, clearCurrentOrder } = ordersSlice.actions;
 export default persistReducer(ordersPersistConfig, ordersSlice.reducer);

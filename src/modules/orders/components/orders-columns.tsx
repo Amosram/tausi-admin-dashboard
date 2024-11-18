@@ -1,5 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
+import { Link } from "react-router-dom";
+import { format, parse } from "date-fns";
 import { OrdersTableData } from "../types";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -15,13 +16,29 @@ import { FaPhoneAlt } from "react-icons/fa";
 const getStatusBadge = (status: string) => {
   switch (status) {
     case "completed":
-      return <Badge className="bg-transparent border-2 font-semibold text-md border-green-500 text-green-500">{status}</Badge>;
+      return (
+        <Badge className="bg-transparent border-2 font-semibold text-md border-green-500 text-green-500">
+          {status}
+        </Badge>
+      );
     case "pending":
-      return <Badge className="bg-transparent border-2 font-semibold text-md border-blue-500 text-blue-500">{status}</Badge>;
+      return (
+        <Badge className="bg-transparent border-2 font-semibold text-md border-blue-500 text-blue-500">
+          {status}
+        </Badge>
+      );
     case "cancelled":
-      return <Badge className="bg-transparent border-2 font-semibold text-md border-red-500 text-red-500">{status}</Badge>;
+      return (
+        <Badge className="bg-transparent border-2 font-semibold text-md border-red-500 text-red-500">
+          {status}
+        </Badge>
+      );
     default:
-      return <Badge className="bg-transparent border-2 font-semibold text-md border-gray-500 text-gray-500">{status}</Badge>;
+      return (
+        <Badge className="bg-transparent border-2 font-semibold text-md border-gray-500 text-gray-500">
+          {status}
+        </Badge>
+      );
   }
 };
 
@@ -38,11 +55,14 @@ const formatDate = (orderDate: unknown, startTime: unknown) => {
   const orderDateString = orderDate as string;
   const startTimeString = startTime as string;
 
-  const dateObject = new Date(orderDateString);
-  const formattedDate = format(dateObject, "MMM dd, yyyy");
+  const dateObject = parse(orderDateString, 'M/d/yyyy', new Date());
+  if (isNaN(dateObject.getTime())) {
+    return 'Invalid date';
+  }
 
+  const formattedDate = format(dateObject, 'MMM dd, yyyy');
   const formattedTime = startTimeString;
-  
+
   return `${formattedDate} at ${formattedTime}`;
 };
 
@@ -80,7 +100,15 @@ export const columns: ColumnDef<OrdersTableData>[] = [
   {
     accessorKey: "orderId",
     header: "Order ID",
-    cell: ({ row }) => <TruncatedCell content={row.getValue("orderId")} />,
+    cell: ({ row }) => (
+      <Link
+        to={`/orders/${row.getValue("orderId")}`}
+        state={{ order: row.original }}
+        className="hover:text-primary hover:underline"
+      >
+        {row.getValue("orderId")}
+      </Link>
+    ),
     enableSorting: true,
   },
   {
@@ -89,7 +117,7 @@ export const columns: ColumnDef<OrdersTableData>[] = [
     cell: ({ row }) => {
       const orderDate = row.getValue("orderDate");
       const startTime = row.original.startTime;
-      return <span>{formatDate(orderDate, startTime)}</span>;
+      return <TruncatedCell content={formatDate(orderDate, startTime)} />;
     },
     enableSorting: true,
   },
@@ -130,32 +158,36 @@ export const columns: ColumnDef<OrdersTableData>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreVertical className="h-4 w-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => console.log("View:", row.original)}
+    cell: ({ row }) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreVertical className="h-4 w-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>
+            <Link
+              to={`/orders/${row.original.orderId}`}
+              state={{ order: row.original }}
+              className="hover:text-primary"
             >
               View details
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => console.log("Edit:", row.original)}
-            >
-              Edit order
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => console.log("Delete:", row.original)}
-            >
-              Delete order
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => console.log("Edit:", row.original)}
+            className="cursor-pointer"
+          >
+            Edit order
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => console.log("Delete:", row.original)}
+            className="bg-destructive text-white cursor-pointer"
+          >
+            Delete order
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
   },
 ];
