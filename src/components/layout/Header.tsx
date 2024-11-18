@@ -1,13 +1,41 @@
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { FaChevronDown } from "react-icons/fa";
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
+import { FaChevronDown, FaChevronLeft } from "react-icons/fa";
 import { IoExitOutline } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
-import { SidebarTrigger } from '../ui/sidebar';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { SidebarTrigger } from "../ui/sidebar";
 
 const Header = () => {
+  const location = useLocation();
+
+  const titles: { [key: string]: string } = {
+    "/": "Dashboard",
+    "/orders": "Orders",
+    "/revenue": "Revenue",
+    "/users": "Users",
+    "/applications": "Applications",
+    "/messaging": "Messaging",
+    "/settings": "Settings",
+  };
+
+  const getTitle = () => {
+    const path = location.pathname;
+
+    if (path.startsWith("/orders/") && path.split("/").length > 2) {
+      return "Order Details";
+    }
+
+    return titles[path] || "Dashboard";
+  };
+
+  const dynamicTitle = getTitle();
 
   const navigate = useNavigate();
-  
+
   const handleLogout = () => {
     navigate("/auth/login");
   };
@@ -20,7 +48,17 @@ const Header = () => {
             <SidebarTrigger />
           </div>
           <div className="relative">
-            <div className="text-gray-600 font-bold">DashBoard</div>
+            {dynamicTitle === "Order Details" ? (
+              <Link
+                to="/orders"
+                className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
+              >
+                <FaChevronLeft/>
+                <span>Order Details</span>
+              </Link>
+            ) : (
+              <div className="text-gray-600 font-bold">{dynamicTitle}</div>
+            )}
           </div>
         </div>
         <div className="flex items-center space-x-4"></div>
@@ -31,21 +69,30 @@ const Header = () => {
             className="border rounded-full p-2 w-full bg-gray-100 pl-4 pr-10 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <span className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <img src="/searchIcon.png" alt="Search Icon"
-              className="w-5 h-5 text-gray-500" />
+            <img
+              src="/searchIcon.png"
+              alt="Search Icon"
+              className="w-5 h-5 text-gray-500"
+            />
           </span>
         </div>
         <div className="flex items-center space-x-4">
           {/* Notifications */}
           <div className="relative">
             {/* notification code = <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 absolute top-0 right-0">2</span>*/}
-            <img src="/messagingNotificationIcon.png" alt="Notification Icon"
-              className="w-6 h-6 cursor-pointer" />
+            <img
+              src="/messagingNotificationIcon.png"
+              alt="Notification Icon"
+              className="w-6 h-6 cursor-pointer"
+            />
           </div>
           <div className="relative">
             {/*<span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 absolute top-0 right-0">2</span>*/}
-            <img src="/bellIcon.png" alt="Bell Icon"
-              className="w-6 h-6 cursor-pointer" />
+            <img
+              src="/bellIcon.png"
+              alt="Bell Icon"
+              className="w-6 h-6 cursor-pointer"
+            />
           </div>
           {/* Avatar */}
           <div className="flex items-center space-x-2">
@@ -57,10 +104,7 @@ const Header = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="flex gap-4 items-center ml-5 mr-5 pr-5 cursor-pointer">
-                  <FaChevronDown
-                    className="text-gray-400 text-sm"
-                    size={12}
-                  />
+                  <FaChevronDown className="text-gray-400 text-sm" size={12} />
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -80,11 +124,12 @@ const Header = () => {
                 "
                 sideOffset={5}
               >
-                <DropdownMenuItem onClick={handleLogout} className="flex items-center justify-between p-2 cursor-pointer">
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="flex items-center justify-between p-2 cursor-pointer"
+                >
                   Logout
-                  <IoExitOutline
-                    className="mr-2 text-red-500"
-                  />
+                  <IoExitOutline className="mr-2 text-red-500" />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
