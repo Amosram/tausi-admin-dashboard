@@ -1,9 +1,12 @@
 import React from 'react'
+import ApplicationsTable from '../components/Table';
 
 const Applications = () => {
   return (
-    <div>Applications</div>
+    <div className='p-4'>
+      <ApplicationsTable />
+    </div>
   )
 }
 
-export default Applications
+export default Applications;
