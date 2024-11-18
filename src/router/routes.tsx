@@ -3,6 +3,7 @@ import React, { lazy, Suspense } from "react";
 import Layout from "@/components/layout";
 import { Outlet, RouteObject } from "react-router-dom";
 import Loader from "@/components/layout/Loader";
+import { Toaster } from "@/components/ui/toaster";
 
 // Auth
 const LoginLazy = lazy(() => import("@/modules/auth/pages/Login"));
@@ -15,6 +16,7 @@ const UsersLazy = lazy(() => import("@/modules/users/pages/Users"));
 const ApplicationsLazy = lazy(() => import("@/modules/applications/pages/Applications"));
 const MessagingLazy = lazy(() => import("@/modules/messaging/pages/Messaging"));
 const SettingsLazy = lazy(() => import("@/modules/settings/pages/Settings"));
+const OrderDetailsLazy = lazy(() => import("@/modules/orders/pages/OrderDetails"));
 
 export const routes: RouteObject[] = [
   {
@@ -22,6 +24,7 @@ export const routes: RouteObject[] = [
     element: (
       <Layout>
         <Outlet />
+        <Toaster />
       </Layout>
     ),
     children: [
@@ -35,11 +38,24 @@ export const routes: RouteObject[] = [
       },
       {
         path: "/orders",
-        element: (
-          <Suspense fallback={<Loader />}>
-            <OrdersLazy />
-          </Suspense>
-        )
+        children: [
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<Loader />}>
+                <OrdersLazy />
+              </Suspense>
+            ),
+          },
+          {
+            path: ":orderId",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <OrderDetailsLazy />
+              </Suspense>
+            )
+          }
+        ]
       },
       {
         path: "/revenue",
