@@ -137,7 +137,8 @@ export interface Appointment {
 export interface ApiResponse {
   statusCode: string;
   message: string;
-  data: Appointment[];
+  code: number;
+  data: Appointment;
 }
 
 export interface OrdersTableData {

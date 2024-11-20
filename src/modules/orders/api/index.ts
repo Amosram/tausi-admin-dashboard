@@ -1,39 +1,29 @@
-import { ApiResponse, Appointment } from "../types";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { ApiResponse, Appointment, OrdersTableData } from "@/modules/orders/types";
+import { transformToTableData } from "@/modules/orders/utils/transform-orders-data";
 
-export const fetchAppointments = async (limit: number): Promise<Appointment[]> => {
-  try {
-    const apiUrl = import.meta.env.VITE_API_URL;
-    console.log('API URL:', apiUrl);
-    const response = await fetch(`${apiUrl}/appointments?limit=${limit}`, {
-      method: "GET",
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to fetch appointments: ${response.statusText}`);
-    }
+export const ordersApi = createApi({
+  reducerPath: "ordersApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_API_URL,
+  }),
+  tagTypes: ["Orders", "OrderDetails"],
+  endpoints: (builder) => ({
+    fetchOrders: builder.query<OrdersTableData[], number>({
+      query: (limit) => `appointments?limit=${limit}`,
+      transformResponse: (response: { data: Appointment[] }) =>
+        transformToTableData(response.data),
+      providesTags: ["Orders"],
+    }),
+    fetchOrderDetails: builder.query<Appointment, string>({
+      query: (orderId) => `appointments/${orderId}`,
+      transformResponse: (response: ApiResponse) => {
+        return response.data;
+      },
+      providesTags: (result, error, orderId) => [{ type: "OrderDetails", id: orderId }],
+    }),
+    
+  }),
+});
 
-    const result: ApiResponse = await response.json();
-    return result.data;
-  } catch (error) {
-    console.error("Error fetching appointments:", error);
-    throw error;
-  }
-};
-
-export const fetchAppointmentById = async (
-  id: string
-): Promise<Appointment> => {
-  try {
-    const apiUrl = import.meta.env.VITE_API_URL;
-    const response = await fetch(`${apiUrl}/appointments/${id}`, {
-      method: "GET",
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to fetch appointment: ${response.statusText}`);
-    }
-    const result = await response.json();
-    return result.data;
-  } catch (error) {
-    console.error("Error fetching appointment:", error);
-    throw error;
-  }
-};
+export const { useFetchOrdersQuery, useFetchOrderDetailsQuery } = ordersApi;

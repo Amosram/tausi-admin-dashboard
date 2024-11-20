@@ -98,13 +98,14 @@ export const columns: ColumnDef<OrdersTableData>[] = [
     enableHiding: false,
   },
   {
+    id: "orderId",
     accessorKey: "orderId",
     header: "Order ID",
     cell: ({ row }) => (
       <Link
         to={`/orders/${row.getValue("orderId")}`}
         state={{ order: row.original }}
-        className="hover:text-primary hover:underline"
+        className="hover:text-primary hover:underline truncate block max-w-[150px]"
       >
         {row.getValue("orderId")}
       </Link>
@@ -112,6 +113,7 @@ export const columns: ColumnDef<OrdersTableData>[] = [
     enableSorting: true,
   },
   {
+    id: "orderDate",
     accessorKey: "orderDate",
     header: "Order Date",
     cell: ({ row }) => {
@@ -122,23 +124,28 @@ export const columns: ColumnDef<OrdersTableData>[] = [
     enableSorting: true,
   },
   {
+    id: "serviceProvider",
     accessorKey: "serviceProvider",
     header: "Service Provider",
     cell: ({ row }) => (
       <TruncatedCell content={row.getValue("serviceProvider")} />
     ),
+    enableSorting: true,
   },
   {
+    id: "category",
     accessorKey: "category",
     header: "Category",
     cell: ({ row }) => <TruncatedCell content={row.getValue("category")} />,
   },
   {
+    id: "location",
     accessorKey: "location",
     header: "Location",
     cell: ({ row }) => <TruncatedCell content={row.getValue("location")} />,
   },
   {
+    id: "contact",
     accessorKey: "contact",
     header: "Contact",
     cell: ({ row }) => {
@@ -152,6 +159,7 @@ export const columns: ColumnDef<OrdersTableData>[] = [
     },
   },
   {
+    id: "status",
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => getStatusBadge(row.getValue("status")),

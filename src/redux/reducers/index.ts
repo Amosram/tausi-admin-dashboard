@@ -1,16 +1,16 @@
 import userReducer from "./userSlice";
-import ordersReducer from './ordersSlice';
+import { ordersApi } from "@/modules/orders/api";
 
 export const modulesReducers = {
+    [ordersApi.reducerPath]: ordersApi.reducer,
 }
 
 
 export const rtkQueryMiddleware = [
-
+    ordersApi.middleware,
 ]
 
 export const staticReducers = {
     user: userReducer,
-    orders: ordersReducer,
     ...modulesReducers
 };
