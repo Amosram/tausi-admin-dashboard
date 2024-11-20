@@ -101,15 +101,3 @@ export interface SessionData {
 export enum UserTypeSession {
     Professional = "professional",
 }
-
-export interface ProfessionalsTableData {
-    professionalId: string;
-    dateApplied: string;
-    dateReviewed: string;
-    serviceProvider: string;
-    service?: Service;
-    location: string;
-    contact: string;
-    status: string;
-  }
-  

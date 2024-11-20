@@ -61,10 +61,10 @@ const SideBar = () => {
                     className={`flex gap-6 items-center font-semibold 
                       px-5 py-5 hover:bg-primary-extralight 
                       ${
-                        pathname === link
-                          ? "bg-primary-extralight border-r-8 border-primary dark:border-[#ef3e23] text-primary dark:text-[#ef3e23]"
-                          : "text-black dark:text-primary hover:dark:text-black"
-                      }
+                  pathname === link
+                    ? "bg-primary-extralight border-r-8 border-primary dark:border-[#ef3e23] text-primary dark:text-[#ef3e23]"
+                    : "text-black dark:text-primary hover:dark:text-black"
+                  }
                     `}
                   >
                     <span className="text-2xl">{icon}</span>
@@ -81,10 +81,10 @@ const SideBar = () => {
                           className={`flex items-center justify-center font-semibold px-2 py-5 
                             hover:bg-primary-extralight 
                             ${
-                              pathname === link
-                                ? "bg-primary-extralight border-r-8 border-primary dark:border-[#ef3e23] text-primary dark:text-[#ef3e23]"
-                                : "text-black dark:text-primary hover:dark:text-black"
-                            }
+                  pathname === link
+                    ? "bg-primary-extralight border-r-8 border-primary dark:border-[#ef3e23] text-primary dark:text-[#ef3e23]"
+                    : "text-black dark:text-primary hover:dark:text-black"
+                  }
                           `}
                         >
                           <span className="text-2xl">{icon}</span>
@@ -104,7 +104,8 @@ const SideBar = () => {
       {open ? (
         <SidebarFooter className="flex items-center border-t border-gray-300 dark:text-black">
           <div className="px-3 py-2 bg-primary-superlight flex gap-2 items-center">
-            <img src="/tausi-logo.png" alt="Footer Logo" className="w-8 h-8" />
+            <img src="/tausi-logo.png" alt="Footer Logo"
+              className="w-8 h-8" />
             <div className="flex flex-col gap-1 text-sm">
               <p>tausi admin dashboard</p>
               <p className="font-semibold">&copy; 2022 All Rights Reserved</p>
@@ -114,7 +115,8 @@ const SideBar = () => {
       ) : (
         <SidebarFooter className="border-t border-gray-300 dark:text-black">
           <div className="flex flex-col items-center ">
-            <img src="/tausi-logo.png" alt="Footer Logo" className="w-6 h-6" />
+            <img src="/tausi-logo.png" alt="Footer Logo"
+              className="w-6 h-6" />
             <p className="text-[12px] text-center font-semibold dark:hidden">&copy; 2022</p>
           </div>
         </SidebarFooter>

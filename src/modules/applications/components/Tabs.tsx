@@ -1,5 +1,5 @@
 import React from 'react';
-import { TabProps } from '../utils/Types';
+import { TabProps } from '../Types/Types';
 
 const Tabs: React.FC<TabProps> = ({ activeTab, setActiveTab }) => {
   const tabs = ["All Status", "PENDING", "IN REVIEW", "REJECTED"];

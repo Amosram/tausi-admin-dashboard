@@ -33,7 +33,7 @@ const initialState: TausiUser = {
     deletedAt: null,
     isDeleted: false
   }
-}
+};
 
 export const userSlice = createSlice({
   name: 'user',
@@ -44,10 +44,10 @@ export const userSlice = createSlice({
 
     },
     signOutUser: (state) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+       
       state = {
         ...initialState
-      }
+      };
     }
   }
 });
