@@ -17,13 +17,7 @@ const Users: React.FC = () => {
     data: usersData,
     error,
     isLoading,
-  } = useFetchUsersQuery(100, {
-    refetchOnMountOrArgChange: true,
-    refetchOnFocus: true,
-    refetchOnReconnect: true,
-  });
-
-  console.log(usersData);
+  } = useFetchUsersQuery(10000);
 
   React.useEffect(() => {
     if (error) {
@@ -57,7 +51,13 @@ const Users: React.FC = () => {
           : "calc(100vw - 4rem)",
       }}
     >
-      Users
+      <DataTable
+        columns={columns}
+        data={usersData || []}
+        filterConfig={{ field: "status", options: USER_OPTIONS }}
+        sortByDate={false}
+        btnText="Add User"
+      />
     </div>
   );
 };

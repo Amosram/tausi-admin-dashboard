@@ -51,6 +51,7 @@ import {
   printSelectedRows,
   shareSelectedRows,
 } from "../../../utils/table-actions";
+import { FaPlus } from "react-icons/fa";
 
 export interface FilterOption {
   label: string;
@@ -68,6 +69,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   filterConfig: FilterConfigProps;
   sortByDate: boolean;
+  btnText?: string;
 }
 
 type SortOption = "newest" | "oldest";
@@ -80,6 +82,7 @@ export function DataTable<TData, TValue>({
   data,
   filterConfig,
   sortByDate,
+  btnText,
 }: DataTableProps<TData, TValue>) {
   const [filteredData, setFilteredData] = useState(data);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -100,7 +103,6 @@ export function DataTable<TData, TValue>({
   const handleSortOptionChange = (option: SortOption) => {
     setSortOption(option);
 
-    // Dynamically find the date column or a column with 'id' variations
     const dateColumn =
       columns.find((column) => column?.id?.toLowerCase().includes("date")) ||
       columns.find((column) => ["id", "Id", "ID"].includes(column?.id));
@@ -339,6 +341,15 @@ export function DataTable<TData, TValue>({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+      )}
+
+      {btnText && (
+        <Button className="md:rounded-3xl">
+          <div className="flex items-center">
+            <FaPlus />
+            {btnText}
+          </div>
+        </Button>
       )}
     </div>
   );

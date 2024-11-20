@@ -78,25 +78,20 @@ export const columns: ColumnDef<UserTableData>[] = [
     id: "email",
     accessorKey: "email",
     header: "Email Address",
-    cell: ({ row }) => {
-      <TruncatedCell content={row.getValue("email")} />;
-    },
+    cell: ({ row }) => <TruncatedCell content={row.getValue("email")} />,
+    enableSorting: true,
   },
   {
     id: "phoneNumber",
     accessorKey: "phoneNumber",
     header: "Contact",
-    cell: ({ row }) => {
-      <TruncatedCell content={row.getValue("phoneNumber")} />;
-    },
+    cell: ({ row }) => <TruncatedCell content={row.getValue("phoneNumber")} />,
   },
   {
     id: "role",
     accessorKey: "role",
     header: "Role",
-    cell: () => {
-      <TruncatedCell content={"Client"} />;
-    },
+    cell: () => <TruncatedCell content={"Client"} />,
   },
   {
     id: "isActive",
@@ -120,9 +115,7 @@ export const columns: ColumnDef<UserTableData>[] = [
     id: "createdAt",
     accessorKey: "createdAt",
     header: "Created On",
-    cell: ({ row }) => {
-      <TruncatedCell content={row.getValue("createdAt")} />;
-    },
+    cell: ({ row }) => <TruncatedCell content={row.getValue("createdAt")} />,
   },
   {
     id: "actions",

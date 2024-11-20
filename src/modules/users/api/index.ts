@@ -1,5 +1,6 @@
 import { TausiUser } from "@/models/user";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { UsersApiResponse } from "../types";
 
 export const usersApi = createApi({
   reducerPath: "usersApi",
@@ -10,6 +11,8 @@ export const usersApi = createApi({
   endpoints: (builder) => ({
     fetchUsers: builder.query<TausiUser[], number>({
       query: (limit) => `users?limit=${limit}`,
+      transformResponse: (response: UsersApiResponse[]) =>
+        response.map((item) => item.users),
       providesTags: ["Users"],
     }),
   }),
