@@ -18,7 +18,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
       </PersistGate>
     </ReduxProvider>
 
-  )
-}
+  );
+};
 
 export default Providers;

@@ -1,4 +1,4 @@
-import { ApiResponse, Appointment } from "../types";
+import { ApiResponse, Appointment } from "@/models";
 
 export const fetchAppointments = async (limit: number): Promise<Appointment[]> => {
   try {

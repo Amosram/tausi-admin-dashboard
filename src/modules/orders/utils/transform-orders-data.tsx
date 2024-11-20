@@ -1,4 +1,4 @@
-import { Appointment, OrdersTableData } from "../types";
+import { Appointment, OrdersTableData } from "../../../models";
 
 export const transformToTableData = (
   appointments: Appointment[]

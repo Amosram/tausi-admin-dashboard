@@ -1,22 +1,22 @@
 import {
-    ThunkAction,
-    Action,
-    combineReducers,
-    Tuple
+  ThunkAction,
+  Action,
+  combineReducers,
+  Tuple
 } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { configureStore} from '@reduxjs/toolkit';
 import {
-    persistStore,
-    persistReducer
+  persistStore,
+  persistReducer
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { staticReducers, rtkQueryMiddleware } from './reducers';
 
 const persistConfig = {
-    key: 'tausiapp',
-    storage,
-    version: 1,
+  key: 'tausiapp',
+  storage,
+  version: 1,
 };
 
 const rootReducer = () => combineReducers(staticReducers);
@@ -33,7 +33,7 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
-setupListeners(store.dispatch)
+setupListeners(store.dispatch);
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;

@@ -1,5 +1,5 @@
 import { fetchAppointmentById, fetchAppointments } from "@/modules/orders/api";
-import { Appointment, OrdersTableData } from "@/modules/orders/types";
+import { Appointment, OrdersTableData } from "@/models";
 import { transformToTableData } from "@/modules/orders/utils/transform-orders-data";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";

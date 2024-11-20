@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { format, parse } from "date-fns";
-import { OrdersTableData } from "../types";
+import { OrdersTableData } from "../../../models";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,

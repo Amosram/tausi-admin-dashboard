@@ -84,6 +84,7 @@ export interface Professional {
   fcmToken: string | null;
   topRated: boolean;
   rating: number;
+  services:             Service[];
 }
 
 export interface Service {
@@ -134,10 +135,10 @@ export interface Appointment {
   service: Service;
 }
 
-export interface ApiResponse {
+export interface ApiResponse<T> { //DO NOT DELETE OR CHANGE THIS INTERFACE
   statusCode: string;
   message: string;
-  data: Appointment[];
+  data: T;
 }
 
 export interface OrdersTableData {
