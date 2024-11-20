@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { ApiResponse, Appointment, OrdersTableData } from "@/modules/orders/types";
+import { AppointmentsApiResponse, Appointment, OrdersTableData } from "@/modules/orders/types";
 import { transformToTableData } from "@/modules/orders/utils/transform-orders-data";
 
 export const ordersApi = createApi({
@@ -17,7 +17,7 @@ export const ordersApi = createApi({
     }),
     fetchOrderDetails: builder.query<Appointment, string>({
       query: (orderId) => `appointments/${orderId}`,
-      transformResponse: (response: ApiResponse) => {
+      transformResponse: (response: AppointmentsApiResponse) => {
         return response.data;
       },
       providesTags: (result, error, orderId) => [{ type: "OrderDetails", id: orderId }],
