@@ -1,10 +1,10 @@
 import { ApiResponse, Appointment } from "../types";
 
-export const fetchAppointments = async (
-  limit: number
-): Promise<Appointment[]> => {
+export const fetchAppointments = async (limit: number): Promise<Appointment[]> => {
   try {
-    const response = await fetch(`/api/v2/appointments?limit=${limit}`, {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    console.log('API URL:', apiUrl);
+    const response = await fetch(`${apiUrl}/appointments?limit=${limit}`, {
       method: "GET",
     });
     if (!response.ok) {
@@ -23,7 +23,8 @@ export const fetchAppointmentById = async (
   id: string
 ): Promise<Appointment> => {
   try {
-    const response = await fetch(`/api/v2/appointments/${id}`, {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const response = await fetch(`${apiUrl}/appointments/${id}`, {
       method: "GET",
     });
     if (!response.ok) {
