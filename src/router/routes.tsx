@@ -17,6 +17,7 @@ const ApplicationsLazy = lazy(() => import("@/modules/applications/pages/Applica
 const MessagingLazy = lazy(() => import("@/modules/messaging/pages/Messaging"));
 const SettingsLazy = lazy(() => import("@/modules/settings/pages/Settings"));
 const OrderDetailsLazy = lazy(() => import("@/modules/orders/pages/OrderDetails"));
+const UserDetailsLazy = lazy(() => import('@/modules/users/pages/UserDetails'));
 
 export const routes: RouteObject[] = [
   {
@@ -67,11 +68,24 @@ export const routes: RouteObject[] = [
       },
       {
         path: "/users",
-        element: (
-          <Suspense fallback={<Loader />}>
-            <UsersLazy />
-          </Suspense>
-        )
+        children: [
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<Loader />}>
+                <UsersLazy />
+              </Suspense>
+            )
+          },
+          {
+            path: ":userId",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <UserDetailsLazy />
+              </Suspense>
+            )
+          }
+        ]
       },
       {
         path: "/applications",

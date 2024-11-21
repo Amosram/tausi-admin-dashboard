@@ -1,16 +1,16 @@
 import userReducer from "./userSlice";
-import { ordersApi } from "@/modules/orders/api";
-import { usersApi } from "@/modules/users/api";
+import {ordersReducer, ordersRtkQueryMiddleware} from "@/modules/orders/reducers";
+import {usersReducer, usersRtkQueryMiddleware} from "@/modules/users/reducers";
 
 export const modulesReducers = {
-    [ordersApi.reducerPath]: ordersApi.reducer,
-    [usersApi.reducerPath]: usersApi.reducer,
+    ...ordersReducer,
+    ...usersReducer
 }
 
 
 export const rtkQueryMiddleware = [
-    ordersApi.middleware,
-    usersApi.middleware,
+    ...ordersRtkQueryMiddleware,
+    ...usersRtkQueryMiddleware
 ]
 
 export const staticReducers = {

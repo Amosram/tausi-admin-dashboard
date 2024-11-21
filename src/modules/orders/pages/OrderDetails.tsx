@@ -16,8 +16,8 @@ import {
 import { FaMoneyBill, FaStar } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { IoChatboxEllipsesSharp } from "react-icons/io5";
-import { useFetchOrderDetailsQuery } from "../api";
 import { useToast } from "@/hooks/use-toast";
+import { useGetOrderByIdQuery } from "../api/ordersApi";
 
 interface InfoCardProps {
   title: string;
@@ -117,11 +117,7 @@ const OrderDetails: React.FC = () => {
   const { toast } = useToast();
   const { orderId } = useParams();
 
-  const {
-    data: currentOrder,
-    isLoading,
-    error,
-  } = useFetchOrderDetailsQuery(orderId!);
+  const { data, isLoading, error } = useGetOrderByIdQuery(orderId!);
 
   useEffect(() => {
     if (error) {
@@ -132,11 +128,11 @@ const OrderDetails: React.FC = () => {
     }
   }, [error, toast]);
 
-  const isDataEmpty = !currentOrder;
+  const currentOrder = data?.data;
 
-  if (isLoading && isDataEmpty) return <Loader />;
-  if (error && isDataEmpty) return <div>Error: Unable to load orders.</div>;
-  if (!currentOrder || !currentOrder.service) return <div className="p-4">No order found</div>;
+  if (isLoading) return <Loader />;
+  if (error) return <div>Error: Unable to load orders.</div>;
+  if (!currentOrder) return <div className="p-4">No order found</div>;
 
   return (
     <div className="p-6 space-y-6">

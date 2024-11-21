@@ -1,8 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { MoreVertical } from "lucide-react";
-
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +8,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { UserTableData } from "../types";
+import { TausiUser } from "@/models/user";
+import { format } from "date-fns";
 
 const TruncatedCell = ({ content }: { content: string | null | undefined }) => {
   if (!content) return <span>-</span>;
@@ -21,37 +20,7 @@ const TruncatedCell = ({ content }: { content: string | null | undefined }) => {
   );
 };
 
-export const columns: ColumnDef<UserTableData>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected()
-            ? true
-            : table.getIsSomePageRowsSelected()
-            ? "indeterminate"
-            : false
-        }
-        onCheckedChange={(value) => {
-          const isSelected = !!value;
-          table.getRowModel().rows.forEach((row) => {
-            row.toggleSelected(isSelected);
-          });
-        }}
-        aria-label="Select all on this page"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+export const columns: ColumnDef<TausiUser>[] = [
   {
     id: "id",
     accessorKey: "id",
@@ -101,11 +70,11 @@ export const columns: ColumnDef<UserTableData>[] = [
       const isActive = row.getValue("isActive");
 
       if (isActive === true) {
-        return <Badge variant="default">Active</Badge>;
+        return <Badge className="bg-transparent font-semibold text-blue-900 text-md">Active</Badge>;
       }
 
       if (isActive === false) {
-        return <Badge variant="destructive">Inactive</Badge>;
+        return <Badge className="bg-transparent font-semibold text-destructive text-md">Inactive</Badge>;
       }
 
       return <Badge variant="outline">Unknown</Badge>;
@@ -115,7 +84,13 @@ export const columns: ColumnDef<UserTableData>[] = [
     id: "createdAt",
     accessorKey: "createdAt",
     header: "Created On",
-    cell: ({ row }) => <TruncatedCell content={row.getValue("createdAt")} />,
+    cell: ({ row }) => {
+      const createdAt = row.getValue("createdAt") as string;
+      const formattedDate = createdAt
+        ? format(new Date(createdAt), "MMM dd, yyyy")
+        : "Invalid date";
+      return <TruncatedCell content={formattedDate} />;
+    },
   },
   {
     id: "actions",
