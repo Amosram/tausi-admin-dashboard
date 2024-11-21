@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -14,6 +14,11 @@ import {
 import { DebouncedInput } from "../DebounceInput";
 import { filterFunctions } from "@/Utils/filter-functions";
 import TableHeader from './TableHeader';
+import { Clock } from 'lucide-react';
+import { Button } from '../button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from '../dropdown-menu';
+import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { ChevronDown } from 'lucide-react';
 
 interface TableProps<T> {
     data: T[];
@@ -22,6 +27,9 @@ interface TableProps<T> {
     showNavigation?: boolean;
     showGlobalFilter?: boolean;
     filterFn?: FilterFn<T>;
+    columnFilters?: ColumnFiltersState;
+    handleStatusFilter?: (status: string | null) => void;
+    STATUS_OPTIONS?: { label: string; value: string | null }[];
 }
 
 const TanStackTable = <T,>({
@@ -30,6 +38,7 @@ const TanStackTable = <T,>({
   showFooter = false,
   showNavigation = true,
   showGlobalFilter = true,
+  STATUS_OPTIONS=[],
   filterFn = filterFunctions.fuzzy,
 }: TableProps<T>) => {
 
@@ -54,6 +63,16 @@ const TanStackTable = <T,>({
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: filterFn,
   });
+
+  const handleStatusFilter = useCallback((status: string | null) => {
+    setColumnFilters((filters) => {
+      const newFilters = filters.filter((f) => f.id !== "status");
+      if (status !== null) {
+        newFilters.push({ id: "status", value: status });
+      }
+      return newFilters;
+    });
+  }, []);
 
 
   const PaginationButtons = () => {
@@ -129,19 +148,59 @@ const TanStackTable = <T,>({
       <div className="overflow-auto">
         <div className="inline-block min-w-full p-1">
           <div className="flex flex-col">
-            <div className="flex justify-between  items-center">
+            <div className="flex justify-between items-center gap-1 mt-3 mb-2">
               {showGlobalFilter ? (
                 <>
+                  <div className="flex gap-2 md:flex-row flex-col md:w-auto w-full">
+                    {STATUS_OPTIONS.map((status) => (
+                      <Button
+                        key={status.label}
+                        variant={
+                          status.value ===
+              (columnFilters.find((f) => f.id === "status")?.value ?? null)
+                            ? "default"
+                            : "outline"
+                        }
+                        onClick={() => handleStatusFilter(status.value)}
+                        className="px-4 py-2 md:rounded-3xl"
+                      >
+                        {status.label}
+                      </Button>
+                    ))}
+                  </div>
                   <DebouncedInput
                     value={globalFilter ?? ""}
                     onChange={(value) => setGlobalFilter(String(value))}
-                    className="font-lg border-block border p-2 shadow mb-2 rounded"
+                    className="font-lg border-block border p-2 shadow bg-background rounded-full w-1/2 border-gray-400"
                     placeholder="Search all columns..."
                   />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild className="outline-none">
+                      <Button variant="light" className="gap-1 rounded-full">
+                        <Clock className="h-4 w-4" />
+                        {sorting[0]?.desc ? "Newest First" : "Oldest First"}
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => setSorting([{ id: "createdAt", desc: true }])}
+                        className={sorting[0]?.desc ? "bg-accent" : ""}
+                      >
+                        Newest First
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setSorting([{ id: "createdAt", desc: false }])}
+                        className={!sorting[0]?.desc ? "bg-accent" : ""}
+                      >
+                        Oldest First
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </>
               ) : null}
             </div>
-            <table className="w-full mt-5 text-sm text-left text-gray-600 shadow-md border  rounded-xl">
+            <table className="w-full mt-2 text-sm text-left text-gray-600 shadow-md border round-xl">
               <TableHeader table={table} />
               <tbody className="bg-white border-b hover:bg-gray-50">
                 {table.getRowModel().rows.map((row) => (

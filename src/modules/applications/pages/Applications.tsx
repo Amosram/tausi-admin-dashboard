@@ -1,5 +1,5 @@
 import { Professional } from "@/models";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import { useGetProfessionalsQuery } from "../api/professionalApi";
 import TanStackTable from "@/components/ui/Table";
 import { format } from "date-fns";
@@ -7,9 +7,38 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useMemo, useState } from "react";
 
 const ProfessionalDashboard = () => {
   const {data, isLoading, isError} = useGetProfessionalsQuery();
+
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  const handleStatusFilter = (status: string | null) => {
+    setColumnFilters((filters) => {
+      const newFilters = filters.filter((f) => f.id !== "isVerified");
+      if (status !== null) {
+        newFilters.push({ id: "isVerified", value: status });
+      }
+      return newFilters;
+    });
+  };
+
+  const STATUS_OPTIONS = useMemo(() => {
+    if (!data?.data) return [];
+    
+    const uniqueStatuses = Array.from(
+      new Set(data.data.map(item => item.isVerified ? "Verified" : "Pending"))
+    );
+
+    return [
+      { label: "All Statuses", value: null },
+      ...uniqueStatuses.map(status => ({
+        label: status,
+        value: status
+      }))
+    ];
+  }, [data]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -124,7 +153,13 @@ const ProfessionalDashboard = () => {
   }
 
   return (
-    <TanStackTable data={data.data} columns={columns} />
+    <TanStackTable
+    data={data.data}
+    columns={columns}
+    columnFilters={columnFilters}
+    handleStatusFilter={handleStatusFilter}
+    STATUS_OPTIONS={STATUS_OPTIONS}
+    />
   );
 };
 
