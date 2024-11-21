@@ -64,26 +64,28 @@ const TanStackTable = <T,>({
       >
         <div className="hidden sm:flex space-x-5 items-center">
           <p className="text-sm text-gray-700">
-                        Showing page <span className="font-medium text-gray-900">{2} </span> of <span className="font-medium text-gray-900">{20}</span>
+                        Showing page <span className="font-medium text-gray-900">{table.getState().pagination.pageIndex + 1} </span> of <span className="font-medium text-gray-900">{table.getPageCount()}</span>
           </p>
-          <select className='py-0.5 text-xs outline:focus-none rounded-lg focus:ring-blue-300 focus:ring-1' value={10}
-            // onChange={e => setPageSize(Number(e.target.value))}
+          <select
+            className="block w-24 bg-background rounded-md border-0 py-2 pl-3 pr-10 text-gray-900 ring-1 ring-inset focus:ring-2 focus:ring-orange-600 sm:text-sm sm:leading-6"
+            value={table.getState().pagination.pageSize}
+            onChange={e => table.setPageSize(Number(e.target.value))}
           >
             {
               [10, 20, 30, 50].map(pageSize => (
-                <option key={pageSize} defaultValue={pageSize}>
-                                    Show {pageSize}
+                <option key={pageSize} value={pageSize}>
+                  Show {pageSize}
                 </option>
               ))
             }
           </select>
         </div>
 
-        <div className="flex-1 flex justify-between sm:justify-end">
+        <div className="flex-1 flex justify-between sm:justify-end ml-3">
           <button
             className="relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            // onClick={() => gotoPage(0)}
-            disabled={false}
+            onClick={() => table.setPageIndex(Math.max(0, table.getState().pagination.pageIndex - 5))}
+            disabled={table.getState().pagination.pageIndex < 5}
           >
             <svg className="w-4 h-4" fill="none"
               stroke="currentColor" viewBox="0 0 24 24"
@@ -94,20 +96,21 @@ const TanStackTable = <T,>({
           </button>
 
           <button
-            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            disabled={!false}
+            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light hover:text-gray-700"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
           >Previous</button>
 
           <button
-            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            // onClick={() => nextPage()}
-            disabled={false}
+            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light hover:text-gray-700"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
           >Next</button>
 
           <button
             className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            // onClick={}
-            disabled={false}
+            onClick={() => table.setPageIndex(table.getState().pagination.pageIndex + 5)}
+            disabled={table.getState().pagination.pageIndex + 5 >= table.getPageCount()}
           >
             <svg className="w-4 h-4" fill="none"
               stroke="currentColor" viewBox="0 0 24 24"
