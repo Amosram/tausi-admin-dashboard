@@ -6,7 +6,7 @@ import { UsersApiResponse } from "@/models";
 export const usersApi = createApi({
   reducerPath: "usersApi",
   baseQuery: axiosBaseQuery({ isAuthorizedApi: true }),
-  tagTypes: ["Users"],
+  tagTypes: ["Users", "UsersDetails"],
   refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
     getUsers: builder.query<TausiUser[], number>({
@@ -17,6 +17,14 @@ export const usersApi = createApi({
       transformResponse: (response: UsersApiResponse[]) =>
         response.map((item) => item.users),
       providesTags: ["Users"],
+    }),
+    getUserById: builder.query<TausiUser, string>({
+      query: (userId) => ({
+        url: `/users/${userId}`,
+        method: "GET",
+      }),
+      transformResponse: (response: UsersApiResponse) => response.users,
+      providesTags: ["UsersDetails"]
     }),
   }),
 });
