@@ -144,6 +144,11 @@ const ProfessionalDashboard = () => {
     }
   ];
 
+  const handleRowSelection = (selectedRows: Professional[]) => {
+    console.log('Selected professionals:', selectedRows);
+    // Handle selected rows as needed
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -154,11 +159,12 @@ const ProfessionalDashboard = () => {
 
   return (
     <TanStackTable
-    data={data.data}
-    columns={columns}
-    columnFilters={columnFilters}
-    handleStatusFilter={handleStatusFilter}
-    STATUS_OPTIONS={STATUS_OPTIONS}
+      data={data.data}
+      columns={columns}
+      columnFilters={columnFilters}
+      handleStatusFilter={handleStatusFilter}
+      STATUS_OPTIONS={STATUS_OPTIONS}
+      onRowSelection={handleRowSelection}
     />
   );
 };

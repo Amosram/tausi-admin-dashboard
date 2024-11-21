@@ -457,7 +457,8 @@ export function OrdersDataTable<TData, TValue>({
           </span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="ml-2">
+              <Button variant="outline" size="sm"
+                className="ml-2">
                 {pageSize} per page <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
