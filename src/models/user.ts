@@ -51,7 +51,6 @@ export interface ServiceCategory {
 export interface TausiUser {
   bio?: string | null;
   createdAt: Date;
-  role: string;
   deactivatedAt: null;
   deactivatedBy: null;
   deactivatedReason: null;
