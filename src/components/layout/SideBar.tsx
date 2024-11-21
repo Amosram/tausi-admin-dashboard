@@ -61,10 +61,10 @@ const SideBar = () => {
                     className={`flex gap-6 items-center font-semibold 
                       px-5 py-5 hover:bg-primary-extralight 
                       ${
-                  pathname === link
-                    ? "bg-primary-extralight border-r-8 border-primary dark:border-[#ef3e23] text-primary dark:text-[#ef3e23]"
-                    : "text-black dark:text-primary hover:dark:text-black"
-                  }
+                        pathname === link
+                          ? "bg-primary-extralight border-r-8 border-primary dark:border-secondary text-primary dark:text-secondary"
+                          : "text-gray-500 dark:text-primary hover:dark:text-black"
+                      }
                     `}
                   >
                     <span className="text-2xl">{icon}</span>

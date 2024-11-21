@@ -1,7 +1,7 @@
 import { toast } from "@/hooks/use-toast";
 import { ColumnDef } from "@tanstack/react-table";
 
-export const exportSelectedRows = <TData,>(
+export const exportSelectedRows = <TData>(
   selectedRows: TData[],
   columns: ColumnDef<TData>[]
 ) => {
@@ -39,7 +39,7 @@ export const exportSelectedRows = <TData,>(
   document.body.removeChild(link);
 };
 
-export const printSelectedRows = <TData,>(
+export const printSelectedRows = <TData>(
   selectedRows: any[],
   columns: ColumnDef<TData>[],
   flexRender: (cell: any, context: any) => any
@@ -88,7 +88,7 @@ export const printSelectedRows = <TData,>(
   printWindow.print();
 };
 
-export const shareSelectedRows = <TData,>(selectedRows: TData[]) => {
+export const shareSelectedRows = <TData>(selectedRows: TData[]) => {
   if (selectedRows.length === 0) {
     toast({
       title: "No rows selected",

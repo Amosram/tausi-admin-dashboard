@@ -29,6 +29,10 @@ const Header = () => {
       return "Order Details";
     }
 
+    if (path.startsWith("/users/") && path.split("/").length > 2) {
+      return "User Details";
+    }
+
     return titles[path] || "Dashboard";
   };
 

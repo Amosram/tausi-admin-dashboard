@@ -1,34 +1,9 @@
+import { SessionData, TausiUser } from "./user";
+
 export interface Coordinates {
   x: number;
   y: number;
 }
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  phoneNumber: string;
-  profilePictureUrl: string;
-  profilePicturePath: string;
-  bio: string | null;
-  locationAddress: string | null;
-  isActive: boolean;
-  deactivatedAt: string | null;
-  deactivatedBy: string | null;
-  deactivatedReason: string | null;
-  phoneVerified: boolean;
-  emailVerified: boolean;
-  isDeleted: boolean;
-  deletedAt: string | null;
-  deletedReason: string | null;
-  createdAt: string;
-  updatedAt: string;
-  latitude: number | null;
-  longitude: number | null;
-  coordinates: Coordinates;
-  fcmToken: string;
-};
-
 
 export interface Client {
   id: string;
@@ -63,7 +38,7 @@ export interface Professional {
   resumePath: string | null;
   isVerified: boolean;
   isActive: boolean;
-  user?: User;
+  user?: TausiUser;
   termsAndConditions: boolean;
   deactivatedAt: string | null;
   deactivatedBy: string | null;
@@ -84,7 +59,7 @@ export interface Professional {
   fcmToken: string | null;
   topRated: boolean;
   rating: number;
-  services:             Service[];
+  services: Service[];
 }
 
 export interface Service {
@@ -135,7 +110,8 @@ export interface Appointment {
   service: Service;
 }
 
-export interface ApiResponse<T> { //DO NOT DELETE OR CHANGE THIS INTERFACE
+export interface ApiResponse<T> {
+  //DO NOT DELETE OR CHANGE THIS INTERFACE
   statusCode: string;
   message: string;
   data: T;
@@ -150,4 +126,16 @@ export interface OrdersTableData {
   contact: string;
   status: string;
   startTime: string;
+}
+
+export interface UsersApiResponse {
+  users: TausiUser;
+  userSessionData: SessionData;
+}
+
+export interface AppointmentsApiResponse {
+  statusCode: string;
+  message: string;
+  code: number;
+  data: Appointment;
 }

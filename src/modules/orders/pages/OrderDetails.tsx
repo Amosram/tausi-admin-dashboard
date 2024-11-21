@@ -1,11 +1,6 @@
 import React, { ReactNode, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { format } from "date-fns";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import {
-  clearCurrentOrder,
-  fetchOrderDetails,
-} from "@/redux/reducers/ordersSlice";
 import Loader from "@/components/layout/Loader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +16,8 @@ import {
 import { FaMoneyBill, FaStar } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { IoChatboxEllipsesSharp } from "react-icons/io5";
+import { useToast } from "@/hooks/use-toast";
+import { useGetOrderByIdQuery } from "../api/ordersApi";
 
 interface InfoCardProps {
   title: string;
@@ -117,23 +114,24 @@ const InfoField: React.FC<InfoFieldProps> = ({ label, value }) => (
 );
 
 const OrderDetails: React.FC = () => {
+  const { toast } = useToast();
   const { orderId } = useParams();
-  const dispatch = useAppDispatch();
-  const { currentOrder, loading, error } = useAppSelector(
-    (state) => state.orders
-  );
+
+  const { data, isLoading, error } = useGetOrderByIdQuery(orderId!);
 
   useEffect(() => {
-    if (orderId) {
-      dispatch(fetchOrderDetails(orderId));
+    if (error) {
+      toast({
+        title: "Error fetching data",
+        description: "Failed to load orders. Please try again later.",
+      });
     }
-    return () => {
-      dispatch(clearCurrentOrder());
-    };
-  }, [orderId, dispatch]);
+  }, [error, toast]);
 
-  if (loading) return <Loader />;
-  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
+  const currentOrder = data?.data;
+
+  if (isLoading) return <Loader />;
+  if (error) return <div>Error: Unable to load orders.</div>;
   if (!currentOrder) return <div className="p-4">No order found</div>;
 
   return (
@@ -236,8 +234,11 @@ const OrderDetails: React.FC = () => {
                     <InfoField label="Orders Made" value="____" />
                     <InfoField label="Total Expenses" value="KES ____" />
                     <div className="flex justify-center items-center">
-                      <Button size="icon" className="p-4 rounded-full bg-primary">
-                        <IoChatboxEllipsesSharp className="text-white"/>
+                      <Button
+                        size="icon"
+                        className="p-4 rounded-full bg-primary"
+                      >
+                        <IoChatboxEllipsesSharp className="text-white" />
                       </Button>
                     </div>
                   </div>
@@ -297,8 +298,11 @@ const OrderDetails: React.FC = () => {
                       value="johndoe@gmail.com"
                     />
                     <div className="flex justify-center items-center">
-                      <Button size="icon" className="p-4 rounded-full bg-blue-500">
-                        <IoChatboxEllipsesSharp className="text-white"/>
+                      <Button
+                        size="icon"
+                        className="p-4 rounded-full bg-blue-500"
+                      >
+                        <IoChatboxEllipsesSharp className="text-white" />
                       </Button>
                     </div>
                   </div>

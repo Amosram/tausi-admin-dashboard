@@ -1,18 +1,22 @@
 import userReducer from "./userSlice";
-import ordersReducer from './ordersSlice';
+import {ordersReducer, ordersRtkQueryMiddleware} from "@/modules/orders/reducers";
+import {usersReducer, usersRtkQueryMiddleware} from "@/modules/users/reducers";
 import { professionalReducer, professionalRtkQueryMiddleware } from "@/modules/applications/reducers";
 
 export const modulesReducers = {
+    ...ordersReducer,
+    ...usersReducer,
   ...professionalReducer
 };
 
 
 export const rtkQueryMiddleware = [
-  ...professionalRtkQueryMiddleware,
+    ...ordersRtkQueryMiddleware,
+    ...usersRtkQueryMiddleware,
+    ...professionalRtkQueryMiddleware,
 ];
 
 export const staticReducers = {
-  user: userReducer,
-  orders: ordersReducer,
-  ...modulesReducers
+    user: userReducer,
+    ...modulesReducers
 };

@@ -1,8 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
-import { format, parse } from "date-fns";
-import { OrdersTableData } from "../../../models";
-import { Checkbox } from "@/components/ui/checkbox";
+import { format } from "date-fns";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +10,7 @@ import {
 import { MoreVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FaPhoneAlt } from "react-icons/fa";
+import { Appointment } from "@/models";
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -51,98 +50,66 @@ const TruncatedCell = ({ content }: { content: string | null | undefined }) => {
   );
 };
 
-const formatDate = (orderDate: unknown, startTime: unknown) => {
-  const orderDateString = orderDate as string;
-  const startTimeString = startTime as string;
-
-  const dateObject = parse(orderDateString, 'M/d/yyyy', new Date());
-  if (isNaN(dateObject.getTime())) {
-    return 'Invalid date';
-  }
-
-  const formattedDate = format(dateObject, 'MMM dd, yyyy');
-  const formattedTime = startTimeString;
-
-  return `${formattedDate} at ${formattedTime}`;
-};
-
-export const columns: ColumnDef<OrdersTableData>[] = [
+export const columns: ColumnDef<Appointment>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected()
-            ? true
-            : table.getIsSomePageRowsSelected()
-            ? "indeterminate"
-            : false
-        }
-        onCheckedChange={(value) => {
-          const isSelected = !!value;
-          table.getRowModel().rows.forEach((row) => {
-            row.toggleSelected(isSelected);
-          });
-        }}
-        aria-label="Select all on this page"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "orderId",
+    id: "id",
+    accessorKey: "id",
     header: "Order ID",
     cell: ({ row }) => (
       <Link
-        to={`/orders/${row.getValue("orderId")}`}
+        to={`/orders/${row.getValue("id")}`}
         state={{ order: row.original }}
-        className="hover:text-primary hover:underline"
+        className="hover:text-primary hover:underline truncate block max-w-[150px]"
       >
-        {row.getValue("orderId")}
+        {row.getValue("id")}
       </Link>
     ),
     enableSorting: true,
   },
   {
-    accessorKey: "orderDate",
+    id: "appointmentDate",
+    accessorKey: "appointmentDate",
     header: "Order Date",
     cell: ({ row }) => {
-      const orderDate = row.getValue("orderDate");
-      const startTime = row.original.startTime;
-      return <TruncatedCell content={formatDate(orderDate, startTime)} />;
+      const appointmentDate = row.getValue("appointmentDate") as string;
+      const formattedDate = appointmentDate
+        ? format(new Date(appointmentDate), "MMM dd, yyyy")
+        : "Invalid date";
+      return <TruncatedCell content={formattedDate} />;
     },
     enableSorting: true,
   },
   {
-    accessorKey: "serviceProvider",
+    id: "professional.businessName",
+    accessorKey: "professional.businessName",
     header: "Service Provider",
     cell: ({ row }) => (
-      <TruncatedCell content={row.getValue("serviceProvider")} />
+      <TruncatedCell content={row.getValue("professional.businessName")} />
+    ),
+    enableSorting: true,
+  },
+  {
+    id: "service.category",
+    accessorKey: "service.category",
+    header: "Category",
+    cell: ({ row }) => (
+      <TruncatedCell content={row.getValue("service.category")} />
     ),
   },
   {
-    accessorKey: "category",
-    header: "Category",
-    cell: ({ row }) => <TruncatedCell content={row.getValue("category")} />,
-  },
-  {
-    accessorKey: "location",
+    id: "locationAddress",
+    accessorKey: "locationAddress",
     header: "Location",
-    cell: ({ row }) => <TruncatedCell content={row.getValue("location")} />,
+    cell: ({ row }) => (
+      <TruncatedCell content={row.getValue("locationAddress")} />
+    ),
   },
   {
-    accessorKey: "contact",
+    id: "client.phoneNumber",
+    accessorKey: "client.phoneNumber",
     header: "Contact",
     cell: ({ row }) => {
-      const contact = row.getValue("contact") as string;
+      const contact = row.getValue("client.phoneNumber") as string;
       return (
         <div className="flex items-center space-x-2">
           <FaPhoneAlt className="text-gray-500" />
@@ -152,6 +119,7 @@ export const columns: ColumnDef<OrdersTableData>[] = [
     },
   },
   {
+    id: "status",
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => getStatusBadge(row.getValue("status")),
@@ -167,7 +135,7 @@ export const columns: ColumnDef<OrdersTableData>[] = [
         <DropdownMenuContent align="end">
           <DropdownMenuItem>
             <Link
-              to={`/orders/${row.original.orderId}`}
+              to={`/orders/${row.original.id}`}
               state={{ order: row.original }}
               className="hover:text-primary"
             >

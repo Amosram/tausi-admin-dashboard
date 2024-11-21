@@ -1,7 +1,7 @@
 import { Professional } from "@/models";
 import { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import { useGetProfessionalsQuery } from "../api/professionalApi";
-import TanStackTable from "@/components/ui/Table";
+import TanStackTable from "@/components/ui/Table/Table";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
