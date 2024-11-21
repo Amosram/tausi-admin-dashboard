@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -10,10 +10,20 @@ import {
   getPaginationRowModel,
   SortingState,
   FilterFn,
+  Row,
+  RowSelectionState,
 } from "@tanstack/react-table";
 import { DebouncedInput } from "../DebounceInput";
 import { filterFunctions } from "@/Utils/filter-functions";
 import TableHeader from './TableHeader';
+import { Clock } from 'lucide-react';
+import { Button } from '../button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from '../dropdown-menu';
+import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { ChevronDown } from 'lucide-react';
+import { Checkbox } from "../checkbox";
+import { FileDown, Printer, Share2 } from "lucide-react";
+import { exportSelectedRows, printSelectedRows, shareSelectedRows } from "@/Utils/table-actions";
 
 interface TableProps<T> {
     data: T[];
@@ -22,6 +32,10 @@ interface TableProps<T> {
     showNavigation?: boolean;
     showGlobalFilter?: boolean;
     filterFn?: FilterFn<T>;
+    columnFilters?: ColumnFiltersState;
+    handleStatusFilter?: (status: string | null) => void;
+    STATUS_OPTIONS?: { label: string; value: string | null }[];
+    onRowSelection?: (selectedRows: T[]) => void;
 }
 
 const TanStackTable = <T,>({
@@ -30,12 +44,15 @@ const TanStackTable = <T,>({
   showFooter = false,
   showNavigation = true,
   showGlobalFilter = true,
+  STATUS_OPTIONS=[],
   filterFn = filterFunctions.fuzzy,
+  onRowSelection,
 }: TableProps<T>) => {
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const table = useReactTable({
     data,
@@ -44,6 +61,7 @@ const TanStackTable = <T,>({
       columnFilters,
       sorting,
       globalFilter,
+      rowSelection,
     },
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -53,7 +71,44 @@ const TanStackTable = <T,>({
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: filterFn,
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
   });
+
+  useEffect(() => {
+    if (onRowSelection) {
+      const selectedRows = table
+        .getSelectedRowModel()
+        .rows.map((row) => row.original);
+      onRowSelection(selectedRows);
+    }
+  }, [rowSelection, onRowSelection, table]);
+
+  const SelectAllCheckbox = () => (
+    <Checkbox
+      checked={table.getIsAllPageRowsSelected()}
+      onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+      aria-label="Select all"
+    />
+  );
+
+  const RowCheckbox = ({ row }: { row: Row<T> }) => (
+    <Checkbox
+      checked={row.getIsSelected()}
+      onCheckedChange={(value) => row.toggleSelected(!!value)}
+      aria-label="Select row"
+    />
+  );
+
+  const handleStatusFilter = useCallback((status: string | null) => {
+    setColumnFilters((filters) => {
+      const newFilters = filters.filter((f) => f.id !== "status");
+      if (status !== null) {
+        newFilters.push({ id: "status", value: status });
+      }
+      return newFilters;
+    });
+  }, []);
 
 
   const PaginationButtons = () => {
@@ -64,26 +119,28 @@ const TanStackTable = <T,>({
       >
         <div className="hidden sm:flex space-x-5 items-center">
           <p className="text-sm text-gray-700">
-                        Showing page <span className="font-medium text-gray-900">{2} </span> of <span className="font-medium text-gray-900">{20}</span>
+                        Showing page <span className="font-medium text-gray-900">{table.getState().pagination.pageIndex + 1} </span> of <span className="font-medium text-gray-900">{table.getPageCount()}</span>
           </p>
-          <select className='py-0.5 text-xs outline:focus-none rounded-lg focus:ring-blue-300 focus:ring-1' value={10}
-            // onChange={e => setPageSize(Number(e.target.value))}
+          <select
+            className="block w-24 bg-background rounded-md border-0 py-2 pl-3 pr-10 text-gray-900 ring-1 ring-inset focus:ring-2 focus:ring-orange-600 sm:text-sm sm:leading-6"
+            value={table.getState().pagination.pageSize}
+            onChange={e => table.setPageSize(Number(e.target.value))}
           >
             {
               [10, 20, 30, 50].map(pageSize => (
-                <option key={pageSize} defaultValue={pageSize}>
-                                    Show {pageSize}
+                <option key={pageSize} value={pageSize}>
+                  Show {pageSize}
                 </option>
               ))
             }
           </select>
         </div>
 
-        <div className="flex-1 flex justify-between sm:justify-end">
+        <div className="flex-1 flex justify-between sm:justify-end ml-3">
           <button
             className="relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            // onClick={() => gotoPage(0)}
-            disabled={false}
+            onClick={() => table.setPageIndex(Math.max(0, table.getState().pagination.pageIndex - 5))}
+            disabled={table.getState().pagination.pageIndex < 5}
           >
             <svg className="w-4 h-4" fill="none"
               stroke="currentColor" viewBox="0 0 24 24"
@@ -94,20 +151,21 @@ const TanStackTable = <T,>({
           </button>
 
           <button
-            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            disabled={!false}
+            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light hover:text-gray-700"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
           >Previous</button>
 
           <button
-            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            // onClick={() => nextPage()}
-            disabled={false}
+            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light hover:text-gray-700"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
           >Next</button>
 
           <button
             className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            // onClick={}
-            disabled={false}
+            onClick={() => table.setPageIndex(table.getState().pagination.pageIndex + 5)}
+            disabled={table.getState().pagination.pageIndex + 5 >= table.getPageCount()}
           >
             <svg className="w-4 h-4" fill="none"
               stroke="currentColor" viewBox="0 0 24 24"
@@ -120,40 +178,147 @@ const TanStackTable = <T,>({
     );
   };
 
+  const renderSelectedRowsHeader = () => {
+    const selectedRowsCount = Object.keys(rowSelection).length;
+    const selectedRows = table.getSelectedRowModel().rows;
+
+    if (selectedRowsCount === 0) return null;
+
+    return (
+      <tr className="bg-primary/10">
+        <th colSpan={columns.length + 1} className="px-4 py-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setRowSelection({})}
+                className='bg-primary text-white'
+              >
+                Clear Selection
+              </Button>
+              <div className="text-sm font-semibold">
+                {selectedRowsCount} Selected
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => printSelectedRows(selectedRows, columns, flexRender)}
+                title="Print Selected Rows"
+              >
+                <Printer className="h-5 w-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => shareSelectedRows(selectedRows.map((row) => row.original))}
+                title="Share Selected Rows"
+              >
+                <Share2 className="h-5 w-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => exportSelectedRows(selectedRows.map((row) => row.original), columns)}
+                title="Export Selected Rows"
+              >
+                <FileDown className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        </th>
+      </tr>
+    );
+  };
 
   return (
     <div className="flex flex-col w-full">
       <div className="overflow-auto">
         <div className="inline-block min-w-full p-1">
           <div className="flex flex-col">
-            <div className="flex justify-between  items-center">
+            <div className="flex justify-between items-center gap-1 mt-3 mb-2">
               {showGlobalFilter ? (
                 <>
+                  <div className="flex gap-2 md:flex-row flex-col md:w-auto w-full">
+                    {STATUS_OPTIONS.map((status) => (
+                      <Button
+                        key={status.label}
+                        variant={
+                          status.value ===
+              (columnFilters.find((f) => f.id === "status")?.value ?? null)
+                            ? "default"
+                            : "outline"
+                        }
+                        onClick={() => handleStatusFilter(status.value)}
+                        className="px-4 py-2 md:rounded-3xl"
+                      >
+                        {status.label}
+                      </Button>
+                    ))}
+                  </div>
                   <DebouncedInput
                     value={globalFilter ?? ""}
                     onChange={(value) => setGlobalFilter(String(value))}
-                    className="font-lg border-block border p-2 shadow mb-2 rounded"
+                    className="font-lg border-block border p-2 shadow bg-background rounded-full w-1/2 border-gray-400"
                     placeholder="Search all columns..."
                   />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild className="outline-none">
+                      <Button variant="light" className="gap-1 rounded-full">
+                        <Clock className="h-4 w-4" />
+                        {sorting[0]?.desc ? "Newest First" : "Oldest First"}
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => setSorting([{ id: "createdAt", desc: true }])}
+                        className={sorting[0]?.desc ? "bg-accent" : ""}
+                      >
+                        Newest First
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setSorting([{ id: "createdAt", desc: false }])}
+                        className={!sorting[0]?.desc ? "bg-accent" : ""}
+                      >
+                        Oldest First
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </>
               ) : null}
             </div>
-            <table className="w-full mt-5 text-sm text-left text-gray-600 shadow-md border  rounded-xl">
-              <TableHeader table={table} />
+            <table className="w-full mt-2 text-sm text-left text-gray-600 shadow-md border round-xl">
+              {/* <TableHeader table={table} /> */}
+              {/* NOTE: IF YOU FIND ERRORS JUST UNCOMMENT THE ABOVE COMPONENT AND COMMENT OUT THE BELOW TABLE HEAD */}
+              <thead>
+                {renderSelectedRowsHeader()}
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    <th className="w-4 p-3">
+                      <SelectAllCheckbox />
+                    </th>
+                    {headerGroup.headers.map((header) => (
+                      <th key={header.id} colSpan={header.colSpan}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
               <tbody className="bg-white border-b hover:bg-gray-50">
                 {table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="bg-white border-b hover:bg-gray-50"
-                  >
+                  <tr key={row.id} className="bg-white border-b hover:bg-gray-50">
                     <td className="w-4 p-3">
-                      <div className="flex items-center">
-                        <input id="checkbox-table-1" type="checkbox"
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-1" />
-                        <label htmlFor="checkbox-table-1" className="sr-only">checkbox</label>
-                      </div>
+                      <RowCheckbox row={row} />
                     </td>
-
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="py-3 px-2 whitespace-nowrap">
                         {flexRender(

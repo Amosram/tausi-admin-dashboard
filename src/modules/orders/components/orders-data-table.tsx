@@ -44,11 +44,12 @@ import {
   PaginationPrevious,
 } from "../../../components/ui/pagination";
 import { Button } from "../../../components/ui/button";
-import { exportSelectedRows, printSelectedRows, shareSelectedRows } from "../../applications/utils/tableActions";
+import { OrdersTableSearch } from "./order-search";
+import { exportSelectedRows, printSelectedRows, shareSelectedRows } from "../utils/table-actions";
 
-interface ProfessionalsTableProps<TData, TValue> {
-  data: TData[];
+interface OrdersDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
 type SortOption = "newest" | "oldest";
@@ -56,17 +57,17 @@ type PageSizeOption = 5 | 10 | 20;
 
 const STATUS_OPTIONS = [
   { label: "All Statuses", value: null },
-  { label: "Pending", value: "pending" },
-  { label: "In Review", value: "in_review" },
-  { label: "Rejected", value: "rejected" },
+  { label: "Completed", value: "completed" },
+  { label: "Ongoing", value: "pending" },
+  { label: "Cancelled", value: "cancelled" },
 ] as const;
 
 const PAGE_SIZE_OPTIONS: PageSizeOption[] = [5, 10, 20];
 
-export function ProfessionalsTable<TData, TValue>({
+export function OrdersDataTable<TData, TValue>({
   columns,
   data,
-}: ProfessionalsTableProps<TData, TValue>){
+}: OrdersDataTableProps<TData, TValue>) {
   const [filteredData, setFilteredData] = useState(data);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -87,7 +88,7 @@ export function ProfessionalsTable<TData, TValue>({
     setSortOption(option);
     setSorting([
       {
-        id: "createdAt",
+        id: "orderDate",
         desc: option === "oldest",
       },
     ]);
@@ -265,7 +266,7 @@ export function ProfessionalsTable<TData, TValue>({
       </div>
 
       <div className="flex-1 mx-6 md:w-auto w-full">
-        {/* <ProfessionalsTableSearch data={data} onSearch={setFilteredData} /> */}
+        <OrdersTableSearch data={data} onSearch={setFilteredData} />
       </div>
 
       <div className="flex md:w-auto w-full">
