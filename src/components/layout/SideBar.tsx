@@ -108,7 +108,7 @@ const SideBar = () => {
             <img src="/tausi-logo.png" alt="Footer Logo" className="w-8 h-8" />
             <div className="flex flex-col gap-1 text-sm">
               <p>tausi admin dashboard</p>
-              <p className="font-semibold">&copy; 2022 All Rights Reserved</p>
+              <p className="font-semibold">&copy; {new Date().getFullYear()} All Rights Reserved</p>
             </div>
           </div>
         </SidebarFooter>
