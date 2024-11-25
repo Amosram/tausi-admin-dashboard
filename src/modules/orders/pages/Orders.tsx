@@ -10,6 +10,13 @@ const Orders: React.FC = () => {
 
   const { data, error, isLoading } = useGetOrdersQuery(50);
 
+  const STATUS_OPTIONS = [
+    { label: "All Statuses", value: null },
+    { label: "Completed", value: "completed" },
+    { label: "Pending", value: "pending" },
+    { label: "Cancelled", value: "cancelled" },
+  ];
+
   React.useEffect(() => {
     if (error) {
       toast({
@@ -27,7 +34,13 @@ const Orders: React.FC = () => {
   if (error && isDataEmpty) return <div>Error: Unable to load orders.</div>;
   if (isDataEmpty) return <div>No orders found.</div>;
 
-  return <TanStackTable data={ordersData || []} columns={columns} />;
+  return (
+    <TanStackTable
+      data={ordersData}
+      columns={columns}
+      STATUS_OPTIONS={STATUS_OPTIONS}
+    />
+  );
 };
 
 export default Orders;
