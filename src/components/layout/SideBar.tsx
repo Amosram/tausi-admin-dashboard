@@ -27,7 +27,7 @@ const menuItems = [
   { title: "Orders", icon: <FaShoppingCart />, link: "/orders" },
   { title: "Revenue", icon: <IoIosWallet />, link: "/revenue" },
   { title: "Users", icon: <FaUserAlt />, link: "/users" },
-  { title: "Applications", icon: <RiFile4Fill />, link: "/applications" },
+  { title: "Applications", icon: <RiFile4Fill />, link: "/professionals" },
   { title: "Ledger", icon: <RiBookletFill />, link: "/ledger" },
   { title: "Booths", icon: <MdStore />, link: "/booths" },
   { title: "Messaging", icon: <IoLogoWechat />, link: "/messaging" },

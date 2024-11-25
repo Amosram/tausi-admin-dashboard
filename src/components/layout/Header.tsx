@@ -30,6 +30,11 @@ const Header = () => {
       return "Order Details";
     }
 
+    if (path.startsWith("/professionals/") && path.split("/").length > 2) {
+      return "Professional Details";
+    }
+
+
     if (path.startsWith("/users/") && path.split("/").length > 2) {
       if (path === "/users/create-user") {
         return "Create User";
@@ -56,11 +61,11 @@ const Header = () => {
             <SidebarTrigger />
           </div>
           <div className="relative">
-            {["Order Details", "User Details", "Create User"].includes(
+            {["Order Details", "Professional Details", "User Details", "Create User"].includes(
               dynamicTitle
             ) ? (
               <Link
-                to={dynamicTitle === "Order Details" ? "/orders" : "/users"}
+                to={dynamicTitle === "Order Details" ? "/orders" : dynamicTitle === "Professional Details" ? "/professionals" : "/users"}
                 className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
               >
                 <FaChevronLeft />

@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
 
 const ProfessionalDashboard = () => {
-  const {data, isLoading, isError} = useGetProfessionalsQuery();
+  const {data, isLoading, isError} = useGetProfessionalsQuery(10000);
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -74,9 +74,13 @@ const ProfessionalDashboard = () => {
       accessorKey: 'id',
       header: 'Application ID',
       cell: ({row}) => (
-        <div className="flex items-center space-x-2">
-          <span>{row.original.id}</span>
-        </div>
+        <Link
+          to={`/professionals/${row.getValue("id")}`}
+          state={{professional: row.original}}
+          className="hover:text-primary hover:underline truncate block max-w-[150px]"
+        >
+          {row.getValue("id")}
+        </Link>
       ),
     },
     {
@@ -119,11 +123,11 @@ const ProfessionalDashboard = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuItem>
               <Link
-                to={`/professional/${row.original.id}`}
+                to={`/professionals/${row.original.id}`}
                 state={{ professional: row.original }}
                 className="hover:text-primary"
               >
-                  View details
+                  View Professional Details
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -154,7 +158,7 @@ const ProfessionalDashboard = () => {
   }
 
   if (isError) {
-    return <div>Error loading Countries</div>;
+    return <div>Error loading Applications</div>;
   }
 
   return (
