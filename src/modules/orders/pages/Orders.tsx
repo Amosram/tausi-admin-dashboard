@@ -39,6 +39,7 @@ const Orders: React.FC = () => {
       data={ordersData}
       columns={columns}
       STATUS_OPTIONS={STATUS_OPTIONS}
+      dateSortingId="appointmentDate"
     />
   );
 };

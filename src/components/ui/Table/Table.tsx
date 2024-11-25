@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -15,27 +15,44 @@ import {
 } from "@tanstack/react-table";
 import { DebouncedInput } from "../DebounceInput";
 import { filterFunctions } from "@/Utils/filter-functions";
-import TableHeader from './TableHeader';
-import { Clock } from 'lucide-react';
-import { Button } from '../button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from '../dropdown-menu';
-import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { ChevronDown } from 'lucide-react';
+import { Clock } from "lucide-react";
+import { Button } from "../button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "../dropdown-menu";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { ChevronDown } from "lucide-react";
 import { Checkbox } from "../checkbox";
 import { FileDown, Printer, Share2 } from "lucide-react";
-import { exportSelectedRows, printSelectedRows, shareSelectedRows } from "@/Utils/table-actions";
+import {
+  exportSelectedRows,
+  printSelectedRows,
+  shareSelectedRows,
+} from "@/Utils/table-actions";
+
+interface ButtonProps {
+  label: string;
+  onClick: () => void;
+  className: string;
+  icon?: React.ReactNode;
+}
 
 interface TableProps<T> {
-    data: T[];
-    columns: ColumnDef<T>[];
-    showFooter?: boolean;
-    showNavigation?: boolean;
-    showGlobalFilter?: boolean;
-    filterFn?: FilterFn<T>;
-    columnFilters?: ColumnFiltersState;
-    handleStatusFilter?: (status: string | null) => void;
-    STATUS_OPTIONS?: { label: string; value: string | null }[];
-    onRowSelection?: (selectedRows: T[]) => void;
+  data: T[];
+  columns: ColumnDef<T>[];
+  showFooter?: boolean;
+  showNavigation?: boolean;
+  showGlobalFilter?: boolean;
+  filterFn?: FilterFn<T>;
+  columnFilters?: ColumnFiltersState;
+  handleStatusFilter?: (status: string | null) => void;
+  STATUS_OPTIONS?: { label: string; value: string | null }[];
+  onRowSelection?: (selectedRows: T[]) => void;
+  columnToBeFiltered?: string;
+  dateSortingId?: string;
+  button?: ButtonProps;
 }
 
 const TanStackTable = <T,>({
@@ -44,15 +61,19 @@ const TanStackTable = <T,>({
   showFooter = false,
   showNavigation = true,
   showGlobalFilter = true,
-  STATUS_OPTIONS=[],
+  STATUS_OPTIONS = [],
   filterFn = filterFunctions.fuzzy,
   onRowSelection,
+  columnToBeFiltered,
+  dateSortingId = "createdAt",
+  button,
 }: TableProps<T>) => {
-
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+  const defaultColumn = "status";
 
   const table = useReactTable({
     data,
@@ -100,16 +121,22 @@ const TanStackTable = <T,>({
     />
   );
 
-  const handleStatusFilter = useCallback((status: string | null) => {
-    setColumnFilters((filters) => {
-      const newFilters = filters.filter((f) => f.id !== "status");
-      if (status !== null) {
-        newFilters.push({ id: "status", value: status });
-      }
-      return newFilters;
-    });
-  }, []);
-
+  {
+    /* THIS NOW DEFAULTS TO THE "status" COLUMN ID BUT ALSO ACCEPTS THE COLUMN NAME FROM THE PROPS */
+  }
+  const handleStatusFilter = useCallback(
+    (status: string | null) => {
+      setColumnFilters((filters) => {
+        const column = columnToBeFiltered || defaultColumn;
+        const newFilters = filters.filter((f) => f.id !== column);
+        if (status !== null) {
+          newFilters.push({ id: column, value: status });
+        }
+        return newFilters;
+      });
+    },
+    [columnToBeFiltered]
+  );
 
   const PaginationButtons = () => {
     return (
@@ -119,34 +146,51 @@ const TanStackTable = <T,>({
       >
         <div className="hidden sm:flex space-x-5 items-center">
           <p className="text-sm text-gray-700">
-                        Showing page <span className="font-medium text-gray-900">{table.getState().pagination.pageIndex + 1} </span> of <span className="font-medium text-gray-900">{table.getPageCount()}</span>
+            Showing page{" "}
+            <span className="font-medium text-gray-900">
+              {table.getState().pagination.pageIndex + 1}{" "}
+            </span>{" "}
+            of{" "}
+            <span className="font-medium text-gray-900">
+              {table.getPageCount()}
+            </span>
           </p>
           <select
             className="block w-24 bg-background rounded-md border-0 py-2 pl-3 pr-10 text-gray-900 ring-1 ring-inset focus:ring-2 focus:ring-orange-600 sm:text-sm sm:leading-6"
             value={table.getState().pagination.pageSize}
-            onChange={e => table.setPageSize(Number(e.target.value))}
+            onChange={(e) => table.setPageSize(Number(e.target.value))}
           >
-            {
-              [10, 20, 30, 50].map(pageSize => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))
-            }
+            {[10, 20, 30, 50].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
           </select>
         </div>
 
         <div className="flex-1 flex justify-between sm:justify-end ml-3">
           <button
             className="relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            onClick={() => table.setPageIndex(Math.max(0, table.getState().pagination.pageIndex - 5))}
+            onClick={() =>
+              table.setPageIndex(
+                Math.max(0, table.getState().pagination.pageIndex - 5)
+              )
+            }
             disabled={table.getState().pagination.pageIndex < 5}
           >
-            <svg className="w-4 h-4" fill="none"
-              stroke="currentColor" viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round"
-                strokeWidth="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+              ></path>
             </svg>
           </button>
 
@@ -154,23 +198,40 @@ const TanStackTable = <T,>({
             className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light hover:text-gray-700"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-          >Previous</button>
+          >
+            Previous
+          </button>
 
           <button
             className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light hover:text-gray-700"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-          >Next</button>
+          >
+            Next
+          </button>
 
           <button
             className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            onClick={() => table.setPageIndex(table.getState().pagination.pageIndex + 5)}
-            disabled={table.getState().pagination.pageIndex + 5 >= table.getPageCount()}
+            onClick={() =>
+              table.setPageIndex(table.getState().pagination.pageIndex + 5)
+            }
+            disabled={
+              table.getState().pagination.pageIndex + 5 >= table.getPageCount()
+            }
           >
-            <svg className="w-4 h-4" fill="none"
-              stroke="currentColor" viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round"
-                strokeWidth="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M13 5l7 7-7 7M5 5l7 7-7 7"
+              ></path>
             </svg>
           </button>
         </div>
@@ -193,7 +254,7 @@ const TanStackTable = <T,>({
                 size="sm"
                 variant="secondary"
                 onClick={() => setRowSelection({})}
-                className='bg-primary text-white'
+                className="bg-primary text-white"
               >
                 Clear Selection
               </Button>
@@ -205,7 +266,9 @@ const TanStackTable = <T,>({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => printSelectedRows(selectedRows, columns, flexRender)}
+                onClick={() =>
+                  printSelectedRows(selectedRows, columns, flexRender)
+                }
                 title="Print Selected Rows"
               >
                 <Printer className="h-5 w-5" />
@@ -213,7 +276,9 @@ const TanStackTable = <T,>({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => shareSelectedRows(selectedRows.map((row) => row.original))}
+                onClick={() =>
+                  shareSelectedRows(selectedRows.map((row) => row.original))
+                }
                 title="Share Selected Rows"
               >
                 <Share2 className="h-5 w-5" />
@@ -221,7 +286,12 @@ const TanStackTable = <T,>({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => exportSelectedRows(selectedRows.map((row) => row.original), columns)}
+                onClick={() =>
+                  exportSelectedRows(
+                    selectedRows.map((row) => row.original),
+                    columns
+                  )
+                }
                 title="Export Selected Rows"
               >
                 <FileDown className="h-5 w-5" />
@@ -247,7 +317,10 @@ const TanStackTable = <T,>({
                         key={status.label}
                         variant={
                           status.value ===
-              (columnFilters.find((f) => f.id === "status")?.value ?? null)
+                          (columnFilters.find(
+                            (f) =>
+                              f.id === (columnToBeFiltered || defaultColumn)
+                          )?.value ?? null)
                             ? "default"
                             : "outline"
                         }
@@ -264,29 +337,43 @@ const TanStackTable = <T,>({
                     className="font-lg border-block border p-2 shadow bg-background rounded-full w-1/2 border-gray-400"
                     placeholder="Search all columns..."
                   />
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild className="outline-none">
-                      <Button variant="light" className="gap-1 rounded-full">
-                        <Clock className="h-4 w-4" />
-                        {sorting[0]?.desc ? "Newest First" : "Oldest First"}
-                        <ChevronDown className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={() => setSorting([{ id: "createdAt", desc: true }])}
-                        className={sorting[0]?.desc ? "bg-accent" : ""}
-                      >
-                        Newest First
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setSorting([{ id: "createdAt", desc: false }])}
-                        className={!sorting[0]?.desc ? "bg-accent" : ""}
-                      >
-                        Oldest First
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  {!button ? (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild className="outline-none">
+                        <Button variant="light" className="gap-1 rounded-full">
+                          <Clock className="h-4 w-4" />
+                          {sorting[0]?.desc ? "Newest First" : "Oldest First"}
+                          <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() =>
+                            setSorting([{ id: dateSortingId, desc: true }])
+                          }
+                          className={sorting[0]?.desc ? "bg-accent" : ""}
+                        >
+                          Newest First
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            setSorting([{ id: dateSortingId, desc: false }])
+                          }
+                          className={!sorting[0]?.desc ? "bg-accent" : ""}
+                        >
+                          Oldest First
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <Button
+                      onClick={button.onClick}
+                      className={`${button.className} flex items-center`}
+                    >
+                      {button.icon && <span>{button.icon}</span>}
+                      {button.label}
+                    </Button>
+                  )}
                 </>
               ) : null}
             </div>
@@ -305,9 +392,9 @@ const TanStackTable = <T,>({
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                       </th>
                     ))}
                   </tr>
@@ -315,7 +402,10 @@ const TanStackTable = <T,>({
               </thead>
               <tbody className="bg-white border-b hover:bg-gray-50">
                 {table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="bg-white border-b hover:bg-gray-50">
+                  <tr
+                    key={row.id}
+                    className="bg-white border-b hover:bg-gray-50"
+                  >
                     <td className="w-4 p-3">
                       <RowCheckbox row={row} />
                     </td>
@@ -339,9 +429,9 @@ const TanStackTable = <T,>({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                              header.column.columnDef.footer,
-                              header.getContext()
-                            )}
+                                header.column.columnDef.footer,
+                                header.getContext()
+                              )}
                         </th>
                       ))}
                     </tr>
@@ -350,9 +440,7 @@ const TanStackTable = <T,>({
               ) : null}
             </table>
             <div className="bottom-0 flex items-baseline justify-end mt-3">
-              {showNavigation ? (
-                PaginationButtons()
-              ) : null}
+              {showNavigation ? PaginationButtons() : null}
             </div>
           </div>
         </div>

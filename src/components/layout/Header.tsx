@@ -20,6 +20,7 @@ const Header = () => {
     "/applications": "Applications",
     "/messaging": "Messaging",
     "/settings": "Settings",
+    "/users/create-user": "Create User",
   };
 
   const getTitle = () => {
@@ -30,6 +31,9 @@ const Header = () => {
     }
 
     if (path.startsWith("/users/") && path.split("/").length > 2) {
+      if (path === "/users/create-user") {
+        return "Create User";
+      }
       return "User Details";
     }
 
@@ -52,13 +56,15 @@ const Header = () => {
             <SidebarTrigger />
           </div>
           <div className="relative">
-            {dynamicTitle === "Order Details" ? (
+            {["Order Details", "User Details", "Create User"].includes(
+              dynamicTitle
+            ) ? (
               <Link
-                to="/orders"
+                to={dynamicTitle === "Order Details" ? "/orders" : "/users"}
                 className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
               >
-                <FaChevronLeft/>
-                <span>Order Details</span>
+                <FaChevronLeft />
+                <span>{dynamicTitle}</span>
               </Link>
             ) : (
               <div className="text-gray-600 font-bold">{dynamicTitle}</div>

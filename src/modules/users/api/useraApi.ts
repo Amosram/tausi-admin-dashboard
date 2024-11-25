@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "../../../Utils/axios";
 import { TausiUser } from "@/models/user";
-import { UsersApiResponse } from "@/models";
+import { CreateUserRequest, UsersApiResponse } from "@/models";
 
 export const usersApi = createApi({
   reducerPath: "usersApi",
@@ -9,13 +9,11 @@ export const usersApi = createApi({
   tagTypes: ["Users", "UsersDetails"],
   refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
-    getUsers: builder.query<TausiUser[], number>({
+    getUsers: builder.query<UsersApiResponse[], number>({
       query: (limit) =>  ({
         url: `/users?limit=${limit}`,
         method: "GET",
       }),
-      transformResponse: (response: UsersApiResponse[]) =>
-        response.map((item) => item.users),
       providesTags: ["Users"],
     }),
     getUserById: builder.query<TausiUser, string>({
@@ -26,7 +24,16 @@ export const usersApi = createApi({
       transformResponse: (response: UsersApiResponse) => response.users,
       providesTags: ["UsersDetails"]
     }),
+    createUser: builder.mutation<UsersApiResponse, CreateUserRequest>({
+      query: (userData) => ({
+        url: '/users',
+        method: 'POST',
+        data: userData,
+      }),
+      // Invalidate the Users tag to trigger a refetch of the users list
+      invalidatesTags: ['Users'],
+    }),
   }),
 });
 
-export const { useGetUsersQuery } = usersApi;
+export const { useGetUsersQuery, useCreateUserMutation } = usersApi;
