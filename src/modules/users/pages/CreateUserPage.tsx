@@ -9,22 +9,9 @@ import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormInputField } from "@/components/ui/Form/FormInputField";
-import { useCreateUserMutation } from "../api/useraApi";
+import { useCreateUserMutation } from "../api/usersApi";
+import { CreateUserRequest } from "@/models";
 
-
-// Define the exact type expected by the API
-export interface CreateUserRequest {
-  id: string;
-  name: string;
-  email: string;
-  phoneNumber: string;
-  userTypeSession: "professional" | "client" | "user";
-  bio: string;
-  profilePictureUrl: string;
-  profilePicturePath: string;
-}
-
-// Form validation schema
 const userFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
@@ -32,7 +19,10 @@ const userFormSchema = z.object({
   userTypeSession: z.enum(["professional", "client", "user"], {
     required_error: "Please select a user type",
   }),
-  bio: z.string().min(10, "Bio must be at least 10 characters").max(500, "Bio must not exceed 500 characters"),
+  bio: z
+    .string()
+    .min(10, "Bio must be at least 10 characters")
+    .max(500, "Bio must not exceed 500 characters"),
   profilePictureUrl: z.string().url("Invalid URL").optional(),
   profilePicturePath: z.string().optional(),
 });
@@ -65,15 +55,15 @@ const CreateUserPage: React.FC = () => {
 
   const onSubmit = async (formData: UserFormValues) => {
     try {
-      // Ensure all required fields are present for the API
       const userData: CreateUserRequest = {
-        id: "id",
+        id: "id2",
         name: formData.name,
         email: formData.email,
         phoneNumber: formData.phoneNumber,
         userTypeSession: formData.userTypeSession,
         bio: formData.bio,
-        profilePictureUrl: formData.profilePictureUrl || "https://placeholder.com/user",
+        profilePictureUrl:
+          formData.profilePictureUrl || "https://placeholder.com/user",
         profilePicturePath: formData.profilePicturePath || "/users/default.jpg",
       };
 
@@ -85,10 +75,12 @@ const CreateUserPage: React.FC = () => {
       navigate("/users");
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to create user. Please try again.",
+        title: `Failed to create user. ${error.data.message}`,
+        description: `Error Code ${error.data.code}: ${error.data.data.message}`,
         variant: "destructive",
       });
+
+      console.log(error);
     }
   };
 

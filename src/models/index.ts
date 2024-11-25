@@ -138,7 +138,7 @@ export interface CreateUserRequest {
   name: string;
   email: string;
   phoneNumber: string;
-  userTypeSession: string;
+  userTypeSession: "professional" | "client" | "user";
   bio: string;
   profilePictureUrl?: string;
   profilePicturePath?: string;

@@ -2,7 +2,7 @@ import React from "react";
 import { columns } from "../components/users-columns";
 import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/layout/Loader";
-import { useGetUsersQuery } from "../api/useraApi";
+import { useGetUsersQuery } from "../api/usersApi";
 import TanStackTable from "@/components/ui/Table/Table";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";

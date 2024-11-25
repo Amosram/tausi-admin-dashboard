@@ -1,4 +1,4 @@
-import { usersApi } from "../api/useraApi";
+import { usersApi } from "../api/usersApi";
 
 export const usersReducer = {
   [usersApi.reducerPath]: usersApi.reducer,
