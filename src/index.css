@@ -12,6 +12,8 @@
     --popover-foreground: #000d24;
     --primary: #ef3e23;
     --primary-light: #F7B7A1;
+    --primary-super-light: #f5d1c5;
+    --primary-extra-light: #f7e4df;
     --primary-foreground: #fafcfc;
     --secondary: #f0f4f9;
     --secondary-foreground: #0b1b2b;
@@ -50,6 +52,8 @@
     --popover-foreground: #fafcfc;
     --primary: #fafcfc;
     --primary-light: #F7B7A1;
+    --primary-super-light: #f5d1c5;
+    --primary-extra-light: #f5dcd3;
     --primary-foreground: #0b1b2b;
     --secondary: #283a4c;
     --secondary-foreground: #fafcfc;
@@ -86,3 +90,22 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom side bar scrollbar styling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
