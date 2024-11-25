@@ -133,6 +133,17 @@ export interface UsersApiResponse {
   userSessionData: SessionData;
 }
 
+export interface CreateUserRequest {
+  id?: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  userTypeSession: "professional" | "client" | "user";
+  bio: string;
+  profilePictureUrl?: string;
+  profilePicturePath?: string;
+}
+
 export interface AppointmentsApiResponse {
   statusCode: string;
   message: string;

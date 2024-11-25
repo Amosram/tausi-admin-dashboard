@@ -1,3 +1,3 @@
-import { usersApi } from "./useraApi";
+import { usersApi } from "./usersApi";
 
 export const usersApiList = [usersApi];

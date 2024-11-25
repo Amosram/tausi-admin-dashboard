@@ -60,7 +60,14 @@ export const columns: ColumnDef<TausiUser>[] = [
     id: "role",
     accessorKey: "role",
     header: "Role",
-    cell: () => <TruncatedCell content={"Client"} />,
+    cell: ({ row }) => {
+      const role = row.getValue("role");
+      const formattedRole =
+        typeof role === "string"
+          ? role.charAt(0).toUpperCase() + role.slice(1)
+          : String(role || "");
+      return <TruncatedCell content={formattedRole} />;
+    },
   },
   {
     id: "isActive",
@@ -70,11 +77,19 @@ export const columns: ColumnDef<TausiUser>[] = [
       const isActive = row.getValue("isActive");
 
       if (isActive === true) {
-        return <Badge className="bg-transparent font-semibold text-blue-900 text-md">Active</Badge>;
+        return (
+          <Badge className="bg-transparent font-semibold text-blue-900 text-md">
+            Active
+          </Badge>
+        );
       }
 
       if (isActive === false) {
-        return <Badge className="bg-transparent font-semibold text-destructive text-md">Inactive</Badge>;
+        return (
+          <Badge className="bg-transparent font-semibold text-destructive text-md">
+            Inactive
+          </Badge>
+        );
       }
 
       return <Badge variant="outline">Unknown</Badge>;
@@ -107,20 +122,20 @@ export const columns: ColumnDef<TausiUser>[] = [
               state={{ user: row.original }}
               className="hover:text-primary"
             >
-              View details
+              View User Details
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => console.log("Edit:", row.original)}
             className="cursor-pointer"
           >
-            Edit order
+            Edit User
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => console.log("Delete:", row.original)}
             className="bg-destructive text-white cursor-pointer"
           >
-            Delete order
+            Delete User
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

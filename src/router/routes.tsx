@@ -18,6 +18,7 @@ const MessagingLazy = lazy(() => import("@/modules/messaging/pages/Messaging"));
 const SettingsLazy = lazy(() => import("@/modules/settings/pages/Settings"));
 const OrderDetailsLazy = lazy(() => import("@/modules/orders/pages/OrderDetails"));
 const UserDetailsLazy = lazy(() => import('@/modules/users/pages/UserDetails'));
+const CreateUserLazy = lazy(() => import("@/modules/users/pages/CreateUserPage"));
 const LedgerLazy = lazy(() => import('@/modules/ledger/pages/Ledger'));
 const BoothsLazy = lazy(() => import("@/modules/booths/pages/Booths"));
 
@@ -84,6 +85,14 @@ export const routes: RouteObject[] = [
             element: (
               <Suspense fallback={<Loader />}>
                 <UserDetailsLazy />
+              </Suspense>
+            )
+          },
+          {
+            path: "create-user",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <CreateUserLazy />
               </Suspense>
             )
           }
