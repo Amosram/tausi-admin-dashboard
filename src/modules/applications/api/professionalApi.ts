@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "../../../Utils/axios";
-import { ApiResponse, Professional, ProfessionalApiResponse } from "@/models";
+import { ApiResponse, PortfolioApiResponse, Professional, ProfessionalApiResponse } from "@/models";
 
 export const professionalApi = createApi({
   reducerPath: 'professionalApi',
@@ -22,7 +22,14 @@ export const professionalApi = createApi({
       }),
       providesTags: ['ProfessionalsDetails']
     }),
+    getProfessionalsPorfolio: builder.query<PortfolioApiResponse, string> ({
+      query: (professionalId) => ({
+        url: `/professionals/${professionalId}/portfolio`,
+        method: "GET",
+      }),
+      providesTags: ['ProfessionalsDetails']
+    }),
   }),
 });
 
-export const {useGetProfessionalsQuery, useGetProfessionalsByIdQuery} = professionalApi;
+export const {useGetProfessionalsQuery, useGetProfessionalsByIdQuery, useGetProfessionalsPorfolioQuery} = professionalApi;

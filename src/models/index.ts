@@ -78,6 +78,19 @@ export interface Service {
   imageUrl: string | null;
   name: string | null;
   category: string;
+  serviceData: {
+    id: string;
+    name: string;
+    minimumPrice: number;
+    category: string;
+    description: string;
+    imageUrl: string;
+    imagePath: string;
+    isDeleted: boolean;
+    deletedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
 }
 
 export interface Appointment {
@@ -158,3 +171,41 @@ export interface ProfessionalApiResponse {
   data: Professional;
 }
 
+
+export interface Portfolio {
+  id:                    string;
+  isDeleted:             boolean;
+  deletedAt:             null;
+  createdAt:             Date;
+  updatedAt:             Date;
+  imagePath:             string;
+  imageUrl:              string;
+  professionalId:        string;
+  serviceId:             string;
+  professionalServiceId: string;
+  service:               Service;
+  professionalService:   ProfessionalService;
+}
+
+export interface ProfessionalService {
+  id:             string;
+  price:          number;
+  isDeleted:      boolean;
+  deletedAt:      null;
+  createdAt:      Date;
+  updatedAt:      Date;
+  professionalId: string;
+  serviceId:      string;
+  brands:         string[];
+  duration:       number;
+  description:    null;
+  imagePath:      null;
+  imageUrl:       null | string;
+  name:           null;
+}
+
+export interface PortfolioApiResponse {
+  statusCode: string;
+  message:    string;
+  data:       Portfolio[];
+}
