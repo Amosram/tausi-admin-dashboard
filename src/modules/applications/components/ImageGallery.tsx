@@ -32,8 +32,8 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({ images, trigger })
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="max-w-[90vw] h-[90vh] p-0">
-        <div className="relative h-full w-full flex items-center justify-center bg-black/95">
+      <DialogContent className=" p-0">
+        <div className="relative sm:h-full sm:w-full flex items-center justify-center bg-black/95">
           <Button
             variant="ghost"
             size="icon"
@@ -67,7 +67,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({ images, trigger })
           <img
             src={images[currentImageIndex].imageUrl}
             alt={`Portfolio image ${currentImageIndex + 1}`}
-            className="max-h-full max-w-full object-contain"
+            className="sm:max-h-full sm:max-w-full object-contain"
           />
           
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white">
