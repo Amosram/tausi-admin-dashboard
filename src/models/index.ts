@@ -150,3 +150,11 @@ export interface AppointmentsApiResponse {
   code: number;
   data: Appointment;
 }
+
+export interface ProfessionalApiResponse {
+  statusCode: string;
+  message: string;
+  code: number;
+  data: Professional;
+}
+
