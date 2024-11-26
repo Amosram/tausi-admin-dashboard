@@ -1,21 +1,29 @@
-import React from 'react';
+import React from "react";
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Portfolio } from '@/models';
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Portfolio } from "@/models";
 
 interface ImageLightboxProps {
   images: Portfolio[];
-  trigger: React.ReactNode;
+  trigger: (openLightbox: (index: number) => void) => React.ReactNode;
 }
 
-export const ImageLightbox: React.FC<ImageLightboxProps> = ({ images, trigger }) => {
+export const ImageLightbox: React.FC<ImageLightboxProps> = ({
+  images,
+  trigger,
+}) => {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
   const [isOpen, setIsOpen] = React.useState(false);
+
+  const openLightbox = (index: number) => {
+    setCurrentImageIndex(index);
+    setIsOpen(true);
+  };
 
   const showNextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -30,9 +38,9 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({ images, trigger })
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        {trigger}
+        {trigger(openLightbox)}
       </DialogTrigger>
-      <DialogContent className=" p-0">
+      <DialogContent className="p-0">
         <div className="relative sm:h-full sm:w-full flex items-center justify-center bg-black/95">
           <Button
             variant="ghost"
@@ -42,7 +50,7 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({ images, trigger })
           >
             <X className="h-6 w-6" />
           </Button>
-          
+
           {images.length > 1 && (
             <>
               <Button
@@ -63,13 +71,13 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({ images, trigger })
               </Button>
             </>
           )}
-          
+
           <img
             src={images[currentImageIndex].imageUrl}
             alt={`Portfolio image ${currentImageIndex + 1}`}
             className="sm:max-h-full sm:max-w-full object-contain"
           />
-          
+
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white">
             {currentImageIndex + 1} / {images.length}
           </div>

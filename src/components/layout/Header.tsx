@@ -17,7 +17,7 @@ const Header = () => {
     "/orders": "Orders",
     "/revenue": "Revenue",
     "/users": "Users",
-    "/applications": "Applications",
+    "/professionals": "Applications",
     "/messaging": "Messaging",
     "/settings": "Settings",
     "/users/create-user": "Create User",
