@@ -120,7 +120,14 @@ export const routes: RouteObject[] = [
           }
         ]
       },
-        
+      {
+        path: "/beauticians",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ApplicationsLazy />
+          </Suspense>
+        )
+      },
       {
         path: "/messaging",
         element: (

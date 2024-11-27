@@ -18,6 +18,7 @@ const Header = () => {
     "/revenue": "Revenue",
     "/users": "Users",
     "/professionals": "Applications",
+    "/beauticians": "Beauticians",
     "/messaging": "Messaging",
     "/settings": "Settings",
     "/users/create-user": "Create User",
