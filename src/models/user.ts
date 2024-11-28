@@ -76,58 +76,60 @@ export interface TausiUser {
 
 export interface TausiProfessional {
   id: string;
-  locationAddress: string;
-  resumeUrl: string | null;
-  resumePath: string | null;
+  locationAddress?: string | null;
+  resumeUrl?: string | null;
+  resumePath?: string | null;
   isVerified: boolean;
   isActive: boolean;
-  user?: TausiUser;
   termsAndConditions: boolean;
-  deactivatedAt: string | null;
-  deactivatedBy: string | null;
-  deactivatedReason: string | null;
+  deactivatedAt?: string | null;
+  deactivatedBy?: string | null;
+  deactivatedReason?: string | null;
   isDeleted: boolean;
-  deletedAt: string | null;
-  deletedReason: string | null;
+  deletedAt?: string | null;
+  deletedReason?: string | null;
   createdAt: string;
   updatedAt: string;
-  coordinates: Coordinates;
-  latitude: string;
-  longitude: string;
-  businessName: string;
+  coordinates?: string | null;
+  latitude?: string | null;
+  longitude?: string | null;
+  businessName?: string | null;
   registrationProgress: number;
   businessType: string;
-  specialization: string | null;
-  bio: string;
-  fcmToken: string | null;
+  specialization?: string | null;
+  bio?: string | null;
+  fcmToken?: string | null;
   topRated: boolean;
   rating: number;
+  verificationData: VerificationData;
 }
 
-export interface TausiClient {
+export interface TausiUserDetails {
   id: string;
   name: string;
   email: string;
   phoneNumber: string;
-  profilePictureUrl: string;
-  profilePicturePath: string;
-  bio: string | null;
-  locationAddress: string;
+  profilePictureUrl?: string | null;
+  profilePicturePath?: string | null;
+  bio?: string | null;
+  locationAddress?: string | null;
   isActive: boolean;
-  deactivatedAt: string | null;
-  deactivatedBy: string | null;
-  deactivatedReason: string | null;
+  deactivatedAt?: string | null;
+  deactivatedBy?: string | null;
+  deactivatedReason?: string | null;
   phoneVerified: boolean;
   emailVerified: boolean;
   isDeleted: boolean;
-  deletedAt: string | null;
-  deletedReason: string | null;
+  deletedAt?: string | null;
+  deletedReason?: string | null;
   createdAt: string;
   updatedAt: string;
-  latitude: string;
-  longitude: string;
-  coordinates: Coordinates;
-  fcmToken: string;
+  latitude?: string | null;
+  longitude?: string | null;
+  coordinates?: string | null;
+  fcmToken?: string | null;
+  sessionData: SessionData;
+  professional: TausiProfessional;
 }
 
 export interface SessionData {
@@ -138,4 +140,16 @@ export interface SessionData {
   updatedAt: Date;
   deletedAt: null;
   isDeleted: boolean;
+}
+
+export interface VerificationData {
+  id: string;
+  verificationStatus: string;
+  verificationTitle: string;
+  verificationDescription: string;
+  reviewedBy?: string | null;
+  isDeleted: boolean;
+  deletedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
