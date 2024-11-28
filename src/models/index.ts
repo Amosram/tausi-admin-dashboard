@@ -338,3 +338,8 @@ export interface LedgersApiResponse {
   message:    string;
   data:       Ledgers[];
 }
+
+export interface CreateUpdateLoanBook {
+    name: string;
+    ledgerId: string
+}

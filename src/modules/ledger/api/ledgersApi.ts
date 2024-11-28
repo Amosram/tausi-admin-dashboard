@@ -1,4 +1,4 @@
-import { ApiResponse, Ledgers, LedgersApiResponse } from "@/models";
+import { ApiResponse, CreateUpdateLoanBook, Ledgers, LedgersApiResponse } from "@/models";
 import { axiosBaseQuery } from "@/Utils/axios";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
@@ -22,8 +22,24 @@ export const ledgersApi = createApi({
         method:"GET"
       }),
       providesTags: ['LedgersDetails']
+    }),
+    createLoanBook: builder.mutation<Ledgers, CreateUpdateLoanBook>({
+      query: (data) => ({
+        url: "/ledgers/books",
+        method: "POST",
+        data
+      }),
+      invalidatesTags: ["Ledgers"]
+    }),
+    updateLoanBook: builder.mutation<Ledgers, Partial<Ledgers>>({
+      query:(data) => ({
+        url: `/ledgers/books/{id}`,
+        method: "PATCH",
+        data
+      }),
+      invalidatesTags: ["Ledgers"]
     })
   }),
 });
 
-export const {useGetLedgersQuery, useGetLedgersByIdQuery} = ledgersApi;
+export const {useGetLedgersQuery, useGetLedgersByIdQuery, useCreateLoanBookMutation, useUpdateLoanBookMutation} = ledgersApi;

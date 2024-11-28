@@ -9,15 +9,15 @@ import { Link, useNavigate } from "react-router-dom";
 import Loader from "@/components/layout/Loader";
 import TanStackTable from "@/components/ui/Table";
 import { FaPlus } from "react-icons/fa";
+import CreateLoanBookModal from "../components/CreateLoanBookModal";
 
 
 const Ledger = () => {
 
   const navigate = useNavigate();
-
   const {data, isLoading, isError} = useGetLedgersQuery();
-
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const columns: ColumnDef<Ledgers>[] = [
     {
@@ -98,7 +98,7 @@ const Ledger = () => {
 
   const AddLoanButton = {
     label: "Add Loan",
-    onClick: () => navigate("/ledgers/create-loan"),
+    onClick: () => setModalOpen(true),
     className: "rounded-3xl",
     icon: <FaPlus size={20} />,
   };
@@ -112,12 +112,18 @@ const Ledger = () => {
   }
 
   return (
-    <TanStackTable
-      data={data.data}
-      columns={columns}
-      onRowSelection={handleRowSelection}
-      button={AddLoanButton}
-    />
+    <>
+      <TanStackTable
+        data={data.data}
+        columns={columns}
+        onRowSelection={handleRowSelection}
+        button={AddLoanButton}
+      />
+      <CreateLoanBookModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+      />
+    </>
   );
 };
 
