@@ -23,6 +23,8 @@ const UserDetailsLazy = lazy(() => import('@/modules/users/pages/UserDetails'));
 const ProfessionalsDetailsLazy = lazy(() => import('@/modules/applications/pages/ProfessionalDetails'));
 const CreateUserLazy = lazy(() => import("@/modules/users/pages/CreateUserPage"));
 const LedgerLazy = lazy(() => import('@/modules/ledger/pages/Ledger'));
+const LedgerLazyDetail = lazy(() => import ('@/modules/ledger/pages/LedgerDetails'));
+const CreateLoanLazy = lazy(() => import('@/modules/ledger/pages/LoanCreatePage'));
 const BoothsLazy = lazy(() => import("@/modules/booths/pages/Booths"));
 
 export const routes: RouteObject[] = [
@@ -160,12 +162,33 @@ export const routes: RouteObject[] = [
         )
       },
       {
-        path: "/ledger",
-        element: (
-          <Suspense fallback={<Loader />}>
-            <LedgerLazy />
-          </Suspense>
-        )
+        path: "/ledgers",
+        children:[
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<Loader />}>
+                <LedgerLazy />
+              </Suspense>
+            )
+          },
+          {
+            path: ":ledgerId",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <LedgerLazyDetail />
+              </Suspense>
+            )
+          },
+          {
+            path: "create-loan",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <CreateLoanLazy />
+              </Suspense>
+            )
+          }
+        ]
       },
       {
         path: "/booths",

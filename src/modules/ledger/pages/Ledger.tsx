@@ -1,22 +1,25 @@
 import { useState } from "react";
-import { useGetBooksQuery } from "../api/ledgersApi";
+import { useGetLedgersQuery } from "../api/ledgersApi";
 import { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Books } from "@/models";
+import { Ledgers } from "@/models";
 import { format } from "date-fns";
 import { MoreVertical } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Loader from "@/components/layout/Loader";
 import TanStackTable from "@/components/ui/Table";
+import { FaPlus } from "react-icons/fa";
 
 
 const Ledger = () => {
 
-  const {data, isLoading, isError} = useGetBooksQuery();
+  const navigate = useNavigate();
+
+  const {data, isLoading, isError} = useGetLedgersQuery();
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const columns: ColumnDef<Books>[] = [
+  const columns: ColumnDef<Ledgers>[] = [
     {
       accessorKey: 'id',
       header: 'Ledger ID',
@@ -63,7 +66,7 @@ const Ledger = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuItem>
               <Link
-                to={`/ledger/${row.original.id}`}
+                to={`/ledgers/${row.original.id}`}
                 state={{ ledger: row.original }}
                 className="hover:text-primary"
               >
@@ -88,25 +91,32 @@ const Ledger = () => {
     }
   ];
 
-  const handleRowSelection = (selectedRows: Books[]) => {
+  const handleRowSelection = (selectedRows: Ledgers[]) => {
     console.log('Selected professionals:', selectedRows);
     // Handle selected rows as needed
   };
 
+  const AddLoanButton = {
+    label: "Add Loan",
+    onClick: () => navigate("/ledgers/create-loan"),
+    className: "rounded-3xl",
+    icon: <FaPlus size={20} />,
+  };
+
   if (isLoading){
-    return <Loader />
+    return <Loader />;
   }
 
   if (isError) {
-    return <div>Error loading Books</div>
+    return <div>Error loading Ledgers</div>;
   }
 
   return (
     <TanStackTable
       data={data.data}
       columns={columns}
-      columnFilters={columnFilters}
       onRowSelection={handleRowSelection}
+      button={AddLoanButton}
     />
   );
 };

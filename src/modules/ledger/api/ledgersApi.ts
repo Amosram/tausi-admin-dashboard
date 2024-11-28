@@ -1,4 +1,4 @@
-import { ApiResponse, Books } from "@/models";
+import { ApiResponse, Ledgers, LedgersApiResponse } from "@/models";
 import { axiosBaseQuery } from "@/Utils/axios";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
@@ -6,17 +6,24 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 export const ledgersApi = createApi({
   reducerPath:'ledgersApi',
   baseQuery: axiosBaseQuery({isAuthorizedApi: true}),
-  tagTypes: ['ledgers'],
+  tagTypes: ['Ledgers', 'LedgersDetails'],
   refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
-    getBooks: builder.query<ApiResponse<Books[]>, void>({
+    getLedgers: builder.query<ApiResponse<Ledgers[]>, void>({
       query: () => ({
         url: "/ledgers",
         method:"GET",
       }),
-      providesTags: ['ledgers']
+      providesTags: ['Ledgers']
+    }),
+    getLedgersById: builder.query<LedgersApiResponse, string> ({
+      query:(ledgersId) => ({
+        url: `/ledgers/${ledgersId}`,
+        method:"GET"
+      }),
+      providesTags: ['LedgersDetails']
     })
   }),
 });
 
-export const {useGetBooksQuery} = ledgersApi;
+export const {useGetLedgersQuery, useGetLedgersByIdQuery} = ledgersApi;

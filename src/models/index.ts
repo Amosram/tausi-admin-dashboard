@@ -322,7 +322,7 @@ export enum VerificationTitle {
 }
 
 
-export interface Books {
+export interface Ledgers {
   id:          string;
   name:        string;
   createdAt:   Date;
@@ -332,9 +332,9 @@ export interface Books {
   description: null;
   ownerId:     string;
 }
-export interface BooksApiResponse {
+export interface LedgersApiResponse {
   statusCode: string;
   code:       number;
   message:    string;
-  data:       Books[];
+  data:       Ledgers[];
 }

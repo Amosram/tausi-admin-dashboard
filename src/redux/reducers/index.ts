@@ -5,21 +5,21 @@ import { professionalReducer, professionalRtkQueryMiddleware } from "@/modules/a
 import { ledgersReducer, ledgersRTKQueryMiddleware } from "@/modules/ledger/reducers";
 
 export const modulesReducers = {
-    ...ordersReducer,
-    ...usersReducer,
+  ...ordersReducer,
+  ...usersReducer,
   ...professionalReducer,
   ...ledgersReducer,
 };
 
 
 export const rtkQueryMiddleware = [
-    ...ordersRtkQueryMiddleware,
-    ...usersRtkQueryMiddleware,
-    ...professionalRtkQueryMiddleware,
-    ...ledgersRTKQueryMiddleware,
+  ...ordersRtkQueryMiddleware,
+  ...usersRtkQueryMiddleware,
+  ...professionalRtkQueryMiddleware,
+  ...ledgersRTKQueryMiddleware,
 ];
 
 export const staticReducers = {
-    user: userReducer,
-    ...modulesReducers
+  user: userReducer,
+  ...modulesReducers
 };

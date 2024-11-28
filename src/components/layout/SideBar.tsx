@@ -114,7 +114,7 @@ const menuItems = [
       { title: "Beautician List", icon: <FaUserCheck />, link: "/professionals" },
     ],
   },
-  { title: "Ledger", icon: <RiBookletFill />, link: "/ledger" },
+  { title: "Ledger", icon: <RiBookletFill />, link: "/ledgers" },
   { title: "Booths", icon: <MdStore />, link: "/booths" },
   { title: "Messaging", icon: <IoLogoWechat />, link: "/messaging" },
   { title: "Settings", icon: <IoMdSettings />, link: "/settings" },
