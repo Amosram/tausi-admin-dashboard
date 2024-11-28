@@ -18,6 +18,9 @@ const Ledger = () => {
   const {data, isLoading, isError} = useGetLedgersQuery();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [editData, setEditData] = useState<{ id: string; name: string; ledgerId: string } | null>(
+    null
+  );
 
   const columns: ColumnDef<Ledgers>[] = [
     {
@@ -73,12 +76,19 @@ const Ledger = () => {
                     View details
               </Link>
             </DropdownMenuItem>
-            {/* <DropdownMenuItem
-                onClick={() => console.log("Edit:", row.original)}
-                className="cursor-pointer"
-              >
-                  Edit professional
-              </DropdownMenuItem> */}
+            <DropdownMenuItem
+              onClick={() => {
+                setEditData({
+                  id: row.original.id,
+                  name: row.original.name,
+                  ledgerId: row.original.id,
+                });
+                setModalOpen(true);
+              }}
+              className="cursor-pointer"
+            >
+              Edit Loan Book
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => console.log("Delete:", row.original)}
               className="bg-destructive text-white cursor-pointer"
@@ -98,7 +108,10 @@ const Ledger = () => {
 
   const AddLoanButton = {
     label: "Add Loan",
-    onClick: () => setModalOpen(true),
+    onClick: () => {
+      setEditData(null); // Reset edit data for create mode
+      setModalOpen(true);
+    },
     className: "rounded-3xl",
     icon: <FaPlus size={20} />,
   };
@@ -122,6 +135,7 @@ const Ledger = () => {
       <CreateLoanBookModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
+        editData={editData}
       />
     </>
   );

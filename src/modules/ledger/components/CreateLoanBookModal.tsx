@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useCreateLoanBookMutation, useGetLedgersQuery } from "../api/ledgersApi";
+import { useState, useEffect } from "react";
+import { useCreateLoanBookMutation, useGetLedgersQuery, useUpdateLoanBookMutation } from "../api/ledgersApi";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog } from "@/components/ui/dialog";
 import { DialogClose, DialogContent, DialogOverlay, DialogPortal, DialogTitle } from "@radix-ui/react-dialog";
@@ -10,9 +10,10 @@ import { Input } from "@/components/ui/input";
 interface CreateLoanBookModalProps {
     isOpen: boolean;
     onClose: () => void;
+    editData?: { id: string; name: string; ledgerId: string };
 }
 
-const CreateLoanBookModal: React.FC<CreateLoanBookModalProps> = ({isOpen, onClose}) => {
+const CreateLoanBookModal: React.FC<CreateLoanBookModalProps> = ({isOpen, onClose, editData}) => {
 
   const toast = useToast();
 
@@ -21,36 +22,44 @@ const CreateLoanBookModal: React.FC<CreateLoanBookModalProps> = ({isOpen, onClos
 
   const {data: ledgers, isLoading:loadingLedgers, isError} = useGetLedgersQuery();
   const [createLoanBook, {isLoading: creating}] = useCreateLoanBookMutation();
+  const [updateLoanBook, { isLoading: updating }] = useUpdateLoanBookMutation();
 
   const ledgerOptions = ledgers?.data.map((ledger) => ({
     value: ledger.id,
     label: ledger.name,
   }));
 
+  useEffect(() => {
+    if (editData) {
+      setName(editData.name);
+      setSelectedLedger(
+        ledgerOptions?.find((option) => option.value === editData.ledgerId) || null
+      );
+    } else {
+      setName("");
+      setSelectedLedger(null);
+    }
+  }, [editData, ledgerOptions]);
+
   const handleSubmit = async () => {
-        
     if (!name || !selectedLedger) {
-      toast.toast({
-        title: "Fill all the fields",
-        description: "Missing a field. Please fill it."
-      });
+      alert("Please fill in all fields.");
       return;
     }
-        
-    try{
-      await createLoanBook({name, ledgerId: selectedLedger.value}).unwrap();
-      toast.toast({
-        title: "Loan book created",
-        description: "You've successfully created a new loan book. "
-      });
+    try {
+      if (editData) {
+        // Update loan book
+        await updateLoanBook({ id: editData.id, name }).unwrap();
+        alert("Loan book updated successfully!");
+      } else {
+        // Create new loan book
+        await createLoanBook({ name, ledgerId: selectedLedger.value }).unwrap();
+        alert("Loan book created successfully!");
+      }
       onClose();
-    }
-    catch (error) {
-      console.error("Error creating a loan book:======>", error);
-      toast.toast({
-        title: "Error creating a loan book",
-        description: "An error occured while creating a new loan book."
-      });
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to save loan book.");
     }
   };
 
@@ -81,15 +90,16 @@ const CreateLoanBookModal: React.FC<CreateLoanBookModalProps> = ({isOpen, onClos
                   value={selectedLedger}
                   placeholder="Search and select a ledger"
                   isSearchable
+                  isDisabled={!!editData}
                 />
               </div>
               <button
                 type="button"
                 onClick={handleSubmit}
-                disabled={creating}
+                disabled={creating || updating}
                 className="w-full bg-primary text-white py-2 rounded"
               >
-                {creating ? "Creating..." : "Create Loan Book"}
+                {creating || updating ? "Saving..." : "Save Loan Book"}
               </button>
             </form>
             <DialogClose asChild>
@@ -105,3 +115,5 @@ const CreateLoanBookModal: React.FC<CreateLoanBookModalProps> = ({isOpen, onClos
 };
 
 export default CreateLoanBookModal;
+
+
