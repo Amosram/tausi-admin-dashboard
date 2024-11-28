@@ -1,11 +1,11 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "../../../Utils/axios";
-import { ApiResponse, PortfolioApiResponse, Professional, ProfessionalApiResponse } from "@/models";
+import { ApiResponse, PortfolioApiResponse, Professional, ProfessionalApiResponse, VerifiedBeauticians } from "@/models";
 
 export const professionalApi = createApi({
   reducerPath: 'professionalApi',
   baseQuery: axiosBaseQuery({isAuthorizedApi: true}),
-  tagTypes: ['Professionals', 'ProfessionalsDetails'],
+  tagTypes: ['Professionals', 'ProfessionalsDetails', 'VerifiedBeauticians'],
   refetchOnMountOrArgChange:true,
   endpoints: (builder) => ({
     getProfessionals: builder.query<ApiResponse<Professional[]>, number>({
@@ -29,7 +29,14 @@ export const professionalApi = createApi({
       }),
       providesTags: ['ProfessionalsDetails']
     }),
+    getVerifiedBeauticians: builder.query<ApiResponse<VerifiedBeauticians[]>, number>({
+      query: (limit) => ({
+        url: `/dashboard/verifications?limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ['VerifiedBeauticians'],
+    }),
   }),
 });
 
-export const {useGetProfessionalsQuery, useGetProfessionalsByIdQuery, useGetProfessionalsPorfolioQuery} = professionalApi;
+export const {useGetProfessionalsQuery, useGetProfessionalsByIdQuery, useGetProfessionalsPorfolioQuery, useGetVerifiedBeauticiansQuery} = professionalApi;

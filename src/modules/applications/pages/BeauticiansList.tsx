@@ -127,20 +127,20 @@ const ProfessionalDashboard = () => {
                 state={{ professional: row.original }}
                 className="hover:text-primary"
               >
-                  View Professional Details
+                  View Beauticians Details
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => console.log("Edit:", row.original)}
               className="cursor-pointer"
             >
-                Edit professional
+                Edit Beauticians
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => console.log("Delete:", row.original)}
               className="bg-destructive text-white cursor-pointer"
             >
-                Delete professional
+                Delete Beauticians
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -158,18 +158,20 @@ const ProfessionalDashboard = () => {
   }
 
   if (isError) {
-    return <div>Error loading Applications</div>;
+    return <div>Error loading Beauticians List</div>;
   }
 
   return (
-    <TanStackTable
-      data={data.data}
-      columns={columns}
-      columnFilters={columnFilters}
-      handleStatusFilter={handleStatusFilter}
-      STATUS_OPTIONS={STATUS_OPTIONS}
-      onRowSelection={handleRowSelection}
-    />
+    <div className="pr-6 pl-6">
+      <TanStackTable
+        data={data.data}
+        columns={columns}
+        columnFilters={columnFilters}
+        handleStatusFilter={handleStatusFilter}
+        STATUS_OPTIONS={STATUS_OPTIONS}
+        onRowSelection={handleRowSelection}
+      />
+    </div>
   );
 };
 
