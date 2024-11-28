@@ -320,3 +320,21 @@ export enum VerificationTitle {
   WeReSorryYourApplicationHasBeenRejected = "We're sorry your application has been rejected",
   YouAreAwaitingApproval = "You are awaiting approval",
 }
+
+
+export interface Books {
+  id:          string;
+  name:        string;
+  createdAt:   Date;
+  updatedAt:   Date;
+  isDeleted:   boolean;
+  deletedAt:   Date | null;
+  description: null;
+  ownerId:     string;
+}
+export interface BooksApiResponse {
+  statusCode: string;
+  code:       number;
+  message:    string;
+  data:       Books[];
+}
