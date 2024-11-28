@@ -209,7 +209,8 @@ const ApplicationDetails: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="mt-6 flex justify-end gap-6">
+      {/* TODO: GET RID OF THE BUTTONS */}
+      {/* <div className="mt-6 flex justify-end gap-6">
         <div className="flex flex-col items-end gap-3 w-full md:w-auto">
           <Button
             variant="ghost"
@@ -229,7 +230,7 @@ const ApplicationDetails: React.FC = () => {
         >
     Approve
         </Button>
-      </div>
+      </div> */}
 
 
     </div>

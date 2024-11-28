@@ -110,8 +110,8 @@ const menuItems = [
     icon: <MdSpa />,
     type: "accordion",
     children: [
-      { title: "Applications", icon: <RiFile4Fill />, link: "/professionals" },
-      { title: "Beautician List", icon: <FaUserCheck />, link: "/beauticians" },
+      { title: "Verified Beauticians", icon: <RiFile4Fill />, link: "/beauticians" },
+      { title: "Beautician List", icon: <FaUserCheck />, link: "/professionals" },
     ],
   },
   { title: "Ledger", icon: <RiBookletFill />, link: "/ledger" },
