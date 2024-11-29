@@ -434,16 +434,20 @@ const UserDetails: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
           <UserProfileCard user={user} onEditField={handleEditField} />
-          <ProfessionalDetailsCard professional={user.professional} />
+          {user.sessionData.userTypeSession === "professional" && (
+            <ProfessionalDetailsCard professional={user.professional} />
+          )}
         </div>
 
         <div className="md:col-span-2 grid grid-cols-1 gap-4">
           <ContactInformationCard user={user} onEditField={handleEditField} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <VerificationDetailsCard
-              verificationData={user.professional.verificationData}
-            />
+            {user.sessionData.userTypeSession === "professional" && (
+              <VerificationDetailsCard
+                verificationData={user.professional.verificationData}
+              />
+            )}
             <SessionDetailsCard sessionData={user.sessionData} />
           </div>
 
