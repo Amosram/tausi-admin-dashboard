@@ -15,6 +15,7 @@ const RevenueLazy = lazy(() => import("@/modules/revenue/pages/Revenue"));
 const UsersLazy = lazy(() => import("@/modules/users/pages/Users"));
 const BeauticiansListLazy = lazy(() => import("@/modules/applications/pages/BeauticiansList"));
 const VerfiedBeauticiansLazy = lazy(() => import("@/modules/applications/pages/VerifiedBeuticans"));
+const VerificationDetailsLazy = lazy(() => import("@/modules/applications/pages/VerificationDetails"));
 const MessagingLazy = lazy(() => import("@/modules/messaging/pages/Messaging"));
 const SettingsLazy = lazy(() => import("@/modules/settings/pages/Settings"));
 const OrderDetailsLazy = lazy(() => import("@/modules/orders/pages/OrderDetails"));
@@ -123,11 +124,24 @@ export const routes: RouteObject[] = [
       },
       {
         path: "/beauticians",
-        element: (
-          <Suspense fallback={<Loader />}>
-            <VerfiedBeauticiansLazy />
-          </Suspense>
-        )
+        children: [
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<Loader />}>
+                <VerfiedBeauticiansLazy />
+              </Suspense>
+            )
+          },
+          {
+            path: ":beatucianId",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <VerificationDetailsLazy />
+              </Suspense>
+            )
+          }
+        ]
       },
       {
         path: "/messaging",

@@ -103,7 +103,7 @@ const VerifiedBeuticans = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuItem>
               <Link
-                to={`/professionals/${row.original.id}`}
+                to={`/beauticians/${row.original.id}`}
                 state={{ professional: row.original }}
                 className="hover:text-primary"
               >
