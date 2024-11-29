@@ -29,7 +29,7 @@ const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div className="bg-white p-2 rounded-lg shadow-lg text-center">
         <p className="font-semibold text-gray-800">${payload[0].value.toLocaleString()}</p>
-        <p className="text-xs text-gray-500">July 2022</p>
+        <p className="text-xs text-gray-500">July {new Date().getFullYear()}</p>
       </div>
     );
   }
