@@ -339,6 +339,24 @@ export interface LedgersApiResponse {
   data:       Ledgers[];
 }
 
+export interface BooksApiResponse {
+  statusCode: string;
+  code:       number;
+  message:    string;
+  data:       Books[];
+}
+
+export interface Books {
+  id:        string;
+  name:      string;
+  createdAt: Date;
+  updatedAt: Date;
+  isDeleted: boolean;
+  deletedAt: null;
+  ledgerId:  string;
+}
+
+
 export interface CreateUpdateLoanBook {
     name: string;
     ledgerId: string
