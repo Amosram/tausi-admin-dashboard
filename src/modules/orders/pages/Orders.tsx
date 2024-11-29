@@ -7,8 +7,10 @@ import TanStackTable from "@/components/ui/Table/Table";
 
 const Orders: React.FC = () => {
   const { toast } = useToast();
+  const { data, error, isLoading, refetch } = useGetOrdersQuery(50);
 
-  const { data, error, isLoading } = useGetOrdersQuery(50);
+  const [retryCount, setRetryCount] = React.useState(0);
+  const maxRetries = 3;
 
   const STATUS_OPTIONS = [
     { label: "All Statuses", value: null },
@@ -19,19 +21,28 @@ const Orders: React.FC = () => {
 
   React.useEffect(() => {
     if (error) {
-      toast({
-        title: "Error fetching data",
-        description: "Failed to load orders. Please try again later.",
-      });
+      if (retryCount < maxRetries) {
+        setTimeout(() => {
+          setRetryCount(retryCount + 1);
+          refetch();
+        }, 2000);
+      } else {
+        toast({
+          title: "Data Load Error",
+          description:
+            "We couldn't load order data. Please refresh the page or contact support for assistance.",
+        });
+      }
     }
-  }, [error, toast]);
+  }, [error, toast, retryCount, refetch]);
 
   const ordersData = data?.data;
 
-  const isDataEmpty = !ordersData || !ordersData;
+  const isDataEmpty = !ordersData || !ordersData.length;
 
   if (isLoading && isDataEmpty) return <Loader />;
-  if (error && isDataEmpty) return <div>Error: Unable to load orders.</div>;
+  if (error && retryCount >= maxRetries && isDataEmpty)
+    return <div>Error: Unable to load order data after multiple attempts.</div>;
   if (isDataEmpty) return <div>No orders found.</div>;
 
   return (

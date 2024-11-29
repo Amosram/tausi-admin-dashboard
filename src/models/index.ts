@@ -1,4 +1,4 @@
-import { SessionData, TausiUser } from "./user";
+import { SessionData, TausiUser, TausiUserDetails } from "./user";
 
 export interface Coordinates {
   x: number;
@@ -144,6 +144,13 @@ export interface OrdersTableData {
 export interface UsersApiResponse {
   users: TausiUser;
   userSessionData: SessionData;
+}
+
+export interface SingleUserApiResponse {
+  statusCode: string;
+  code: number;
+  message: string;
+  data: TausiUserDetails;
 }
 
 export interface CreateUserRequest {

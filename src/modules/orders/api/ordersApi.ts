@@ -6,7 +6,7 @@ export const ordersApi = createApi({
   reducerPath: "ordersApi",
   baseQuery: axiosBaseQuery({ isAuthorizedApi: true }),
   tagTypes: ["Orders", "OrderDetails"],
-  refetchOnMountOrArgChange: true,
+  refetchOnMountOrArgChange: false,
   endpoints: (builder) => ({
     getOrders: builder.query<ApiResponse<Appointment[]>, number>({
       query: (limit) => ({
@@ -14,6 +14,7 @@ export const ordersApi = createApi({
         method: "GET",
       }),
       providesTags: ["Orders"],
+      keepUnusedDataFor: 60,
     }),
     getOrderById: builder.query<AppointmentsApiResponse, string>({
       query: (orderId) => ({

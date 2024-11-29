@@ -10,13 +10,16 @@ import { useNavigate } from "react-router-dom";
 const Users: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { data, error, isLoading, refetch } = useGetUsersQuery(20000);
 
-  const { data, error, isLoading } = useGetUsersQuery(10000);
+  const [retryCount, setRetryCount] = React.useState(0);
+  const maxRetries = 3;
 
-  const usersData = data?.map((item) => ({
-    ...item.users,
-    role: item.userSessionData?.userTypeSession,
-  })) || [];
+  const usersData =
+    data?.map((item) => ({
+      ...item.users,
+      role: item.userSessionData?.userTypeSession,
+    })) || [];
 
   const ROLE_OPTIONS = [
     { label: "All Roles", value: null },
@@ -34,18 +37,26 @@ const Users: React.FC = () => {
 
   React.useEffect(() => {
     if (error) {
-      console.error("Error fetching users:", error);
-      toast({
-        title: "Error fetching data",
-        description: "Failed to load users. Please try again later.",
-      });
+      if (retryCount < maxRetries) {
+        setTimeout(() => {
+          setRetryCount(retryCount + 1);
+          refetch();
+        }, 2000);
+      } else {
+        toast({
+          title: "Data Load Error",
+          description:
+            "We encountered an issue loading user data. Please refresh the page or contact support if the issue persists.",
+        });
+      }
     }
-  }, [error, toast]);
+  }, [error, toast, retryCount, refetch]);
 
   const isDataEmpty = !usersData || !usersData.length;
 
-  if (isLoading) return <Loader />;
-  if (error) return <div>Error: Unable to load users.</div>;
+  if (isLoading && isDataEmpty) return <Loader />;
+  if (error && retryCount >= maxRetries && isDataEmpty)
+    return <div>Error: Unable to load user data after multiple attempts.</div>;
   if (isDataEmpty) return <div>No users found.</div>;
 
   return (
