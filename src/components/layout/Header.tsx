@@ -17,7 +17,8 @@ const Header = () => {
     "/orders": "Orders",
     "/revenue": "Revenue",
     "/users": "Users",
-    "/applications": "Applications",
+    "/professionals": "Beauticians List",
+    "/beauticians": "Verified Beauticians",
     "/messaging": "Messaging",
     "/settings": "Settings",
     "/users/create-user": "Create User",
@@ -29,6 +30,11 @@ const Header = () => {
     if (path.startsWith("/orders/") && path.split("/").length > 2) {
       return "Order Details";
     }
+
+    if (path.startsWith("/professionals/") && path.split("/").length > 2) {
+      return "Professional Details";
+    }
+
 
     if (path.startsWith("/users/") && path.split("/").length > 2) {
       if (path === "/users/create-user") {
@@ -56,11 +62,11 @@ const Header = () => {
             <SidebarTrigger />
           </div>
           <div className="relative">
-            {["Order Details", "User Details", "Create User"].includes(
+            {["Order Details", "Professional Details", "User Details", "Create User"].includes(
               dynamicTitle
             ) ? (
               <Link
-                to={dynamicTitle === "Order Details" ? "/orders" : "/users"}
+                to={dynamicTitle === "Order Details" ? "/orders" : dynamicTitle === "Professional Details" ? "/professionals" : "/users"}
                 className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
               >
                 <FaChevronLeft />

@@ -13,11 +13,13 @@ const DashboardLazy = lazy(() => import("@/modules/dashboard/pages/Dashboard"));
 const OrdersLazy = lazy(() => import("@/modules/orders/pages/Orders"));
 const RevenueLazy = lazy(() => import("@/modules/revenue/pages/Revenue"));
 const UsersLazy = lazy(() => import("@/modules/users/pages/Users"));
-const ApplicationsLazy = lazy(() => import("@/modules/applications/pages/Applications"));
+const BeauticiansListLazy = lazy(() => import("@/modules/applications/pages/BeauticiansList"));
+const VerfiedBeauticiansLazy = lazy(() => import("@/modules/applications/pages/VerifiedBeuticans"));
 const MessagingLazy = lazy(() => import("@/modules/messaging/pages/Messaging"));
 const SettingsLazy = lazy(() => import("@/modules/settings/pages/Settings"));
 const OrderDetailsLazy = lazy(() => import("@/modules/orders/pages/OrderDetails"));
 const UserDetailsLazy = lazy(() => import('@/modules/users/pages/UserDetails'));
+const ProfessionalsDetailsLazy = lazy(() => import('@/modules/applications/pages/ProfessionalDetails'));
 const CreateUserLazy = lazy(() => import("@/modules/users/pages/CreateUserPage"));
 const LedgerLazy = lazy(() => import('@/modules/ledger/pages/Ledger'));
 const BoothsLazy = lazy(() => import("@/modules/booths/pages/Booths"));
@@ -99,10 +101,31 @@ export const routes: RouteObject[] = [
         ]
       },
       {
-        path: "/applications",
+        path: "/professionals",
+        children: [
+          {
+            index:true,
+            element: (
+              <Suspense fallback={<Loader />}>
+                <BeauticiansListLazy />
+              </Suspense>
+            )
+          },
+          {
+            path: ":professionalId",
+            element: (
+              <Suspense fallback={<Loader />} >
+                <ProfessionalsDetailsLazy />
+              </Suspense>
+            )
+          }
+        ]
+      },
+      {
+        path: "/beauticians",
         element: (
           <Suspense fallback={<Loader />}>
-            <ApplicationsLazy />
+            <VerfiedBeauticiansLazy />
           </Suspense>
         )
       },

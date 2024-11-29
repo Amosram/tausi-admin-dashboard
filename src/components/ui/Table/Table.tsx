@@ -15,7 +15,7 @@ import {
 } from "@tanstack/react-table";
 import { DebouncedInput } from "../DebounceInput";
 import { filterFunctions } from "@/Utils/filter-functions";
-import { Clock } from "lucide-react";
+import { ChevronUp, ChevronDown, Clock } from "lucide-react";
 import { Button } from "../button";
 import {
   DropdownMenu,
@@ -23,7 +23,6 @@ import {
   DropdownMenuItem,
 } from "../dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { ChevronDown } from "lucide-react";
 import { Checkbox } from "../checkbox";
 import { FileDown, Printer, Share2 } from "lucide-react";
 import {
@@ -156,7 +155,7 @@ const TanStackTable = <T,>({
             </span>
           </p>
           <select
-            className="block w-24 bg-background rounded-md border-0 py-2 pl-3 pr-10 text-gray-900 ring-1 ring-inset focus:ring-2 focus:ring-orange-600 sm:text-sm sm:leading-6"
+            className="block w-26 bg-background rounded-md border-0 py-2 pl-3 pr-10 text-gray-900 ring-1 ring-inset focus:ring-2 focus:ring-orange-600 sm:text-sm sm:leading-6"
             value={table.getState().pagination.pageSize}
             onChange={(e) => table.setPageSize(Number(e.target.value))}
           >
@@ -388,18 +387,39 @@ const TanStackTable = <T,>({
                       <SelectAllCheckbox />
                     </th>
                     {headerGroup.headers.map((header) => (
-                      <th key={header.id} colSpan={header.colSpan}>
+                      <th
+                        key={header.id}
+                        colSpan={header.colSpan}
+                        className="cursor-pointer select-none px-4 py-2 text-left"
+                        onClick={
+                          header.column.getCanSort()
+                            ? () => header.column.toggleSorting()
+                            : undefined
+                        }
+                      >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        {header.column.getCanSort() && (
+                          <span className="ml-2 inline-flex items-center">
+                            {header.column.getIsSorted() === "asc" && (
+                              <ChevronUp className="w-4 h-4 text-gray-600" />
                             )}
+                            {header.column.getIsSorted() === "desc" && (
+                              <ChevronDown className="w-4 h-4 text-gray-600" />
+                            )}
+                          </span>
+                        )}
                       </th>
                     ))}
                   </tr>
                 ))}
               </thead>
+
+
               <tbody className="bg-white border-b hover:bg-gray-50">
                 {table.getRowModel().rows.map((row) => (
                   <tr
@@ -429,9 +449,9 @@ const TanStackTable = <T,>({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.footer,
-                                header.getContext()
-                              )}
+                              header.column.columnDef.footer,
+                              header.getContext()
+                            )}
                         </th>
                       ))}
                     </tr>
