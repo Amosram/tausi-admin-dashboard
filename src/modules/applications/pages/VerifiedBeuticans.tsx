@@ -8,6 +8,7 @@ import TanStackTable from "@/components/ui/Table/Table";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { useMemo, useState } from "react";
+import Loader from "@/components/layout/Loader";
 
 
 const VerifiedBeuticans: React.FC = () => {
@@ -65,7 +66,7 @@ const VerifiedBeuticans: React.FC = () => {
       header: "Beutician ID",
       cell: ({row}) => (
         <Link
-          to={`/beauticians/${row.getValue("id")}`}
+          to={`/dashboard/verifications/${row.getValue("id")}`}
           state={{verifiedBeautician: row.original}}
           className="hover:text-primary hover:underline truncate block max-w-[150px]"
         >
@@ -99,19 +100,19 @@ const VerifiedBeuticans: React.FC = () => {
       cell: ({row}) => <span>{row.original.locationAddress}</span>
     },
     {
+      accessorKey: "createdAt",
+      header: "Creation Date",
+      cell: ({ row }) => {
+        const date = new Date(row.original.createdAt);
+        return <span>{format(date, 'MMM dd, yyyy')}</span>;
+      }
+    },
+    {
       id: "verificationStatus",
       accessorKey: "verificationData.verificationStatus",
       header: "Verification Status",
       cell: ({ row }) => getStatusBadge(row.getValue("verificationStatus"))
     },
-    // {
-    //   accessorKey: "createdAt",
-    //   header: "Creation Date",
-    //   cell: ({ row }) => {
-    //     const date = new Date(row.original.createdAt);
-    //     return <span>{format(date, 'MMM dd, yyyy')}</span>;
-    //   }
-    // },
     {
       header: 'Actions',
       enableSorting: false,
@@ -124,7 +125,7 @@ const VerifiedBeuticans: React.FC = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuItem>
               <Link
-                to={`/beauticians/${row.original.id}`}
+                to={`/dashboard/verifications/${row.original.id}`}
                 state={{ professional: row.original }}
                 className="hover:text-primary"
               >
@@ -150,7 +151,7 @@ const VerifiedBeuticans: React.FC = () => {
   ];
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
     
   if (isError) {

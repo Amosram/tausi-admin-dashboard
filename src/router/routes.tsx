@@ -123,7 +123,7 @@ export const routes: RouteObject[] = [
         ]
       },
       {
-        path: "/beauticians",
+        path: "/dashboard/verifications",
         children: [
           {
             index: true,
@@ -134,7 +134,7 @@ export const routes: RouteObject[] = [
             )
           },
           {
-            path: ":beatucianId",
+            path: ":beauticianId",
             element: (
               <Suspense fallback={<Loader />}>
                 <VerificationDetailsLazy />

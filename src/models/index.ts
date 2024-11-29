@@ -221,7 +221,7 @@ export interface VerifiedBeauticiansResponse {
   statusCode: string;
   code:       number;
   message:    string;
-  data:       VerifiedBeauticians[];
+  data:       VerifiedBeauticians;
 }
 
 export interface VerifiedBeauticians {

@@ -18,7 +18,7 @@ const Header = () => {
     "/revenue": "Revenue",
     "/users": "Users",
     "/professionals": "Beauticians List",
-    "/beauticians": "Verified Beauticians",
+    "/dashboard/verifications": "Verified Beauticians",
     "/messaging": "Messaging",
     "/settings": "Settings",
     "/users/create-user": "Create User",
@@ -33,6 +33,10 @@ const Header = () => {
 
     if (path.startsWith("/professionals/") && path.split("/").length > 2) {
       return "Professional Details";
+    }
+
+    if (path.startsWith("/dashboard/verifications/") && path.split("/").length > 2) {
+      return "Verified Beauticians Details";
     }
 
 
@@ -62,11 +66,11 @@ const Header = () => {
             <SidebarTrigger />
           </div>
           <div className="relative">
-            {["Order Details", "Professional Details", "User Details", "Create User"].includes(
+            {["Order Details", "Professional Details", "Verified Beauticians Details", "User Details", "Create User"].includes(
               dynamicTitle
             ) ? (
               <Link
-                to={dynamicTitle === "Order Details" ? "/orders" : dynamicTitle === "Professional Details" ? "/professionals" : "/users"}
+                to={dynamicTitle === "Order Details" ? "/orders" : dynamicTitle === "Professional Details" ? "/professionals" : dynamicTitle === "Verified Beauticians Details" ? "/dashboard/verifications" : "/users"}
                 className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
               >
                 <FaChevronLeft />
