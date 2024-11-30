@@ -19,7 +19,7 @@ const Header = () => {
     "/users": "Users",
     "/professionals": "Beauticians List",
     "/dashboard/verifications": "Verified Beauticians",
-    "/ledgers": "Ledger",
+    "/ledgers/books": "Books",
     "/messaging": "Messaging",
     "/settings": "Settings",
     "/users/create-user": "Create User",
@@ -49,8 +49,8 @@ const Header = () => {
       return "User Details";
     }
 
-    if (path.startsWith("/ledgers/") && path.split("/").length > 2) {
-      return "Ledger Details";
+    if (path.startsWith("/ledgers/books/") && path.split("/").length > 2) {
+      return "Books Details";
     }
     
 
@@ -77,7 +77,7 @@ const Header = () => {
               dynamicTitle
             ) ? (
                 <Link
-                  to={dynamicTitle === "Order Details" ? "/orders" : dynamicTitle === "Ledger Details" ? "/ledgers" : dynamicTitle === "Professional Details" ? "/professionals" : dynamicTitle === "Verified Beauticians Details" ? "/dashboard/verifications" : "/users"}
+                  to={dynamicTitle === "Order Details" ? "/orders" : dynamicTitle === "Ledger Details" ? "/ledgers/books" : dynamicTitle === "Professional Details" ? "/professionals" : dynamicTitle === "Verified Beauticians Details" ? "/dashboard/verifications" : "/users"}
                   className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
                 >
                   <FaChevronLeft />

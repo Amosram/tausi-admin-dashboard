@@ -107,7 +107,7 @@ const Ledger = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuItem>
               <Link
-                to={`/ledgers/${row.original.id}`}
+                to={`/ledgers/books/${row.original.id}`}
                 state={{ ledger: row.original }}
                 className="hover:text-primary"
               >
