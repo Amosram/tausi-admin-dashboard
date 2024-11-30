@@ -5,10 +5,7 @@ import {
   MapPin,
   Phone,
   Mail,
-  Edit,
   Globe,
-  CreditCard,
-  Cloud,
   ShieldCheck,
   Trash2,
   Briefcase,
@@ -18,88 +15,39 @@ import { useParams } from "react-router-dom";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  SessionData,
   TausiProfessional,
   TausiUserDetails,
   VerificationData,
 } from "@/models/user";
 import { useGetUserByIdQuery, useUpdateUserMutation } from "../api/usersApi";
-
-// Components
-const EditFieldDialog: React.FC<EditFieldDialogProps> = ({
-  open,
-  onOpenChange,
-  title,
-  currentValue,
-  onSave,
-  inputType = "input",
-}) => {
-  const [editValue, setEditValue] = useState(currentValue);
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit {title}</DialogTitle>
-        </DialogHeader>
-        {inputType === "input" ? (
-          <Input
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            className="mb-4"
-          />
-        ) : (
-          <Textarea
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            className="mb-4"
-          />
-        )}
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              onSave(editValue);
-              onOpenChange(false);
-            }}
-          >
-            Save
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const UserProfileCard: React.FC<{
   user: TausiUserDetails;
-  onEditField: (field: string, value: string) => void;
-}> = ({ user, onEditField }) => (
+}> = ({ user }) => (
   <Card>
     <CardHeader className="flex flex-row justify-between items-center">
-      <CardTitle>User Profile</CardTitle>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => onEditField("name", user.name)}
-      >
-        <Edit size={16} />
-      </Button>
+      <CardTitle>Profile</CardTitle>
     </CardHeader>
     <CardContent className="flex flex-col items-center text-center">
       <Avatar className="h-auto w-[50%]">
@@ -126,8 +74,7 @@ const UserProfileCard: React.FC<{
 
 const ContactInformationCard: React.FC<{
   user: TausiUserDetails;
-  onEditField: (field: string, value: string) => void;
-}> = ({ user, onEditField }) => (
+}> = ({ user }) => (
   <Card>
     <CardHeader>
       <CardTitle>Contact Information</CardTitle>
@@ -141,13 +88,6 @@ const ContactInformationCard: React.FC<{
             {user.phoneVerified ? "Verified" : "Unverified"}
           </Badge>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onEditField("phoneNumber", user.phoneNumber)}
-        >
-          <Edit size={16} />
-        </Button>
       </div>
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-2">
@@ -157,13 +97,6 @@ const ContactInformationCard: React.FC<{
             {user.emailVerified ? "Verified" : "Unverified"}
           </Badge>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onEditField("email", user.email)}
-        >
-          <Edit size={16} />
-        </Button>
       </div>
     </CardContent>
   </Card>
@@ -259,34 +192,9 @@ const AccountDetailsCard: React.FC<{ user: TausiUserDetails }> = ({ user }) => (
   </Card>
 );
 
-const SessionDetailsCard: React.FC<{ sessionData: SessionData }> = ({
-  sessionData,
-}) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Session Details</CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-3">
-      <div className="flex items-center space-x-2">
-        <Cloud size={16} />
-        <span>Session Type: {sessionData.userTypeSession}</span>
-      </div>
-      <div className="flex items-center space-x-2">
-        <CreditCard size={16} />
-        <span>Session ID: {sessionData.id}</span>
-      </div>
-    </CardContent>
-  </Card>
-);
-
 const LocationDetailsCard: React.FC<{
   user: TausiUserDetails;
-  onEditField: (
-    field: string,
-    value: string,
-    inputType?: "input" | "textarea"
-  ) => void;
-}> = ({ user, onEditField }) => (
+}> = ({ user }) => (
   <Card>
     <CardHeader>
       <CardTitle>Location Details</CardTitle>
@@ -297,45 +205,18 @@ const LocationDetailsCard: React.FC<{
           <Globe size={16} />
           <span>Latitude: {user.latitude || "N/A"}</span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onEditField("latitude", user.latitude || "")}
-        >
-          <Edit size={16} />
-        </Button>
       </div>
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <Globe size={16} />
           <span>Longitude: {user.longitude || "N/A"}</span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => onEditField("longitude", user.longitude || "")}
-        >
-          <Edit size={16} />
-        </Button>
       </div>
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <MapPin size={16} />
           <span>Full Address: {user.locationAddress || "N/A"}</span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() =>
-            onEditField(
-              "locationAddress",
-              user.locationAddress || "",
-              "textarea"
-            )
-          }
-        >
-          <Edit size={16} />
-        </Button>
       </div>
     </CardContent>
   </Card>
@@ -347,39 +228,18 @@ const UserDetails: React.FC = () => {
   const { data: user, isLoading, isError } = useGetUserByIdQuery(userId || "");
   const [updateUser] = useUpdateUserMutation();
 
-  const [editDialogOpen, setEditDialogOpen] = useState<EditDialogState>({
-    field: "",
-    value: "",
-    open: false,
-    inputType: "input",
-  });
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isAlertOpen, setAlertOpen] = useState(false);
+  const [deleteReason, setDeleteReason] = useState("");
 
-  const handleEditField = (
-    field: string,
-    currentValue: string,
-    inputType: "input" | "textarea" = "input"
-  ) => {
-    setEditDialogOpen({
-      field,
-      value: currentValue,
-      open: true,
-      inputType,
+  const handleDelete = async () => {
+    await updateUser({
+      id: userId,
+      isDeleted: true,
+      deletedReason: deleteReason,
     });
-  };
-
-  const handleSaveField = async (newValue: string) => {
-    if (userId && editDialogOpen.field) {
-      try {
-        const updatedUser = await updateUser({
-          id: userId,
-          [editDialogOpen.field]: newValue,
-        }).unwrap();
-        console.log("User updated successfully:", updatedUser);
-      } catch (error) {
-        console.error("Error updating user:", error);
-      }
-    }
-    setEditDialogOpen({ field: "", value: "", open: false });
+    setDialogOpen(false);
+    setAlertOpen(false);
   };
 
   if (!userId) {
@@ -418,74 +278,96 @@ const UserDetails: React.FC = () => {
       {/* User Management Section */}
       <div className="w-full bg-muted p-4 rounded-lg flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
-          <h2 className="text-xl font-bold">User Management</h2>
+          <h2 className="text-xl font-bold uppercase">
+            {user.sessionData.userTypeSession}
+          </h2>
           <Badge variant={user.isActive ? "default" : "destructive"}>
             {user.isActive ? "Active" : "Inactive"}
           </Badge>
         </div>
         <div className="flex">
-          <Button variant="destructive" className="flex items-center space-x-2">
+          <Button
+            variant="destructive"
+            className="flex items-center space-x-2"
+            onClick={() => setDialogOpen(true)}
+          >
             <Trash2 size={16} />
             <span>Delete User</span>
           </Button>
         </div>
       </div>
 
+      <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete User</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p>Enter a reason for deleting this user:</p>
+            <Input
+              placeholder="Reason for deletion"
+              value={deleteReason}
+              onChange={(e) => setDeleteReason(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setDialogOpen(false);
+                setAlertOpen(true);
+              }}
+              disabled={!deleteReason.trim()}
+            >
+              Proceed
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation Alert */}
+      <AlertDialog open={isAlertOpen} onOpenChange={setAlertOpen}>
+        <AlertDialogTrigger asChild />
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <h3 className="text-primary text-2xl">Are you sure?</h3>
+            <p>This action will delete the user permanently.</p>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} disabled>
+              Confirm Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
-          <UserProfileCard user={user} onEditField={handleEditField} />
+          <UserProfileCard user={user} />
           {user.sessionData.userTypeSession === "professional" && (
             <ProfessionalDetailsCard professional={user.professional} />
           )}
         </div>
 
         <div className="md:col-span-2 grid grid-cols-1 gap-4">
-          <ContactInformationCard user={user} onEditField={handleEditField} />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {user.sessionData.userTypeSession === "professional" && (
-              <VerificationDetailsCard
-                verificationData={user.professional.verificationData}
-              />
-            )}
-            <SessionDetailsCard sessionData={user.sessionData} />
-          </div>
-
-          <LocationDetailsCard user={user} onEditField={handleEditField} />
+          <ContactInformationCard user={user} />
+          <LocationDetailsCard user={user} />
+          {user.sessionData.userTypeSession === "professional" && (
+            <VerificationDetailsCard
+              verificationData={user.professional.verificationData}
+            />
+          )}
         </div>
         <div className="md:col-span-3 grid-cols-1">
           <AccountDetailsCard user={user} />
         </div>
       </div>
-
-      <EditFieldDialog
-        open={editDialogOpen.open}
-        onOpenChange={(open) =>
-          setEditDialogOpen((prev) => ({ ...prev, open }))
-        }
-        title={editDialogOpen.field}
-        currentValue={editDialogOpen.value}
-        onSave={handleSaveField}
-        inputType={editDialogOpen.inputType}
-      />
     </div>
   );
 };
-
-interface EditFieldDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  title: string;
-  currentValue: string;
-  onSave: (newValue: string) => void;
-  inputType?: "input" | "textarea";
-}
-
-interface EditDialogState {
-  field: string;
-  value: string;
-  open: boolean;
-  inputType?: "input" | "textarea";
-}
 
 export default UserDetails;
