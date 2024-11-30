@@ -9,46 +9,47 @@ import { IoExitOutline } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "../ui/sidebar";
 
+interface RouteDetails {
+  title: string;
+  backLink?: string;
+}
+
+const routeMappings: Record<string, RouteDetails> = {
+  "/": { title: "Dashboard" },
+  "/orders": { title: "Orders" },
+  "/revenue": { title: "Revenue" },
+  "/users": { title: "Users" },
+  "/professionals": { title: "Beauticians List" },
+  "/beauticians": { title: "Verified Beauticians" },
+  "/messaging": { title: "Messaging" },
+  "/settings": { title: "Settings" },
+  "/users/create-user": { title: "Create User", backLink: "/users" },
+  "/booths": { title: "Booths" },
+  "/booths/create-booth": { title: "Create Booth", backLink: "/booths" },
+  "/booths/:id": { title: "Booth Details", backLink: "/booths" },
+  "/orders/:id": { title: "Order Details", backLink: "/orders" },
+  "/professionals/:id": {
+    title: "Professional Details",
+    backLink: "/professionals",
+  },
+};
+
+const getDynamicRouteDetails = (pathname: string): RouteDetails => {
+  for (const [route, details] of Object.entries(routeMappings)) {
+    const dynamicRouteMatch = route.includes(":")
+      ? new RegExp(`^${route.replace(/:\w+/g, "[^/]+")}$`).test(pathname)
+      : route === pathname;
+
+    if (dynamicRouteMatch) return details;
+  }
+  return { title: "Dashboard" };
+};
+
 const Header = () => {
+  const navigate = useNavigate();
   const location = useLocation();
 
-  const titles: { [key: string]: string } = {
-    "/": "Dashboard",
-    "/orders": "Orders",
-    "/revenue": "Revenue",
-    "/users": "Users",
-    "/professionals": "Beauticians List",
-    "/beauticians": "Verified Beauticians",
-    "/messaging": "Messaging",
-    "/settings": "Settings",
-    "/users/create-user": "Create User",
-  };
-
-  const getTitle = () => {
-    const path = location.pathname;
-
-    if (path.startsWith("/orders/") && path.split("/").length > 2) {
-      return "Order Details";
-    }
-
-    if (path.startsWith("/professionals/") && path.split("/").length > 2) {
-      return "Professional Details";
-    }
-
-
-    if (path.startsWith("/users/") && path.split("/").length > 2) {
-      if (path === "/users/create-user") {
-        return "Create User";
-      }
-      return "User Details";
-    }
-
-    return titles[path] || "Dashboard";
-  };
-
-  const dynamicTitle = getTitle();
-
-  const navigate = useNavigate();
+  const { title, backLink } = getDynamicRouteDetails(location.pathname);
 
   const handleLogout = () => {
     navigate("/auth/login");
@@ -62,18 +63,16 @@ const Header = () => {
             <SidebarTrigger />
           </div>
           <div className="relative">
-            {["Order Details", "Professional Details", "User Details", "Create User"].includes(
-              dynamicTitle
-            ) ? (
+            {backLink ? (
               <Link
-                to={dynamicTitle === "Order Details" ? "/orders" : dynamicTitle === "Professional Details" ? "/professionals" : "/users"}
+                to={backLink}
                 className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
               >
                 <FaChevronLeft />
-                <span>{dynamicTitle}</span>
+                <span>{title}</span>
               </Link>
             ) : (
-              <div className="text-gray-600 font-bold">{dynamicTitle}</div>
+              <div className="text-gray-600 font-bold">{title}</div>
             )}
           </div>
         </div>

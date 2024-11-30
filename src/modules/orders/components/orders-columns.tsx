@@ -50,7 +50,7 @@ const TruncatedCell = ({ content }: { content: string | null | undefined }) => {
   );
 };
 
-export const columns: ColumnDef<Appointment>[] = [
+export const ordersColumns: ColumnDef<Appointment>[] = [
   {
     id: "id",
     accessorKey: "id",

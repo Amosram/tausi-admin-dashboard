@@ -1,15 +1,15 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
-import { MoreVertical } from "lucide-react";
+import { format } from "date-fns";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { MoreVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { TausiUser } from "@/models/user";
-import { format } from "date-fns";
+import { Booth } from "@/models";
 
 const TruncatedCell = ({ content }: { content: string | null | undefined }) => {
   if (!content) return <span>-</span>;
@@ -20,14 +20,14 @@ const TruncatedCell = ({ content }: { content: string | null | undefined }) => {
   );
 };
 
-export const usersColumns: ColumnDef<TausiUser>[] = [
+export const boothColumns: ColumnDef<Booth>[] = [
   {
     id: "id",
     accessorKey: "id",
-    header: "User ID",
+    header: "Booth ID",
     cell: ({ row }) => (
       <Link
-        to={`/users/${row.getValue("id")}`}
+        to={`/booths/${row.getValue("id")}`}
         state={{ user: row.original }}
         className="hover:text-primary hover:underline truncate block max-w-[150px]"
       >
@@ -39,35 +39,34 @@ export const usersColumns: ColumnDef<TausiUser>[] = [
   {
     id: "name",
     accessorKey: "name",
-    header: "User Name",
+    header: "Name",
     cell: ({ row }) => <TruncatedCell content={row.getValue("name")} />,
     enableSorting: true,
   },
   {
-    id: "email",
-    accessorKey: "email",
-    header: "Email Address",
-    cell: ({ row }) => <TruncatedCell content={row.getValue("email")} />,
+    id: "locationAddress",
+    accessorKey: "locationAddress",
+    header: "Location",
+    cell: ({ row }) => (
+      <TruncatedCell content={row.getValue("locationAddress")} />
+    ),
     enableSorting: true,
   },
   {
-    id: "phoneNumber",
-    accessorKey: "phoneNumber",
-    header: "Contact",
-    cell: ({ row }) => <TruncatedCell content={row.getValue("phoneNumber")} />,
+    id: "numberOfStations",
+    accessorKey: "numberOfStations",
+    header: "Number of Stations",
+    cell: ({ row }) => (
+      <TruncatedCell content={row.getValue("numberOfStations")} />
+    ),
   },
   {
-    id: "role",
-    accessorKey: "role",
-    header: "Role",
-    cell: ({ row }) => {
-      const role = row.getValue("role");
-      const formattedRole =
-        typeof role === "string"
-          ? role.charAt(0).toUpperCase() + role.slice(1)
-          : String(role || "");
-      return <TruncatedCell content={formattedRole} />;
-    },
+    id: "numberOfBeauticians",
+    accessorKey: "numberOfBeauticians",
+    header: "Number of Beauticians",
+    cell: ({ row }) => (
+      <TruncatedCell content={row.getValue("numberOfBeauticians")} />
+    ),
   },
   {
     id: "isActive",
@@ -96,6 +95,32 @@ export const usersColumns: ColumnDef<TausiUser>[] = [
     },
   },
   {
+    id: "occupancyStatus",
+    accessorKey: "occupancyStatus",
+    header: "Occupancy Status",
+    cell: ({ row }) => {
+      const occupancyStatus = row.getValue("occupancyStatus");
+
+      if (occupancyStatus === "empty") {
+        return (
+          <Badge className="bg-transparent font-semibold text-green-600 border-green-500 text-md">
+            Empty
+          </Badge>
+        );
+      }
+
+      if (occupancyStatus === "occupied") {
+        return (
+          <Badge className="bg-transparent font-semibold text-blue-600 border-blue-500 text-md">
+            Occupied
+          </Badge>
+        );
+      }
+
+      return <Badge variant="outline">{row.getValue("occupancyStatus")}</Badge>;
+    },
+  },
+  {
     id: "createdAt",
     accessorKey: "createdAt",
     header: "Created On",
@@ -118,24 +143,24 @@ export const usersColumns: ColumnDef<TausiUser>[] = [
         <DropdownMenuContent align="end">
           <DropdownMenuItem>
             <Link
-              to={`/users/${row.original.id}`}
-              state={{ user: row.original }}
+              to={`/orders/${row.original.id}`}
+              state={{ order: row.original }}
               className="hover:text-primary"
             >
-              View User Details
+              View details
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => console.log("Edit:", row.original)}
             className="cursor-pointer"
           >
-            Edit User
+            Edit Booth
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => console.log("Delete:", row.original)}
             className="bg-destructive text-white cursor-pointer"
           >
-            Delete User
+            Delete Booth
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
