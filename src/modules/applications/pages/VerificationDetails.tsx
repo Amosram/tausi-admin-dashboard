@@ -1,6 +1,6 @@
+import { lazy, useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ImageLightbox } from "../components/ImageGallery";
-import { VerifiedBeauticians } from "@/models";
+import { Coordinates, VerifiedBeauticians } from "@/models";
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import {
@@ -19,8 +19,9 @@ import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
 import { useUseGetVerifiedBeauticianByIdQuery } from "../api/professionalApi";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
+import { DEFAULT_LOCATION } from "@/Utils/constants";
 
+const Maps = lazy(() => import("@/components/ui/maps"));
 
 // verified beautician personal profile
 
@@ -157,54 +158,6 @@ const ProfessionalDetailsCard: React.FC<{
   </Card>
 );
 
-// map and portfolio cards
-
-const MapAndPortfolioCards: React.FC<{ beautician: VerifiedBeauticians }> = ({ beautician }) => (
-  <Tabs defaultValue="map" className="w-full">
-    <TabsList className="grid w-full grid-cols-2">
-      <TabsTrigger value="map">Location</TabsTrigger>
-      <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
-    </TabsList>
-    <TabsContent value="map">
-      <Card>
-        <CardHeader>
-          <CardTitle>Location</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px] w-full">
-            {/* <MapComponent latitude={beautician.latitude} longitude={beautician.longitude} /> */}
-          </div>
-        </CardContent>
-      </Card>
-    </TabsContent>
-    <TabsContent value="portfolio">
-      <Card>
-        <CardHeader>
-          <CardTitle>Portfolio</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ImageLightbox
-            images={beautician.portfolio}
-            trigger={(openLightbox) => (
-              <div className="grid grid-cols-3 gap-4">
-                {beautician.portfolio.map((image, index) => (
-                  <div key={index} className="relative h-40">
-                    <img
-                      src={image.url}
-                      alt={image.title}
-                      className="w-full h-full object-cover rounded-md"
-                      onClick={() => openLightbox(index)}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          />
-        </CardContent>
-      </Card>
-    </TabsContent>
-  </Tabs>
-);
 
 const VerificationDetails: React.FC = () => {
   
@@ -212,6 +165,9 @@ const VerificationDetails: React.FC = () => {
   const {data, isLoading, isError} = useUseGetVerifiedBeauticianByIdQuery(beauticianId!);
 
   const beautician = data?.data;
+
+  // using the map component
+  const [coordinates, setCoordinates] = useState<Coordinates>(beautician?.coordinates || DEFAULT_LOCATION);
 
   if (!beauticianId) {
     return <div>Invalid beautician ID</div>;
@@ -283,7 +239,19 @@ const VerificationDetails: React.FC = () => {
         </div>
         {/* Location*/}
         <div className="md:col-span-3 grid-cols-1">
-        {/* TODO: ADD MAP COMPONENT HERE */}
+          {/* TODO: ADD MAP COMPONENT HERE */}
+          <Maps
+            coordinates={{
+              lat: Number(beautician.latitude) || coordinates.x,
+              lng: Number(beautician.longitude) || coordinates.y,
+            }}
+            setCoordinates={(coords) => {
+              setCoordinates({
+                x: coords.lat,
+                y: coords.lng
+              });
+            }}
+          />
         </div>
       </div>
     </div>
