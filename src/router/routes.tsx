@@ -23,7 +23,7 @@ const UserDetailsLazy = lazy(() => import('@/modules/users/pages/UserDetails'));
 const ProfessionalsDetailsLazy = lazy(() => import('@/modules/applications/pages/ProfessionalDetails'));
 const CreateUserLazy = lazy(() => import("@/modules/users/pages/CreateUserPage"));
 const LedgerLazy = lazy(() => import('@/modules/ledger/pages/Ledger'));
-const LedgerLazyDetail = lazy(() => import ('@/modules/ledger/pages/LedgerDetails'));
+const LedgerLazyDetail = lazy(() => import ('@/modules/ledger/pages/LedgerBookDetails'));
 const CreateLoanLazy = lazy(() => import('@/modules/ledger/pages/LoanCreatePage'));
 const BoothsLazy = lazy(() => import("@/modules/booths/pages/Booths"));
 
