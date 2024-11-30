@@ -122,7 +122,7 @@ const ProfessionalDetailsCard: React.FC<{
 }> = ({ beautician }) => (
   <Card>
     <CardHeader>
-      <CardTitle>beautician Information</CardTitle>
+      <CardTitle>Beautician Information</CardTitle>
     </CardHeader>
     <CardContent className="space-y-3">
       <div className="flex items-center space-x-2">
@@ -204,7 +204,7 @@ const VerificationDetails: React.FC = () => {
   return (
     <div className="container mx-auto p-4">
       {/* Verification Management */}
-      <div className="w-full bg-muted p-4 rounded-lg flex justify-between items-center mb-4">
+      <div className="w-full bg-muted p-4 rounded-lg flex flex-col sm:flex-row justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
           <h2 className="text-xl font-bold">
                  Verification Management
@@ -222,8 +222,8 @@ const VerificationDetails: React.FC = () => {
             <XCircle size={16} />
             <span>Decline</span>
           </Button> */}
+          <DeclineDialog beauticianId={beauticianId} />
         </div>
-        <DeclineDialog beauticianId={beauticianId} />
       </div>
       {/* beautician Profile */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -232,8 +232,8 @@ const VerificationDetails: React.FC = () => {
           <ProfessionalDetailsCard beautician={beautician} />
         </div>
 
-        {/* Contact informatin */}
-        <div className="md:cols-span-2 grid grid-cols-1 gap-4">
+        {/* Contact information */}
+        <div className="md:col-span-2 grid grid-cols-1 gap-4">
           <ContactInformationCard beautician={beautician} />
           {/* Verification Details */}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
