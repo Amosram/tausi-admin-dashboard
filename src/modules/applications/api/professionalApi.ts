@@ -42,8 +42,16 @@ export const professionalApi = createApi({
         method: "GET",
       }),
       providesTags: ['VerifiedBeauticiansDetails'],
-    })
+    }),
+    updateverifiedBeauticians: builder.mutation<VerifiedBeauticiansResponse, Partial<VerifiedBeauticians>>({
+      query: (data) => ({
+        url: `/professionals/dashboard/verification/${data.id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ['VerifiedBeauticiansDetails'],
+    }),
   }),
 });
 
-export const {useGetProfessionalsQuery, useGetProfessionalsByIdQuery, useGetProfessionalsPorfolioQuery, useGetVerifiedBeauticiansQuery, useUseGetVerifiedBeauticianByIdQuery} = professionalApi;
+export const {useGetProfessionalsQuery, useGetProfessionalsByIdQuery, useGetProfessionalsPorfolioQuery, useGetVerifiedBeauticiansQuery, useUseGetVerifiedBeauticianByIdQuery, useUpdateverifiedBeauticiansMutation} = professionalApi;

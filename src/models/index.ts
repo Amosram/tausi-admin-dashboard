@@ -224,7 +224,7 @@ export interface VerifiedBeauticiansResponse {
   data:       VerifiedBeauticians;
 }
 
-export interface VerifiedBeauticians {
+export interface VerifiedBeauticians extends UpdateVerifiedBeautician {
   id:                   string;
   locationAddress:      string;
   resumeUrl:            null;
@@ -267,6 +267,12 @@ export interface VerifiedBeauticians {
   user:                 User;
   portfolio:            any[];
   services:             Service[];
+}
+
+export interface UpdateVerifiedBeautician {
+    verificationStatus:      string;
+    verificationDescription: string;
+    reviewedBy:              string;
 }
 
 export enum BusinessType {

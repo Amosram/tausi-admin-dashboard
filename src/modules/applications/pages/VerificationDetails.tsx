@@ -20,6 +20,7 @@ import { useParams } from "react-router-dom";
 import { useUseGetVerifiedBeauticianByIdQuery } from "../api/professionalApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DEFAULT_LOCATION } from "@/Utils/constants";
+import DeclineDialog from "../components/DeclineDialog";
 
 const Maps = lazy(() => import("@/components/ui/maps"));
 
@@ -166,6 +167,7 @@ const VerificationDetails: React.FC = () => {
 
   const beautician = data?.data;
 
+
   // using the map component
   const [coordinates, setCoordinates] = useState<Coordinates>(beautician?.coordinates || DEFAULT_LOCATION);
 
@@ -216,11 +218,12 @@ const VerificationDetails: React.FC = () => {
             <CheckCircle size={16} />
             <span>Approve</span>
           </Button>
-          <Button variant="destructive" className="flex items-center space-x-2">
+          {/* <Button variant="destructive" className="flex items-center space-x-2">
             <XCircle size={16} />
             <span>Decline</span>
-          </Button>
+          </Button> */}
         </div>
+        <DeclineDialog beauticianId={beauticianId} />
       </div>
       {/* beautician Profile */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -239,7 +242,6 @@ const VerificationDetails: React.FC = () => {
         </div>
         {/* Location*/}
         <div className="md:col-span-3 grid-cols-1">
-          {/* TODO: ADD MAP COMPONENT HERE */}
           <Maps
             coordinates={{
               lat: Number(beautician.latitude) || coordinates.x,
