@@ -33,11 +33,7 @@ const routeMappings: Record<string, RouteDetails> = {
   "/ledgers/create-loan": { title: "Create Loan" },
   "/ledgers/books": { title: "Books" },
   "/ledgers/books/:id": { title: "Books Details", backLink: "/ledgers/books" },
-  "/dashboard/verifications/:id": { title: "Verified Beauticians Details", backLink: "/dashboard/verifications" },
-  "/professionals/:id": {
-    title: "Professional Details",
-    backLink: "/professionals",
-  },
+  "/dashboard/verifications/:id": { title: "Verified Beauticians Details", backLink: "/dashboard/verifications" }
 };
 
 const getDynamicRouteDetails = (pathname: string): RouteDetails => {

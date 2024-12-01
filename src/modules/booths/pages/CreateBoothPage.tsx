@@ -22,7 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import CoordinateSelectorMap from "../components/coordinate-selector";
+import Maps from "@/components/ui/maps";
 
 const boothFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -115,8 +115,8 @@ const CreateBoothPage: React.FC = () => {
   };
 
   const handleCoordinatesSelect = (coordinates: Coordinates) => {
-    form.setValue("coordinates.x", coordinates.x);
-    form.setValue("coordinates.y", coordinates.y);
+    form.setValue("coordinates.x", coordinates.x); // Set x
+    form.setValue("coordinates.y", coordinates.y); // Set y
     setIsCoordinateModalOpen(false);
   };
 
@@ -238,13 +238,18 @@ const CreateBoothPage: React.FC = () => {
           <DialogHeader>
             <DialogTitle>Select Booth Coordinates</DialogTitle>
           </DialogHeader>
-          <CoordinateSelectorMap
-            initialCoordinates={{
-              x: form.getValues("coordinates.x") || -1.286389,
-              y: form.getValues("coordinates.y") || 36.817223,
+          <Maps
+            coordinates={{
+              lat: form.getValues("coordinates.y") || -1.286389, // Map y to lat
+              lng: form.getValues("coordinates.x") || 36.817223, // Map x to lng
             }}
-            onCoordinatesSelect={handleCoordinatesSelect}
-            onClose={() => setIsCoordinateModalOpen(false)}
+            setCoordinates={(coords) => {
+              // Map lat/lng back to x/y for the form
+              handleCoordinatesSelect({
+                x: coords.lng,
+                y: coords.lat,
+              });
+            }}
           />
         </DialogContent>
       </Dialog>

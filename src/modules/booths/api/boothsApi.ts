@@ -16,15 +16,50 @@ export const boothsApi = createApi({
       providesTags: ["Booths"],
       keepUnusedDataFor: 60,
     }),
-    createBooth: builder.mutation<BoothsApiResponse<Booth>, CreateBoothPayload>({
-      query: (newBooth) => ({
-        url: `/booths`,
-        method: "POST",
-        data: newBooth,
+    getBoothById: builder.query<BoothsApiResponse<Booth>, string>({
+      query: (boothId) => ({
+        url: `/booths/${boothId}`,
+        method: "GET",
       }),
-      invalidatesTags: ["Booths"],
+      providesTags: (result, error, boothId) =>
+        result ? [{ type: "Booths", id: boothId }] : [],
     }),
+    createBooth: builder.mutation<BoothsApiResponse<Booth>, CreateBoothPayload>(
+      {
+        query: (newBooth) => ({
+          url: `/booths`,
+          method: "POST",
+          data: newBooth,
+        }),
+        invalidatesTags: ["Booths"],
+      }
+    ),
+    updateBooth: builder.mutation<Booth, { id: string; data: Partial<Booth> }>({
+      query: ({ id, data }) => ({
+        url: `/booths/${id}`,
+        method: "PATCH",
+        data,
+      }),
+      invalidatesTags: (result, error, { id }) =>
+        result ? [{ type: "Booths", id }] : [],
+    }),
+    deleteBooth: builder.mutation<void, { id: string; deletedReason?: string }>(
+      {
+        query: ({ id, deletedReason }) => ({
+          url: `/booths/${id}`,
+          method: "DELETE",
+          data: { deletedReason },
+        }),
+        invalidatesTags: ["Booths"],
+      }
+    ),
   }),
 });
 
-export const { useGetBoothsQuery, useCreateBoothMutation } = boothsApi;
+export const {
+  useGetBoothsQuery,
+  useCreateBoothMutation,
+  useDeleteBoothMutation,
+  useUpdateBoothMutation,
+  useGetBoothByIdQuery
+} = boothsApi;
