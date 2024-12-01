@@ -1,4 +1,4 @@
-import { ApiResponse, Books, BooksApiResponse, CreateUpdateLoanBook, Ledgers, LedgersApiResponse } from "@/models";
+import { ApiResponse, BookDetails, Books, BooksApiResponse, CreateUpdateLoanBook, Ledgers, LedgersApiResponse } from "@/models";
 import { axiosBaseQuery } from "@/Utils/axios";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
@@ -23,9 +23,9 @@ export const ledgersApi = createApi({
       }),
       providesTags: ['Books']
     }),
-    getBooksById: builder.query<BooksApiResponse, string>({
-      query: (booksId) => ({
-        url: `/ledgers/books/${booksId}`,
+    getBooksById: builder.query<BookDetails, string>({
+      query: (bookId) => ({
+        url: `/ledgers/books/${bookId}`,
         method: "GET"
       }),
       providesTags: ['Books']

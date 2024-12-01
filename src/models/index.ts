@@ -343,7 +343,7 @@ export interface BooksApiResponse {
   statusCode: string;
   code:       number;
   message:    string;
-  data:       Books[];
+  data:       Books;
 }
 
 export interface Books {
@@ -356,6 +356,16 @@ export interface Books {
   ledgerId:  string;
 }
 
+export interface BookDetails {
+  id:        string;
+  name:      string;
+  createdAt: Date;
+  updatedAt: Date;
+  isDeleted: boolean;
+  deletedAt: null;
+  ledgerId:  string;
+  entries:   null;
+}
 
 export interface CreateUpdateLoanBook {
     name: string;
