@@ -26,6 +26,8 @@ const LedgerLazy = lazy(() => import('@/modules/ledger/pages/Ledger'));
 const LedgerLazyDetail = lazy(() => import ('@/modules/ledger/pages/LedgerBookDetails'));
 const CreateLoanLazy = lazy(() => import('@/modules/ledger/pages/LoanCreatePage'));
 const BoothsLazy = lazy(() => import("@/modules/booths/pages/Booths"));
+const BoothDetailsLazy = lazy(() => import("@/modules/booths/pages/BoothDetails"));
+const CreateBoothLazy = lazy(() => import("@/modules/booths/pages/CreateBoothPage"));
 
 export const routes: RouteObject[] = [
   {
@@ -192,11 +194,32 @@ export const routes: RouteObject[] = [
       },
       {
         path: "/booths",
-        element: (
-          <Suspense fallback={<Loader />}>
-            <BoothsLazy />
-          </Suspense>
-        )
+        children: [
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<Loader />}>
+                <BoothsLazy />
+              </Suspense>
+            )
+          },
+          {
+            path: ":boothId",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <BoothDetailsLazy />
+              </Suspense>
+            )
+          },
+          {
+            path: "create-booth",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <CreateBoothLazy />
+              </Suspense>
+            )
+          }
+        ]
       },
       {
         path: "/ledger",

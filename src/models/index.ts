@@ -321,7 +321,6 @@ export enum VerificationTitle {
   YouAreAwaitingApproval = "You are awaiting approval",
 }
 
-
 export interface Ledgers {
   id:          string;
   name:        string;
@@ -371,3 +370,45 @@ export interface CreateUpdateLoanBook {
     name: string;
     ledgerId: string
 }
+export interface BoothsApiResponse<T> {
+  statusCode: string;
+  code: number;
+  message: string;
+  data: T;
+};
+
+export interface Booth {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
+  isDeleted: boolean;
+  deletedAt: string | null;
+  deletedReason: string | null;
+  name: string;
+  locationAddress: string;
+  coordinates: Coordinates;
+  boundaries: unknown | null;
+  numberOfBeauticians: number;
+  numberOfStations: number;
+  imagePath: string | null;
+  imageUrl: string | null;
+  underMaintenance: boolean;
+  occupancyStatus: "empty" | "occupied" | string;
+};
+
+export interface CreateBoothPayload {
+  name: string;
+  locationAddress: string;
+  numberOfBeauticians?: number;
+  numberOfStations?: number;
+  occupancyStatus: "empty" | "occupied";
+  imagePath?: string;
+  imageUrl?: string;
+  coordinates: {
+    x: number;
+    y: number;
+  };
+  boundaries?: unknown | null;
+  underMaintenance?: boolean;
+};

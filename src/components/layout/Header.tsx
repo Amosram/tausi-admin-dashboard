@@ -9,57 +9,53 @@ import { IoExitOutline } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "../ui/sidebar";
 
+interface RouteDetails {
+  title: string;
+  backLink?: string;
+}
+
+const routeMappings: Record<string, RouteDetails> = {
+  "/": { title: "Dashboard" },
+  "/orders": { title: "Orders" },
+  "/revenue": { title: "Revenue" },
+  "/users": { title: "Users" },
+  "/users/:id": { title: "User Details", backLink: "/users" },
+  "/professionals": { title: "Beauticians List" },
+  "/professionals/:id": { title: "Professional Details", backLink: "/professionals" },
+  "/dashboard/verifications": { title: "Verified Beauticians" },
+  "/messaging": { title: "Messaging" },
+  "/settings": { title: "Settings" },
+  "/users/create-user": { title: "Create User", backLink: "/users" },
+  "/booths": { title: "Booths" },
+  "/booths/create-booth": { title: "Create Booth", backLink: "/booths" },
+  "/booths/:id": { title: "Booth Details", backLink: "/booths" },
+  "/orders/:id": { title: "Order Details", backLink: "/orders" },
+  "/ledgers/create-loan": { title: "Create Loan" },
+  "/ledgers/books": { title: "Books" },
+  "/ledgers/books/:id": { title: "Books Details", backLink: "/ledgers/books" },
+  "/dashboard/verifications/:id": { title: "Verified Beauticians Details", backLink: "/dashboard/verifications" },
+  "/professionals/:id": {
+    title: "Professional Details",
+    backLink: "/professionals",
+  },
+};
+
+const getDynamicRouteDetails = (pathname: string): RouteDetails => {
+  for (const [route, details] of Object.entries(routeMappings)) {
+    const dynamicRouteMatch = route.includes(":")
+      ? new RegExp(`^${route.replace(/:\w+/g, "[^/]+")}$`).test(pathname)
+      : route === pathname;
+
+    if (dynamicRouteMatch) return details;
+  }
+  return { title: "Dashboard" };
+};
+
 const Header = () => {
+  const navigate = useNavigate();
   const location = useLocation();
 
-  const titles: { [key: string]: string } = {
-    "/": "Dashboard",
-    "/orders": "Orders",
-    "/revenue": "Revenue",
-    "/users": "Users",
-    "/professionals": "Beauticians List",
-    "/dashboard/verifications": "Verified Beauticians",
-    "/ledgers/books": "Books",
-    "/messaging": "Messaging",
-    "/settings": "Settings",
-    "/users/create-user": "Create User",
-    "/ledgers/create-loan":"Create Loan"
-  };
-
-  const getTitle = () => {
-    const path = location.pathname;
-
-    if (path.startsWith("/orders/") && path.split("/").length > 2) {
-      return "Order Details";
-    }
-
-    if (path.startsWith("/professionals/") && path.split("/").length > 2) {
-      return "Professional Details";
-    }
-
-    if (path.startsWith("/dashboard/verifications/") && path.split("/").length > 2) {
-      return "Verified Beauticians Details";
-    }
-
-
-    if (path.startsWith("/users/") && path.split("/").length > 2) {
-      if (path === "/users/create-user") {
-        return "Create User";
-      }
-      return "User Details";
-    }
-
-    if (path.startsWith("/ledgers/books/") && path.split("/").length > 2) {
-      return "Books Details";
-    }
-    
-
-    return titles[path] || "Dashboard";
-  };
-
-  const dynamicTitle = getTitle();
-
-  const navigate = useNavigate();
+  const { title, backLink } = getDynamicRouteDetails(location.pathname);
 
   const handleLogout = () => {
     navigate("/auth/login");
@@ -73,19 +69,17 @@ const Header = () => {
             <SidebarTrigger />
           </div>
           <div className="relative">
-            {["Order Details", "Professional Details", "Verified Beauticians Details", "User Details", "Create User", "Create Loan", "Ledger Details"].includes(
-              dynamicTitle
-            ) ? (
-                <Link
-                  to={dynamicTitle === "Order Details" ? "/orders" : dynamicTitle === "Ledger Details" ? "/ledgers/books" : dynamicTitle === "Professional Details" ? "/professionals" : dynamicTitle === "Verified Beauticians Details" ? "/dashboard/verifications" : "/users"}
-                  className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
-                >
-                  <FaChevronLeft />
-                  <span>{dynamicTitle}</span>
-                </Link>
-              ) : (
-                <div className="text-gray-600 font-bold">{dynamicTitle}</div>
-              )}
+            {backLink ? (
+              <Link
+                to={backLink}
+                className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
+              >
+                <FaChevronLeft />
+                <span>{title}</span>
+              </Link>
+            ) : (
+              <div className="text-gray-600 font-bold">{title}</div>
+            )}
           </div>
         </div>
         <div className="flex items-center space-x-4"></div>

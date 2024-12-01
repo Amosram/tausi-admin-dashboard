@@ -1,5 +1,5 @@
 import React from "react";
-import { columns } from "../components/users-columns";
+import { usersColumns } from "../components/users-columns";
 import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/layout/Loader";
 import { useGetUsersQuery } from "../api/usersApi";
@@ -62,7 +62,7 @@ const Users: React.FC = () => {
   return (
     <TanStackTable
       data={usersData}
-      columns={columns}
+      columns={usersColumns}
       columnToBeFiltered="role"
       STATUS_OPTIONS={ROLE_OPTIONS}
       button={AddUserButton}

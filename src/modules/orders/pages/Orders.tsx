@@ -1,5 +1,5 @@
 import React from "react";
-import { columns } from "../components/orders-columns";
+import { ordersColumns } from "../components/orders-columns";
 import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/layout/Loader";
 import { useGetOrdersQuery } from "../api/ordersApi";
@@ -48,7 +48,7 @@ const Orders: React.FC = () => {
   return (
     <TanStackTable
       data={ordersData}
-      columns={columns}
+      columns={ordersColumns}
       STATUS_OPTIONS={STATUS_OPTIONS}
       dateSortingId="appointmentDate"
     />
