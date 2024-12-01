@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
 import { useGetVerifiedBeauticiansQuery } from "../api/professionalApi";
@@ -8,15 +7,58 @@ import { Link } from "react-router-dom";
 import TanStackTable from "@/components/ui/Table/Table";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { useMemo, useState } from "react";
+import Loader from "@/components/layout/Loader";
 
 
-const VerifiedBeuticans = () => {
+const VerifiedBeuticans: React.FC = () => {
 
   const {data, isLoading, isError} = useGetVerifiedBeauticiansQuery(10000);
 
-  const STATUS_OPTIONS = [
-    { label: "All Options", value: null }
-  ];
+  const STATUS_OPTIONS = useMemo(() => {
+    if (!data?.data) return [];
+    
+    const uniqueStatuses = Array.from(
+      new Set(data.data.map(item => item.verificationData.verificationStatus))
+    );
+
+    return [
+      { label: "All Statuses", value: null },
+      ...uniqueStatuses.map(verificationStatus => ({
+        label: verificationStatus,
+        value: verificationStatus
+      }))
+    ];
+  }, [data]);
+
+  const getStatusBadge = (verificationStatus: string) => {
+    switch (verificationStatus) {
+    case "pending":
+      return (
+        <Badge className="bg-transparent border-2 font-semibold text-md border-gray-500 text-gray-500">
+          {verificationStatus}
+        </Badge>
+      );
+    case "review":
+      return (
+        <Badge className="bg-transparent border-2 font-semibold text-md border-blue-500 text-blue-500">
+          {verificationStatus}
+        </Badge>
+      );
+    case "rejected":
+      return (
+        <Badge className="bg-transparent border-2 font-semibold text-md border-red-500 text-red-500">
+          {verificationStatus}
+        </Badge>
+      );
+    default:
+      return (
+        <Badge className="bg-transparent border-2 font-semibold text-md border-gray-500 text-gray-500">
+          {verificationStatus}
+        </Badge>
+      );
+    }
+  };
 
   const columns: ColumnDef<VerifiedBeauticians>[] = [
     {
@@ -24,7 +66,7 @@ const VerifiedBeuticans = () => {
       header: "Beutician ID",
       cell: ({row}) => (
         <Link
-          to={`/beauticians/${row.getValue("id")}`}
+          to={`/dashboard/verifications/${row.getValue("id")}`}
           state={{verifiedBeautician: row.original}}
           className="hover:text-primary hover:underline truncate block max-w-[150px]"
         >
@@ -43,45 +85,19 @@ const VerifiedBeuticans = () => {
       cell: ({row}) => <span>{row.original?.user.email}</span>
     },
     {
+      accessorKey: "user.phoneNumber",
+      header: "Phone Number",
+      cell: ({row}) => <span>{row.original.user.phoneNumber}</span>
+    },
+    {
       accessorKey: "businessName",
       header:"Bussiness Name",
       cell: ({row}) => <span>{row.original.businessName}</span>
     },
     {
-      accessorKey: "businessType",
-      header: "Bussiness Type",
-      cell: ({row}) => <span>{row.original.businessType}</span>
-    },
-    {
       accessorKey: "locationAddress",
       header:"Location",
       cell: ({row}) => <span>{row.original.locationAddress}</span>
-    },
-    {
-      id: "isVerified",
-      accessorKey: "isVerified",
-      header: "Status",
-      cell: ({ row }) => {
-        const isVerified = row.getValue("isVerified");
-    
-        if (isVerified === true) {
-          return (
-            <Badge className="bg-transparent font-semibold text-blue-900 text-md">
-                Verified
-            </Badge>
-          );
-        }
-    
-        if (isVerified === false) {
-          return (
-            <Badge className="bg-transparent font-semibold text-destructive text-md">
-                Unverified
-            </Badge>
-          );
-        }
-    
-        return <Badge variant="outline">Unknown</Badge>;
-      },
     },
     {
       accessorKey: "createdAt",
@@ -90,6 +106,12 @@ const VerifiedBeuticans = () => {
         const date = new Date(row.original.createdAt);
         return <span>{format(date, 'MMM dd, yyyy')}</span>;
       }
+    },
+    {
+      id: "verificationStatus",
+      accessorKey: "verificationData.verificationStatus",
+      header: "Verification Status",
+      cell: ({ row }) => getStatusBadge(row.getValue("verificationStatus"))
     },
     {
       header: 'Actions',
@@ -103,7 +125,7 @@ const VerifiedBeuticans = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuItem>
               <Link
-                to={`/professionals/${row.original.id}`}
+                to={`/dashboard/verifications/${row.original.id}`}
                 state={{ professional: row.original }}
                 className="hover:text-primary"
               >
@@ -129,7 +151,7 @@ const VerifiedBeuticans = () => {
   ];
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
     
   if (isError) {
@@ -141,6 +163,7 @@ const VerifiedBeuticans = () => {
       <TanStackTable
         data={data.data}
         columns={columns}
+        columnToBeFiltered="verificationStatus"
         STATUS_OPTIONS={STATUS_OPTIONS}
       />
     </div>

@@ -15,6 +15,7 @@ const RevenueLazy = lazy(() => import("@/modules/revenue/pages/Revenue"));
 const UsersLazy = lazy(() => import("@/modules/users/pages/Users"));
 const BeauticiansListLazy = lazy(() => import("@/modules/applications/pages/BeauticiansList"));
 const VerfiedBeauticiansLazy = lazy(() => import("@/modules/applications/pages/VerifiedBeuticans"));
+const VerificationDetailsLazy = lazy(() => import("@/modules/applications/pages/VerificationDetails"));
 const MessagingLazy = lazy(() => import("@/modules/messaging/pages/Messaging"));
 const SettingsLazy = lazy(() => import("@/modules/settings/pages/Settings"));
 const OrderDetailsLazy = lazy(() => import("@/modules/orders/pages/OrderDetails"));
@@ -22,6 +23,8 @@ const UserDetailsLazy = lazy(() => import('@/modules/users/pages/UserDetails'));
 const ProfessionalsDetailsLazy = lazy(() => import('@/modules/applications/pages/ProfessionalDetails'));
 const CreateUserLazy = lazy(() => import("@/modules/users/pages/CreateUserPage"));
 const LedgerLazy = lazy(() => import('@/modules/ledger/pages/Ledger'));
+const LedgerLazyDetail = lazy(() => import ('@/modules/ledger/pages/LedgerBookDetails'));
+const CreateLoanLazy = lazy(() => import('@/modules/ledger/pages/LoanCreatePage'));
 const BoothsLazy = lazy(() => import("@/modules/booths/pages/Booths"));
 const BoothDetailsLazy = lazy(() => import("@/modules/booths/pages/BoothDetails"));
 const CreateBoothLazy = lazy(() => import("@/modules/booths/pages/CreateBoothPage"));
@@ -124,12 +127,25 @@ export const routes: RouteObject[] = [
         ]
       },
       {
-        path: "/beauticians",
-        element: (
-          <Suspense fallback={<Loader />}>
-            <VerfiedBeauticiansLazy />
-          </Suspense>
-        )
+        path: "/dashboard/verifications",
+        children: [
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<Loader />}>
+                <VerfiedBeauticiansLazy />
+              </Suspense>
+            )
+          },
+          {
+            path: ":beauticianId",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <VerificationDetailsLazy />
+              </Suspense>
+            )
+          }
+        ]
       },
       {
         path: "/messaging",
@@ -148,12 +164,33 @@ export const routes: RouteObject[] = [
         )
       },
       {
-        path: "/ledger",
-        element: (
-          <Suspense fallback={<Loader />}>
-            <LedgerLazy />
-          </Suspense>
-        )
+        path: "/ledgers/books",
+        children:[
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<Loader />}>
+                <LedgerLazy />
+              </Suspense>
+            )
+          },
+          {
+            path: ":bookId",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <LedgerLazyDetail />
+              </Suspense>
+            )
+          },
+          {
+            path: "create-loan",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <CreateLoanLazy />
+              </Suspense>
+            )
+          }
+        ]
       },
       {
         path: "/booths",

@@ -221,10 +221,10 @@ export interface VerifiedBeauticiansResponse {
   statusCode: string;
   code:       number;
   message:    string;
-  data:       VerifiedBeauticians[];
+  data:       VerifiedBeauticians;
 }
 
-export interface VerifiedBeauticians {
+export interface VerifiedBeauticians extends UpdateVerifiedBeautician {
   id:                   string;
   locationAddress:      string;
   resumeUrl:            null;
@@ -267,6 +267,12 @@ export interface VerifiedBeauticians {
   user:                 User;
   portfolio:            any[];
   services:             Service[];
+}
+
+export interface UpdateVerifiedBeautician {
+    verificationStatus:      string;
+    verificationDescription: string;
+    reviewedBy:              string;
 }
 
 export enum BusinessType {
@@ -315,6 +321,55 @@ export enum VerificationTitle {
   YouAreAwaitingApproval = "You are awaiting approval",
 }
 
+export interface Ledgers {
+  id:          string;
+  name:        string;
+  createdAt:   Date;
+  updatedAt:   Date;
+  isDeleted:   boolean;
+  deletedAt:   Date | null;
+  description: null;
+  ownerId:     string;
+}
+export interface LedgersApiResponse {
+  statusCode: string;
+  code:       number;
+  message:    string;
+  data:       Ledgers[];
+}
+
+export interface BooksApiResponse {
+  statusCode: string;
+  code:       number;
+  message:    string;
+  data:       Books;
+}
+
+export interface Books {
+  id:        string;
+  name:      string;
+  createdAt: Date;
+  updatedAt: Date;
+  isDeleted: boolean;
+  deletedAt: null;
+  ledgerId:  string;
+}
+
+export interface BookDetails {
+  id:        string;
+  name:      string;
+  createdAt: Date;
+  updatedAt: Date;
+  isDeleted: boolean;
+  deletedAt: null;
+  ledgerId:  string;
+  entries:   null;
+}
+
+export interface CreateUpdateLoanBook {
+    name: string;
+    ledgerId: string
+}
 export interface BoothsApiResponse<T> {
   statusCode: string;
   code: number;
