@@ -41,6 +41,7 @@ import {
   AlertDialogHeader,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import DummyUserDetails from "../components/dummy-user-details";
 
 const UserProfileCard: React.FC<{
   user: TausiUserDetails;
@@ -264,13 +265,7 @@ const UserDetails: React.FC = () => {
   }
 
   if (isError || !user) {
-    return (
-      <div className="container mx-auto p-4">
-        <div className="bg-destructive text-destructive-foreground p-4 rounded-lg">
-          Unable to load user details. Please try again later.
-        </div>
-      </div>
-    );
+    return <DummyUserDetails />;
   }
 
   return (
