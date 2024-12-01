@@ -1,39 +1,60 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "../../../Utils/axios";
-import { TausiUser } from "@/models/user";
-import { CreateUserRequest, UsersApiResponse } from "@/models";
+import { TausiUserDetails } from "@/models/user";
+import {
+  CreateUserRequest,
+  SingleUserApiResponse,
+  UsersApiResponse,
+} from "@/models";
 
 export const usersApi = createApi({
   reducerPath: "usersApi",
   baseQuery: axiosBaseQuery({ isAuthorizedApi: true }),
-  tagTypes: ["Users", "UsersDetails"],
-  refetchOnMountOrArgChange: true,
+  tagTypes: ["Users", "UserDetails"],
+  refetchOnMountOrArgChange: false,
   endpoints: (builder) => ({
     getUsers: builder.query<UsersApiResponse[], number>({
-      query: (limit) =>  ({
+      query: (limit) => ({
         url: `/users?limit=${limit}`,
         method: "GET",
       }),
       providesTags: ["Users"],
+      keepUnusedDataFor: 60,
     }),
-    getUserById: builder.query<TausiUser, string>({
+    getUserById: builder.query<TausiUserDetails, string>({
       query: (userId) => ({
         url: `/users/${userId}`,
         method: "GET",
       }),
-      transformResponse: (response: UsersApiResponse) => response.users,
-      providesTags: ["UsersDetails"]
+      transformResponse: (response: SingleUserApiResponse) => response.data,
+      providesTags: ["UserDetails"],
     }),
     createUser: builder.mutation<UsersApiResponse, CreateUserRequest>({
       query: (userData) => ({
-        url: '/users',
-        method: 'POST',
+        url: "/users",
+        method: "POST",
         data: userData,
       }),
       // Invalidate the Users tag to trigger a refetch of the users list
-      invalidatesTags: ['Users'],
+      invalidatesTags: ["Users"],
+    }),
+    updateUser: builder.mutation<
+      TausiUserDetails,
+      Partial<TausiUserDetails> & { id: string }
+    >({
+      query: ({ id, ...updates }) => ({
+        url: `/users/${id}`,
+        method: "PATCH",
+        data: updates,
+      }),
+      invalidatesTags: ["UserDetails", "Users"],
     }),
   }),
 });
 
-export const { useGetUsersQuery, useCreateUserMutation } = usersApi;
+export const {
+  useGetUsersQuery,
+  useCreateUserMutation,
+  useGetUserByIdQuery,
+  useUpdateUserMutation,
+} = usersApi;

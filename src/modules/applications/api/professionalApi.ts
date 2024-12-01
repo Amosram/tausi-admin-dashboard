@@ -1,21 +1,57 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "../../../Utils/axios";
-import { ApiResponse, Professional } from "@/models";
+import { ApiResponse, PortfolioApiResponse, Professional, ProfessionalApiResponse, VerifiedBeauticians, VerifiedBeauticiansResponse } from "@/models";
 
 export const professionalApi = createApi({
   reducerPath: 'professionalApi',
   baseQuery: axiosBaseQuery({isAuthorizedApi: true}),
-  tagTypes: ['Professionals'],
+  tagTypes: ['Professionals', 'ProfessionalsDetails', 'VerifiedBeauticians', 'VerifiedBeauticiansDetails'],
   refetchOnMountOrArgChange:true,
   endpoints: (builder) => ({
-    getProfessionals: builder.query<ApiResponse<Professional[]>, void>({
-      query: () => ({
-        url: "/professionals",
+    getProfessionals: builder.query<ApiResponse<Professional[]>, number>({
+      query: (limit) => ({
+        url: `/professionals?limit=${limit}`,
         method: "GET",
       }),
       providesTags: ['Professionals'],
-    })
+    }),
+    getProfessionalsById: builder.query<ProfessionalApiResponse, string> ({
+      query: (professionalId) => ({
+        url: `/professionals/${professionalId}`,
+        method: "GET",
+      }),
+      providesTags: ['ProfessionalsDetails']
+    }),
+    getProfessionalsPorfolio: builder.query<PortfolioApiResponse, string> ({
+      query: (professionalId) => ({
+        url: `/professionals/${professionalId}/portfolio`,
+        method: "GET",
+      }),
+      providesTags: ['ProfessionalsDetails']
+    }),
+    getVerifiedBeauticians: builder.query<ApiResponse<VerifiedBeauticians[]>, number>({
+      query: (limit) => ({
+        url: `/dashboard/verifications?limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ['VerifiedBeauticians'],
+    }),
+    useGetVerifiedBeauticianById: builder.query<VerifiedBeauticiansResponse, string>({
+      query: (beauticianId) => ({
+        url: `/dashboard/verifications/${beauticianId}`,
+        method: "GET",
+      }),
+      providesTags: ['VerifiedBeauticiansDetails'],
+    }),
+    updateverifiedBeauticians: builder.mutation<VerifiedBeauticiansResponse, Partial<VerifiedBeauticians>>({
+      query: (data) => ({
+        url: `/professionals/dashboard/verification/${data.id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ['VerifiedBeauticiansDetails'],
+    }),
   }),
 });
 
-export const {useGetProfessionalsQuery} = professionalApi;
+export const {useGetProfessionalsQuery, useGetProfessionalsByIdQuery, useGetProfessionalsPorfolioQuery, useGetVerifiedBeauticiansQuery, useUseGetVerifiedBeauticianByIdQuery, useUpdateverifiedBeauticiansMutation} = professionalApi;

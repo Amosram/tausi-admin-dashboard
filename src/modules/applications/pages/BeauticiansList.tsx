@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
 
 const ProfessionalDashboard = () => {
-  const {data, isLoading, isError} = useGetProfessionalsQuery();
+  const {data, isLoading, isError} = useGetProfessionalsQuery(10000);
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -74,9 +74,13 @@ const ProfessionalDashboard = () => {
       accessorKey: 'id',
       header: 'Application ID',
       cell: ({row}) => (
-        <div className="flex items-center space-x-2">
-          <span>{row.original.id}</span>
-        </div>
+        <Link
+          to={`/professionals/${row.getValue("id")}`}
+          state={{professional: row.original}}
+          className="hover:text-primary hover:underline truncate block max-w-[150px]"
+        >
+          {row.getValue("id")}
+        </Link>
       ),
     },
     {
@@ -119,24 +123,24 @@ const ProfessionalDashboard = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuItem>
               <Link
-                to={`/professional/${row.original.id}`}
+                to={`/professionals/${row.original.id}`}
                 state={{ professional: row.original }}
                 className="hover:text-primary"
               >
-                  View details
+                  View Beauticians Details
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => console.log("Edit:", row.original)}
               className="cursor-pointer"
             >
-                Edit professional
+                Edit Beauticians
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => console.log("Delete:", row.original)}
               className="bg-destructive text-white cursor-pointer"
             >
-                Delete professional
+                Delete Beauticians
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -154,18 +158,20 @@ const ProfessionalDashboard = () => {
   }
 
   if (isError) {
-    return <div>Error loading Countries</div>;
+    return <div>Error loading Beauticians List</div>;
   }
 
   return (
-    <TanStackTable
-      data={data.data}
-      columns={columns}
-      columnFilters={columnFilters}
-      handleStatusFilter={handleStatusFilter}
-      STATUS_OPTIONS={STATUS_OPTIONS}
-      onRowSelection={handleRowSelection}
-    />
+    <div className="pr-6 pl-6">
+      <TanStackTable
+        data={data.data}
+        columns={columns}
+        columnFilters={columnFilters}
+        handleStatusFilter={handleStatusFilter}
+        STATUS_OPTIONS={STATUS_OPTIONS}
+        onRowSelection={handleRowSelection}
+      />
+    </div>
   );
 };
 
