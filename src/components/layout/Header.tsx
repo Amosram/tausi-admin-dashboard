@@ -19,6 +19,7 @@ const routeMappings: Record<string, RouteDetails> = {
   "/orders": { title: "Orders" },
   "/revenue": { title: "Revenue" },
   "/users": { title: "Users" },
+  "/users/:id": { title: "User Details", backLink: "/users" },
   "/professionals": { title: "Beauticians List" },
   "/beauticians": { title: "Verified Beauticians" },
   "/messaging": { title: "Messaging" },
