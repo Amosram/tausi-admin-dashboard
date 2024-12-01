@@ -19,9 +19,11 @@ const Header = () => {
     "/users": "Users",
     "/professionals": "Beauticians List",
     "/dashboard/verifications": "Verified Beauticians",
+    "/ledgers/books": "Books",
     "/messaging": "Messaging",
     "/settings": "Settings",
     "/users/create-user": "Create User",
+    "/ledgers/create-loan":"Create Loan"
   };
 
   const getTitle = () => {
@@ -47,6 +49,11 @@ const Header = () => {
       return "User Details";
     }
 
+    if (path.startsWith("/ledgers/books/") && path.split("/").length > 2) {
+      return "Books Details";
+    }
+    
+
     return titles[path] || "Dashboard";
   };
 
@@ -66,19 +73,19 @@ const Header = () => {
             <SidebarTrigger />
           </div>
           <div className="relative">
-            {["Order Details", "Professional Details", "Verified Beauticians Details", "User Details", "Create User"].includes(
+            {["Order Details", "Professional Details", "Verified Beauticians Details", "User Details", "Create User", "Create Loan", "Ledger Details"].includes(
               dynamicTitle
             ) ? (
-              <Link
-                to={dynamicTitle === "Order Details" ? "/orders" : dynamicTitle === "Professional Details" ? "/professionals" : dynamicTitle === "Verified Beauticians Details" ? "/dashboard/verifications" : "/users"}
-                className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
-              >
-                <FaChevronLeft />
-                <span>{dynamicTitle}</span>
-              </Link>
-            ) : (
-              <div className="text-gray-600 font-bold">{dynamicTitle}</div>
-            )}
+                <Link
+                  to={dynamicTitle === "Order Details" ? "/orders" : dynamicTitle === "Ledger Details" ? "/ledgers/books" : dynamicTitle === "Professional Details" ? "/professionals" : dynamicTitle === "Verified Beauticians Details" ? "/dashboard/verifications" : "/users"}
+                  className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
+                >
+                  <FaChevronLeft />
+                  <span>{dynamicTitle}</span>
+                </Link>
+              ) : (
+                <div className="text-gray-600 font-bold">{dynamicTitle}</div>
+              )}
           </div>
         </div>
         <div className="flex items-center space-x-4"></div>
