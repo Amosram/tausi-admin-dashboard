@@ -70,9 +70,13 @@ const Ledger = () => {
       accessorKey: 'id',
       header: 'Book ID',
       cell: ({row}) => (
-        <div className="flex items-center space-x-2">
-          <span>{row.original.id}</span>
-        </div>
+        <Link
+          to={`/ledgers/books/${row.getValue("id")}`}
+          state={{professional: row.original}}
+          className="hover:text-primary hover:underline truncate block max-w-[150px]"
+        >
+          {row.getValue("id")}
+        </Link>
       ),
     },
     {
@@ -158,7 +162,7 @@ const Ledger = () => {
   }
 
   return (
-    <>
+    <div className="p-6">
       <TanStackTable
         data={data.data}
         columns={columns}
@@ -183,7 +187,7 @@ const Ledger = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   );
 };
 

@@ -1,28 +1,35 @@
 import Loader from '@/components/layout/Loader';
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetProfessionalsByIdQuery, useGetProfessionalsPorfolioQuery } from '../api/professionalApi';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
-import { Button } from '@/components/ui/button';
 import { Image, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ImageLightbox } from '../components/ImageGallery';
 import { IoPricetagOutline } from 'react-icons/io5';
+import { Coordinates } from '@/models';
+import { DEFAULT_LOCATION } from '@/Utils/constants';
+import Maps from '@/components/ui/maps';
+import { Button } from '@/components/ui/button';
 
 const ApplicationDetails: React.FC = () => {
   const { professionalId } = useParams();
   const { data, isLoading, isError } = useGetProfessionalsByIdQuery(professionalId!);
   const { data: portfolio, isLoading: isPortfolioLoading, isError: isPortfolioError } = useGetProfessionalsPorfolioQuery(professionalId!);
+  
+  const professional = data?.data;
+
+  // getting user location using coordinates
+  const [coordinates, setCoordinates] = useState<Coordinates>(professional?.coordinates || DEFAULT_LOCATION);
 
   if (isLoading || isPortfolioLoading) return <Loader />;
   if (isError || isPortfolioError) return <p>Error loading data.</p>;
 
-  const professional = data?.data;
   const { services, resumeUrl, businessName, bio, locationAddress, user } = professional || {};
 
   return (
-    <div className='p-6'>
-      <div className='flex flex-col md:flex-row flex-1 p-4 space-y-4 md:space-y-0 md:space-x-4 lg:space-x-10'>
+    <div className='container mx-auto p-4'>
+      <div className='flex flex-col md:flex-row p-4 space-y-4 md:space-y-0 md:space-x-4 lg:space-x-10'>
         {/* Left Panel */}
         <div className='w-full md:w-1/3 bg-white p-6 rounded-2xl shadow-sm'>
           <div className='text-center mt-8'>
@@ -68,7 +75,7 @@ const ApplicationDetails: React.FC = () => {
         </div>
 
         {/* Right Side Content */}
-        <div className='w-full md:w-2/3 bg-white p-4 rounded-2xl shadow-md'>
+        <div className='w-full md:w-2/3 bg-white p-4 rounded-2xl shadow-md self-start'>
           <div className="rounded-lg bg-white p-6 shadow-sm">
             <Tabs defaultValue="services">
               <TabsList className="mb-6">
@@ -172,7 +179,7 @@ const ApplicationDetails: React.FC = () => {
                                 {brand || 'Unnamed Product'}
                               </h3>
                               <p className="text-sm text-gray-500">
-                  Category: {brand.category || 'N/A'}
+                                 Category: {brand.category || 'N/A'}
                               </p>
                             </div>
                           </div>
@@ -207,32 +214,33 @@ const ApplicationDetails: React.FC = () => {
               </TabsContent>
             </Tabs>
           </div>
+          <div className="flex justify-end mt-4">
+            <Button
+              variant="ghost"
+              className="w-full md:w-60 bg-red-500 hover:bg-red-600 text-white"
+              onClick={() => { }}
+            >
+      Deactivate
+            </Button>
+          </div>
         </div>
       </div>
-      {/* TODO: GET RID OF THE BUTTONS */}
-      {/* <div className="mt-6 flex justify-end gap-6">
-        <div className="flex flex-col items-end gap-3 w-full md:w-auto">
-          <Button
-            variant="ghost"
-            className="w-full md:w-60 bg-gray-600 hover:bg-black text-white"
-          >
-      Decline
-          </Button>
-          <Button
-            variant="link"
-            className="w-full md:w-auto text-gray-500 text-center"
-          >
-      Request for more Info
-          </Button>
-        </div>
-        <Button
-          className="w-full md:w-60 bg-blue-500 hover:bg-blue-600"
-        >
-    Approve
-        </Button>
-      </div> */}
-
-
+      <div className="md:col-span-3 grid-cols-1">
+        {/* maps */}
+        <Maps
+          coordinates={{
+            lat: Number(professional.latitude) || coordinates.x,
+            lng: Number(professional.longitude) || coordinates.y,
+          }}
+          setCoordinates={(coords) => {
+            setCoordinates({
+              x: coords.lat,
+              y: coords.lng
+            });
+          }}
+        />
+      </div>
+        
     </div>
   );
 };
