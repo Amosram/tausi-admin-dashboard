@@ -278,7 +278,6 @@ const ProductCard: React.FC<{
           <div key={index} className="flex items-center space-x-4 p-2 rounded-lg hover:bg-muted">
             <img
               src='/tausi-logo.png'
-              alt={product.brands.join(", ")}
               width={50}
               height={50}
               className="rounded-md"

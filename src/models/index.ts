@@ -71,7 +71,7 @@ export interface Service {
   updatedAt: string;
   professionalId: string;
   serviceId: string;
-  brands: string[];
+  brands: string[] | null;
   duration: number;
   description: string | null;
   imagePath: string | null;
