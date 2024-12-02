@@ -108,10 +108,10 @@ const AddEntryDialog: React.FC = () => {
         <Tabs defaultValue="cashIn" className="space-y-4">
           {/* Tabs for Cash In / Cash Out */}
           <TabsList>
-            <TabsTrigger className="bg-green-600 rounded-xl p-2 w-24 text-white font-medium mr-4" value="cashIn" onClick={() => setEntryType("Cash In")}>
+            <TabsTrigger className={`rounded-xl p-2 w-24 text-white font-medium mr-4 ${entryType === "Cash In" ? "bg-green-600" : "bg-gray-400"}`} value="cashIn" onClick={() => setEntryType("Cash In")}>
               Cash In
             </TabsTrigger>
-            <TabsTrigger className="bg-red-600 rounded-xl w-24 p-2 text-white font-medium mr-4" value="cashOut" onClick={() => setEntryType("Cash Out")}>
+            <TabsTrigger className={`rounded-xl w-24 p-2 text-white font-medium mr-4 ${entryType === "Cash Out" ? "bg-red-600" : "bg-gray-400"}`} value="cashOut" onClick={() => setEntryType("Cash Out")}>
               Cash Out
             </TabsTrigger>
           </TabsList>

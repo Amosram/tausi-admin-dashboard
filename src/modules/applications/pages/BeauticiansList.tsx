@@ -140,7 +140,7 @@ const ProfessionalDashboard = () => {
               onClick={() => console.log("Delete:", row.original)}
               className="bg-destructive text-white cursor-pointer"
             >
-                Delete Beauticians
+                Deactivate Beauticians
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -43,11 +43,11 @@ const LedgerBookDetails = () => {
   const book = data;
   
   if (isLoading) {
-    return <Loader/>
+    return <Loader/>;
   }
 
   if (isError) {
-    return <div>Error fetching book details</div>
+    return <div>Error fetching book details</div>;
   }
 
   return (
@@ -68,9 +68,9 @@ const LedgerBookDetails = () => {
           <LedgerBookDetailsCard book={book} />
         </div>
         {/* Entries Card */}
-          <div className="md:col-span-2 grid grid-cols-1">
+        <div className="md:col-span-2 grid grid-cols-1">
           <LedgerBookEntriesCard />
-          </div>
+        </div>
       </div>
     </div>
   );
