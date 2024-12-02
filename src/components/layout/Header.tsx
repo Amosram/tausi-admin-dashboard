@@ -22,7 +22,7 @@ const routeMappings: Record<string, RouteDetails> = {
   "/users/:id": { title: "User Details", backLink: "/users" },
   "/professionals": { title: "Beauticians List" },
   "/professionals/:id": { title: "Professional Details", backLink: "/professionals" },
-  "/dashboard/verifications": { title: "Verified Beauticians" },
+  "/dashboard/verifications": { title: "Applications" },
   "/messaging": { title: "Messaging" },
   "/settings": { title: "Settings" },
   "/users/create-user": { title: "Create User", backLink: "/users" },
@@ -33,11 +33,7 @@ const routeMappings: Record<string, RouteDetails> = {
   "/ledgers/create-loan": { title: "Create Loan" },
   "/ledgers/books": { title: "Books" },
   "/ledgers/books/:id": { title: "Books Details", backLink: "/ledgers/books" },
-  "/dashboard/verifications/:id": { title: "Verified Beauticians Details", backLink: "/dashboard/verifications" },
-  "/professionals/:id": {
-    title: "Professional Details",
-    backLink: "/professionals",
-  },
+  "/dashboard/verifications/:id": { title: "Applications Details", backLink: "/dashboard/verifications" },
 };
 
 const getDynamicRouteDetails = (pathname: string): RouteDetails => {
@@ -52,7 +48,6 @@ const getDynamicRouteDetails = (pathname: string): RouteDetails => {
 };
 
 const Header = () => {
-  const navigate = useNavigate();
   const location = useLocation();
 
   const titles: { [key: string]: string } = {
@@ -100,7 +95,7 @@ const Header = () => {
     return titles[path] || "Dashboard";
   };
 
-  const dynamicTitle = getTitle();
+  const { title: dynamicTitle, backLink } = getDynamicRouteDetails(location.pathname);
 
   const navigate = useNavigate();
 
@@ -122,10 +117,10 @@ const Header = () => {
                 className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
               >
                 <FaChevronLeft />
-                <span>{title}</span>
+                <span>{dynamicTitle}</span>
               </Link>
             ) : (
-              <div className="text-gray-600 font-bold">{title}</div>
+              <div className="text-gray-600 font-bold">{dynamicTitle}</div>
             )}
           </div>
         </div>
