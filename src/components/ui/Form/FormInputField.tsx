@@ -29,7 +29,7 @@ interface FormInputFieldProps {
   label: string;
   placeholder?: string;
   description?: string;
-  type?: "text" | "email" | "tel" | "textarea" | "select";
+  type?: "text" | "email" | "tel" | "textarea" | "select" | "number";
   options?: SelectOption[];
 }
 

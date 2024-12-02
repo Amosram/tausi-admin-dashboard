@@ -28,17 +28,15 @@ const boothFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   locationAddress: z.string().min(5, "Location must be at least 5 characters"),
   numberOfBeauticians: z
-    .number()
-    .int()
-    .min(1, "Must have at least 1 beautician")
-    .max(100, "Too many beauticians")
-    .optional(),
+    .string()
+    .transform((value) => parseInt(value, 10))
+    .refine((value) => Number.isInteger(value) && value > 0, "Must be a positive integer")
+    .refine((value) => value <= 100, "Too many beauticians"),
   numberOfStations: z
-    .number()
-    .int()
-    .min(1, "Must have at least 1 station")
-    .max(50, "Too many stations")
-    .optional(),
+    .string()
+    .transform((value) => parseInt(value, 10))
+    .refine((value) => Number.isInteger(value) && value > 0, "Must be a positive integer")
+    .refine((value) => value <= 50, "Too many stations"),
   occupancyStatus: z.enum(["empty", "occupied"], {
     required_error: "Please select the occupancy status",
   }),
@@ -49,6 +47,7 @@ const boothFormSchema = z.object({
     y: z.number().min(-90).max(90, "Latitude must be between -90 and 90"),
   }),
 });
+
 
 type BoothFormValues = z.infer<typeof boothFormSchema>;
 
@@ -63,8 +62,6 @@ const CreateBoothPage: React.FC = () => {
     defaultValues: {
       name: "",
       locationAddress: "",
-      numberOfBeauticians: 0,
-      numberOfStations: 0,
       occupancyStatus: "empty",
       imagePath: "",
       imageUrl: "",
@@ -148,6 +145,7 @@ const CreateBoothPage: React.FC = () => {
                 name="numberOfBeauticians"
                 label="Number of Beauticians"
                 placeholder="e.g 1"
+                type="number"
                 description="Number of beauticians in this booth"
               />
 
@@ -156,6 +154,7 @@ const CreateBoothPage: React.FC = () => {
                 name="numberOfStations"
                 label="Number of Stations"
                 placeholder="e.g 1"
+                type="number"
                 description="Number of stations in this booth"
               />
 
