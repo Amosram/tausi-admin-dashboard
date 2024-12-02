@@ -225,8 +225,75 @@ const BusinessCard: React.FC<{
   
 );
 
+// service provided card
+const ServiceProvidedCard: React.FC<{
+  beautician: VerifiedBeauticians;
+}> = (beautician) => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Services</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="grid grid-cols-1 gap-4">
+        {beautician.beautician?.services.map((service, index) => (
+          <Card key={index}>
+            <CardHeader className="pb-2">
+              <div className="flex items-center space-x-4">
+                <img
+                  src={service.serviceData.imageUrl}
+                  alt={service.serviceData.name}
+                  width={100}
+                  height={100}
+                  className="rounded-md"
+                />
+                <div>
+                  <CardTitle className="text-xl capitalize mb-2">{service.serviceData.name}</CardTitle>
+                  <CardDescription className="text-lg"> Category: N/A</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-lg mb-2">{service.serviceData.description}</p>
+              <p className="font-medium"><b>Price:</b> KES {service.serviceData.minimumPrice}</p>
+              <p className="font-medium"><b>Duration:</b> {Math.floor(service.duration / 60)} min</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </CardContent>
+  </Card>
+);
 
-
+// products card
+const ProductCard: React.FC<{
+  beautician: VerifiedBeauticians;
+}> = (beautician) => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Products</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="space-y-4">
+        {beautician.beautician.services.map((product, index) => (
+          <div key={index} className="flex items-center space-x-4 p-2 rounded-lg hover:bg-muted">
+            <img
+              src='/tausi-logo.png'
+              alt={product.brands.join(", ")}
+              width={50}
+              height={50}
+              className="rounded-md"
+            />
+            <div>
+              <h3 className="font-semibold capitalize text-xl">{product.brands}</h3>
+              {/* <p className="text-sm text-muted-foreground">{product.description}</p>
+              <p className="font-semibold mt-1">KES{product.price}</p> */}
+            </div>
+          </div>
+        ))}
+      </div>
+    </CardContent>
+  </Card>
+);
 
 const VerificationDetails: React.FC = () => {
   
@@ -294,12 +361,11 @@ const VerificationDetails: React.FC = () => {
         </div>
       </div>
       {/* beautician Profile */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
           <ProfileCard beautician={beautician} />
           <ProfessionalDetailsCard beautician={beautician} />
         </div>
-
         {/* Contact information */}
         <div className="md:col-span-2 grid grid-cols-1 gap-4">
           <ContactInformationCard beautician={beautician} />
@@ -307,25 +373,35 @@ const VerificationDetails: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
             <VerificationDetailsCard verificationData={beautician}/>
           </div>
-          <div className="">
+          {/* Business Card */}
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
             <BusinessCard beautician={beautician} />
           </div>
         </div>
-        {/* Location*/}
-        <div className="md:col-span-3 grid-cols-1">
-          <Maps
-            coordinates={{
-              lat: Number(beautician.latitude) || coordinates.x,
-              lng: Number(beautician.longitude) || coordinates.y,
-            }}
-            setCoordinates={(coords) => {
-              setCoordinates({
-                x: coords.lat,
-                y: coords.lng
-              });
-            }}
-          />
+      </div>
+      {/* Service and Product Card */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <div className="md:col-span-1 grid grid-cols-1 gap-4">
+          <ServiceProvidedCard beautician={beautician} />
         </div>
+        <div className="md:col-span-1 grid grid-cols-1 gap-4">
+          <ProductCard beautician={beautician} />
+        </div>
+      </div>
+      {/* Location*/}
+      <div className="md:col-span-3 grid-cols-3">
+        <Maps
+          coordinates={{
+            lat: Number(beautician.latitude) || coordinates.x,
+            lng: Number(beautician.longitude) || coordinates.y,
+          }}
+          setCoordinates={(coords) => {
+            setCoordinates({
+              x: coords.lat,
+              y: coords.lng
+            });
+          }}
+        />
       </div>
     </div>
   );
