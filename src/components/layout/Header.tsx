@@ -55,7 +55,54 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { title, backLink } = getDynamicRouteDetails(location.pathname);
+  const titles: { [key: string]: string } = {
+    "/": "Dashboard",
+    "/orders": "Orders",
+    "/revenue": "Revenue",
+    "/users": "Users",
+    "/professionals": "Beauticians List",
+    "/dashboard/verifications": "Applications",
+    "/ledgers/books": "Books",
+    "/messaging": "Messaging",
+    "/settings": "Settings",
+    "/users/create-user": "Create User",
+    "/ledgers/create-loan":"Create Loan"
+  };
+
+  const getTitle = () => {
+    const path = location.pathname;
+
+    if (path.startsWith("/orders/") && path.split("/").length > 2) {
+      return "Order Details";
+    }
+
+    if (path.startsWith("/professionals/") && path.split("/").length > 2) {
+      return "Professional Details";
+    }
+
+    if (path.startsWith("/dashboard/verifications/") && path.split("/").length > 2) {
+      return "Applications Details";
+    }
+
+
+    if (path.startsWith("/users/") && path.split("/").length > 2) {
+      if (path === "/users/create-user") {
+        return "Create User";
+      }
+      return "User Details";
+    }
+
+    if (path.startsWith("/ledgers/books/") && path.split("/").length > 2) {
+      return "Books Details";
+    }
+    
+
+    return titles[path] || "Dashboard";
+  };
+
+  const dynamicTitle = getTitle();
+
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     navigate("/auth/login");

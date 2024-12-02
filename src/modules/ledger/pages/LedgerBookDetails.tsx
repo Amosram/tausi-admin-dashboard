@@ -12,7 +12,7 @@ const LedgerBookDetailsCard: React.FC<{
 }> = ({ book }) => (
   <Card>
     <CardHeader>
-      <CardTitle>book Information</CardTitle>
+      <CardTitle>Book Information</CardTitle>
     </CardHeader>
     <CardContent className="space-y-3">
       {book.name && (

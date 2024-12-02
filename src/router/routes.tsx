@@ -14,7 +14,7 @@ const OrdersLazy = lazy(() => import("@/modules/orders/pages/Orders"));
 const RevenueLazy = lazy(() => import("@/modules/revenue/pages/Revenue"));
 const UsersLazy = lazy(() => import("@/modules/users/pages/Users"));
 const BeauticiansListLazy = lazy(() => import("@/modules/applications/pages/BeauticiansList"));
-const VerfiedBeauticiansLazy = lazy(() => import("@/modules/applications/pages/VerifiedBeuticans"));
+const VerfiedBeauticiansLazy = lazy(() => import("@/modules/applications/pages/UnVerifiedBeuticans"));
 const VerificationDetailsLazy = lazy(() => import("@/modules/applications/pages/VerificationDetails"));
 const MessagingLazy = lazy(() => import("@/modules/messaging/pages/Messaging"));
 const SettingsLazy = lazy(() => import("@/modules/settings/pages/Settings"));
