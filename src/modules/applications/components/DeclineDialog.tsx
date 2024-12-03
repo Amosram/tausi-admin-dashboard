@@ -27,7 +27,7 @@ const DeclineDialog = ({ beauticianId }: { beauticianId: string }) => {
         reviewedBy:  reviewedBy as VerifiedBeauticians["reviewedBy"],
       }).unwrap();
 
-      toast({ title: "Success", description: "Application declined successfully!" });
+      toast({ title: "Success", description: "Application declined successfully!", variant: "success" });
     } catch (error) {
       console.error("Decline failed:", error);
       toast({ title: "Error", description: "An error occurred while declining the application.", variant: "destructive" });
