@@ -136,7 +136,7 @@ const ProfessionalDetails = () => {
         isActive: true,
         deactivatedAt: null,
         deactivatedBy: null,
-        deactivatedReason: null
+        deactivatedReason: null,
       }).unwrap();
 
       toast({

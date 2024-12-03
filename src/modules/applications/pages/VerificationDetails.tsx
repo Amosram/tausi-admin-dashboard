@@ -12,18 +12,20 @@ import {
   Star,
   CheckCircle,
   XCircle,
-  Clock,
+  Clock10,
+  CircleEllipsis,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
-import { useGetProfessionalsPorfolioQuery, useUseGetVerifiedBeauticianByIdQuery } from "../api/professionalApi";
+import { useGetProfessionalsPorfolioQuery, useUpdateverifiedBeauticiansMutation, useUseGetVerifiedBeauticianByIdQuery } from "../api/professionalApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DEFAULT_LOCATION } from "@/Utils/constants";
 import DeclineDialog from "../components/DeclineDialog";
 import { ImageLightbox } from "../components/ImageGallery";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 const Maps = lazy(() => import("@/components/ui/maps"));
 
@@ -100,9 +102,10 @@ const VerificationDetailsCard: React.FC<{ verificationData: VerifiedBeauticians 
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center capitalize">
-          {verificationData.verificationData?.verificationStatus === "review" && <CheckCircle className="mr-2 h-5 w-5 text-green-500" />}
+          {verificationData.verificationData?.verificationStatus === "approved" && <CheckCircle className="mr-2 h-5 w-5 text-green-500" />}
+          {verificationData.verificationData?.verificationStatus === "review" && <Clock10 className="mr-2 h-5 w-5 text-red-500" />}
           {verificationData.verificationData?.verificationStatus === "rejected" && <XCircle className="mr-2 h-5 w-5 text-red-500" />}
-          {verificationData.verificationData?.verificationStatus === "pending" && <Clock className="mr-2 h-5 w-5 text-yellow-500" />}
+          {verificationData.verificationData?.verificationStatus === "pending" && <CircleEllipsis className="mr-2 h-5 w-5 text-yellow-500" />}
           Verification Status: {verificationData.verificationData?.verificationStatus}
         </CardTitle>
         <CardDescription className='text-sm text-muted-foreground font-semibold'>{verificationData.verificationData?.verificationTitle}</CardDescription>
@@ -302,7 +305,8 @@ const VerificationDetails: React.FC = () => {
   const {professionalId} = useParams();
   const {data, isLoading, isError} = useUseGetVerifiedBeauticianByIdQuery(professionalId!);
   const {data: portfolio, isLoading: isPortfolioLoading, isError: isPortfolioError} = useGetProfessionalsPorfolioQuery(professionalId!);
-  
+  const [updateVerifiedBeauticians] = useUpdateverifiedBeauticiansMutation();
+
   const beautician = data?.data;
   
   // using the map component
@@ -338,6 +342,27 @@ const VerificationDetails: React.FC = () => {
       </div>
     );
   }
+
+  const handleApprove = async () => {
+    try{
+      await updateVerifiedBeauticians({
+        id: beautician.id,
+        // isVerified: true,
+        verificationStatus: "approved",
+        verificationTitle: "Verification Approved",
+        verificationDescription: "Verification approved successfully",
+      }).unwrap();
+      toast({ title: "Success", description: "Application approved successfully!", variant: "success" });
+    }
+    catch (error) {
+      console.error("Approve failed:", error);
+      toast({ title: "Error", description: "An error occurred while approving the application.", variant: "destructive" });
+    }
+  };
+
+  const isActionCompleted =
+    beautician.isVerified || beautician.verificationData?.verificationStatus === "approved" || beautician.verificationData?.verificationStatus === "rejected";
+
   return (
     <div className="container mx-auto p-4">
       {/* Verification Management */}
@@ -351,15 +376,19 @@ const VerificationDetails: React.FC = () => {
           </Badge>
         </div>
         <div className="flex gap-3">
-          <Button className="flex items-center space-x-2 bg-green-600">
-            <CheckCircle size={16} />
-            <span>Approve</span>
-          </Button>
-          {/* <Button variant="destructive" className="flex items-center space-x-2">
-            <XCircle size={16} />
-            <span>Decline</span>
-          </Button> */}
-          <DeclineDialog beauticianId={professionalId} />
+          {!beautician.verificationData?.verificationStatus.includes("rejected") && !beautician.isVerified && (
+            <Button
+              className="flex items-center space-x-2 bg-green-600"
+              onClick={handleApprove}
+              disabled={beautician.isVerified || beautician.verificationData?.verificationStatus.includes("approved")}
+            >
+              <CheckCircle size={16} />
+              <span>Approve</span>
+            </Button>
+          )}
+          {!beautician.verificationData?.verificationStatus.includes("approved") && !beautician.isVerified && !isActionCompleted && !beautician.isVerified && (
+            <DeclineDialog beauticianId={professionalId}/>
+          )}
         </div>
       </div>
       {/* beautician Profile */}

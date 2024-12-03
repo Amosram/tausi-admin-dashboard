@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 
 const DeclineDialog = ({ beauticianId }: { beauticianId: string }) => {
   const [description, setDescription] = useState("");
-  const [reviewedBy, setReviewedBy] = useState("")
+  const [reviewedBy, setReviewedBy] = useState("");
   const [updateVerifiedBeauticians, { isLoading }] = useUpdateverifiedBeauticiansMutation();
 
   const handleDecline = async () => {
@@ -23,9 +23,13 @@ const DeclineDialog = ({ beauticianId }: { beauticianId: string }) => {
       await updateVerifiedBeauticians({
         id: beauticianId,
         verificationStatus: VerificationStatus.Rejected,
+        verificationTitle: "Verification Rejected",
         verificationDescription: description,
         reviewedBy:  reviewedBy as VerifiedBeauticians["reviewedBy"],
       }).unwrap();
+
+      setDescription("");
+      setReviewedBy("");
 
       toast({ title: "Success", description: "Application declined successfully!", variant: "success" });
     } catch (error) {
@@ -37,7 +41,10 @@ const DeclineDialog = ({ beauticianId }: { beauticianId: string }) => {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <Button variant="destructive" className="flex items-center space-x-2">
+        <Button
+          variant="destructive"
+          className="flex items-center space-x-2"
+        >
           <XCircle size={16} />
           <span>Decline</span>
         </Button>

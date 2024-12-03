@@ -51,6 +51,12 @@ const VerifiedBeuticans: React.FC = () => {
           {verificationStatus}
         </Badge>
       );
+      case "approved":
+        return (
+        <Badge className="bg-transparent border-2 font-semibold text-md border-green-500 text-green-500">
+          {verificationStatus}
+        </Badge>
+        );
     default:
       return (
         <Badge className="bg-transparent border-2 font-semibold text-md border-gray-500 text-gray-500">
