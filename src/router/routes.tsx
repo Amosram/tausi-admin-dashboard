@@ -138,7 +138,7 @@ export const routes: RouteObject[] = [
             )
           },
           {
-            path: ":beauticianId",
+            path: ":professionalId",
             element: (
               <Suspense fallback={<Loader />}>
                 <VerificationDetailsLazy />

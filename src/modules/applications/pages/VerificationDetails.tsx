@@ -17,10 +17,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
-import { useUseGetVerifiedBeauticianByIdQuery } from "../api/professionalApi";
+import { useGetProfessionalsPorfolioQuery, useUseGetVerifiedBeauticianByIdQuery } from "../api/professionalApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DEFAULT_LOCATION } from "@/Utils/constants";
 import DeclineDialog from "../components/DeclineDialog";
+import { ImageLightbox } from "../components/ImageGallery";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
+import { cn } from "@/lib/utils";
 
 const Maps = lazy(() => import("@/components/ui/maps"));
 
@@ -296,20 +299,20 @@ const ProductCard: React.FC<{
 
 const VerificationDetails: React.FC = () => {
   
-  const {beauticianId} = useParams();
-  const {data, isLoading, isError} = useUseGetVerifiedBeauticianByIdQuery(beauticianId!);
-
+  const {professionalId} = useParams();
+  const {data, isLoading, isError} = useUseGetVerifiedBeauticianByIdQuery(professionalId!);
+  const {data: portfolio, isLoading: isPortfolioLoading, isError: isPortfolioError} = useGetProfessionalsPorfolioQuery(professionalId!);
+  
   const beautician = data?.data;
-
-
+  
   // using the map component
   const [coordinates, setCoordinates] = useState<Coordinates>(beautician?.coordinates || DEFAULT_LOCATION);
-
-  if (!beauticianId) {
+  
+  if (!professionalId) {
     return <div>Invalid beautician ID</div>;
   }
 
-  if (isLoading) {
+  if (isLoading || isPortfolioLoading) {
     return (
       <div className="container mx-auto p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -326,7 +329,7 @@ const VerificationDetails: React.FC = () => {
     );
   }
 
-  if (isError || !beautician) {
+  if (isError || !beautician || isPortfolioError) {
     return (
       <div className="container mx-auto p-4">
         <div className="bg-destructive text-destructive-foreground p-4 rounded-lg">
@@ -356,7 +359,7 @@ const VerificationDetails: React.FC = () => {
             <XCircle size={16} />
             <span>Decline</span>
           </Button> */}
-          <DeclineDialog beauticianId={beauticianId} />
+          <DeclineDialog beauticianId={professionalId} />
         </div>
       </div>
       {/* beautician Profile */}
@@ -387,21 +390,75 @@ const VerificationDetails: React.FC = () => {
           <ProductCard beautician={beautician} />
         </div>
       </div>
-      {/* Location*/}
-      <div className="md:col-span-3 grid-cols-3">
-        <Maps
-          coordinates={{
-            lat: Number(beautician.latitude) || coordinates.x,
-            lng: Number(beautician.longitude) || coordinates.y,
-          }}
-          setCoordinates={(coords) => {
-            setCoordinates({
-              x: coords.lat,
-              y: coords.lng
-            });
-          }}
-        />
-      </div>
+      {/* Tab Layout for Portfolio and Location */}
+      <Tabs className="w-full mt-8" defaultValue="location">
+        {/* Tab List */}
+        <TabsList className="flex border-b border-muted space-x-4 pb-2 " aria-label="Portfolio and Location">
+          <TabsTrigger
+            value="location"
+            className={cn(
+              "border-b-4 border-transparent px-4 py-2 font-medium text-lg",
+              "data-[state=active]:border-red-500 data-[state=active]:text-red-500"
+            )}
+          >
+            Location
+          </TabsTrigger>
+          <TabsTrigger
+            value="portfolio"
+            className={cn(
+              "border-b-4 border-transparent px-4 py-2 font-medium text-lg",
+              "data-[state=active]:border-red-500 data-[state=active]:text-red-500"
+            )}
+          >
+            Portfolio
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Tab Content */}
+        <TabsContent value="portfolio" className="mt-4">
+          <div className="md:col-span-3 grid-cols-3">
+            {Array.isArray(portfolio?.data) ? (
+              <ImageLightbox
+                images={portfolio.data}
+                trigger={(openLightbox) => (
+                  <>
+                    {portfolio.data.map((item, index) => (
+                      <img
+                        key={item.id}
+                        src={item.imageUrl}
+                        alt="Portfolio Image"
+                        className="w-full h-full object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => openLightbox(index)}
+                        onLoad={() => console.log(`Image ${item.id} loaded successfully:`, item.imageUrl)}
+                        onError={() => console.error(`Failed to load image ${item.id}:`, item.imageUrl)}
+                      />
+                    ))}
+                  </>
+                )}
+              />
+            ) : (
+              <p>No images available in the portfolio.</p>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="location" className="mt-4">
+          <div className="md:col-span-3 grid-cols-3">
+            <Maps
+              coordinates={{
+                lat: Number(beautician.latitude) || coordinates.x,
+                lng: Number(beautician.longitude) || coordinates.y,
+              }}
+              setCoordinates={(coords) => {
+                setCoordinates({
+                  x: coords.lat,
+                  y: coords.lng,
+                });
+              }}
+            />
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

@@ -37,8 +37,8 @@ export const professionalApi = createApi({
       providesTags: ['VerifiedBeauticians'],
     }),
     useGetVerifiedBeauticianById: builder.query<VerifiedBeauticiansResponse, string>({
-      query: (beauticianId) => ({
-        url: `/dashboard/verifications/${beauticianId}`,
+      query: (professionalId) => ({
+        url: `/dashboard/verifications/${professionalId}`,
         method: "GET",
       }),
       providesTags: ['VerifiedBeauticiansDetails'],
