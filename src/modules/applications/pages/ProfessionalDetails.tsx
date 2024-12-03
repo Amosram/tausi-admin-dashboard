@@ -1,5 +1,5 @@
 import { lazy, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Coordinates, Professional } from "@/models";
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
@@ -201,6 +201,45 @@ const BusinessCard: React.FC<{
   
 );
 
+// service provided card
+const ServiceProvidedCard: React.FC<{
+  professional: Professional;
+}> = (professional) => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Services</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="grid grid-cols-1 gap-4">
+        {professional.professional?.services.map((service, index) => (
+          <Card key={index}>
+            <CardHeader className="pb-2">
+              <div className="flex items-center space-x-4">
+                <img
+                  src={service.serviceData.imageUrl}
+                  alt={service.serviceData.name}
+                  width={100}
+                  height={100}
+                  className="rounded-md"
+                />
+                <div>
+                  <CardTitle className="text-xl capitalize mb-2">{service.serviceData.name}</CardTitle>
+                  <CardDescription className="text-lg"> Category: N/A</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-lg mb-2">{service.serviceData.description}</p>
+              <p className="font-medium"><b>Price:</b> KES {service.serviceData.minimumPrice}</p>
+              <p className="font-medium"><b>Duration:</b> {Math.floor(service.duration / 60)} min</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </CardContent>
+  </Card>
+);
+
 const ProfessionalDetails = () => {
   const {professionalId} = useParams();
   const {data, isLoading, isError} = useGetProfessionalsByIdQuery(professionalId!);
@@ -316,7 +355,7 @@ const ProfessionalDetails = () => {
       {/* Service and Product Card */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
-          {/* <ServiceProvidedCard professional={professional} /> */}
+          <ServiceProvidedCard professional={professional} />
         </div>
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
           {/* <ProductCard professional={professional} /> */}
