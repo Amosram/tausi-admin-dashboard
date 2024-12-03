@@ -15,6 +15,7 @@ export const professionalApi = createApi({
       }),
       providesTags: ['Professionals'],
     }),
+
     getProfessionalsById: builder.query<ProfessionalApiResponse, string> ({
       query: (professionalId) => ({
         url: `/professionals/${professionalId}`,
@@ -22,6 +23,7 @@ export const professionalApi = createApi({
       }),
       providesTags: ['ProfessionalsDetails']
     }),
+
     getProfessionalsPorfolio: builder.query<PortfolioApiResponse, string> ({
       query: (professionalId) => ({
         url: `/professionals/${professionalId}/portfolio`,
@@ -29,6 +31,16 @@ export const professionalApi = createApi({
       }),
       providesTags: ['ProfessionalsDetails']
     }),
+
+    updateProfessional: builder.mutation<ProfessionalApiResponse, Partial<Professional>>({
+      query: (data) => ({
+        url: `/professionals/${data.id}`,
+        method: "PATCH",
+        data: data,
+      }),
+      invalidatesTags: ['ProfessionalsDetails']
+    }),
+
     getVerifiedBeauticians: builder.query<ApiResponse<VerifiedBeauticians[]>, number>({
       query: (limit) => ({
         url: `/dashboard/verifications?limit=${limit}`,
@@ -36,6 +48,7 @@ export const professionalApi = createApi({
       }),
       providesTags: ['VerifiedBeauticians'],
     }),
+
     useGetVerifiedBeauticianById: builder.query<VerifiedBeauticiansResponse, string>({
       query: (professionalId) => ({
         url: `/dashboard/verifications/${professionalId}`,
@@ -43,6 +56,7 @@ export const professionalApi = createApi({
       }),
       providesTags: ['VerifiedBeauticiansDetails'],
     }),
+
     updateverifiedBeauticians: builder.mutation<VerifiedBeauticiansResponse, Partial<VerifiedBeauticians>>({
       query: (data) => ({
         url: `/dashboard/verifications/${data.id}`,
@@ -51,7 +65,16 @@ export const professionalApi = createApi({
       }),
       invalidatesTags: ['VerifiedBeauticiansDetails'],
     }),
+
   }),
 });
 
-export const {useGetProfessionalsQuery, useGetProfessionalsByIdQuery, useGetProfessionalsPorfolioQuery, useGetVerifiedBeauticiansQuery, useUseGetVerifiedBeauticianByIdQuery, useUpdateverifiedBeauticiansMutation} = professionalApi;
+export const {
+  useGetProfessionalsQuery,
+  useGetProfessionalsByIdQuery,
+  useGetProfessionalsPorfolioQuery,
+  useGetVerifiedBeauticiansQuery,
+  useUseGetVerifiedBeauticianByIdQuery,
+  useUpdateverifiedBeauticiansMutation,
+  useUpdateProfessionalMutation
+} = professionalApi;

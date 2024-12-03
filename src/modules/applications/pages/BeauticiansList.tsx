@@ -8,17 +8,18 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreVertical } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
+import Loader from "@/components/layout/Loader";
 
 const ProfessionalDashboard = () => {
   const {data, isLoading, isError} = useGetProfessionalsQuery(10000);
-
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
+
   const handleStatusFilter = (status: string | null) => {
-    setColumnFilters((filters) => {
-      const newFilters = filters.filter((f) => f.id !== "isVerified");
+    setColumnFilters((prevFilters) => {
+      const newFilters = prevFilters.filter((filter) => filter.id !== "isActive");
       if (status !== null) {
-        newFilters.push({ id: "isVerified", value: status });
+        newFilters.push({ id: "isActive", value: status === "Active" });
       }
       return newFilters;
     });
@@ -28,7 +29,7 @@ const ProfessionalDashboard = () => {
     if (!data?.data) return [];
     
     const uniqueStatuses = Array.from(
-      new Set(data.data.map(item => item.isVerified ? "Verified" : "Pending"))
+      new Set(data.data.map(item => item.isActive ? "Active" : "Inactive"))
     );
 
     return [
@@ -42,19 +43,13 @@ const ProfessionalDashboard = () => {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-    case "Pending":
+    case "Active":
       return (
         <Badge className="bg-transparent border-2 font-semibold text-md border-gray-500 text-gray-500">
           {status}
         </Badge>
       );
-    case "In Review":
-      return (
-        <Badge className="bg-transparent border-2 font-semibold text-md border-blue-500 text-blue-500">
-          {status}
-        </Badge>
-      );
-    case "Rejected":
+    case "inActive":
       return (
         <Badge className="bg-transparent border-2 font-semibold text-md border-red-500 text-red-500">
           {status}
@@ -104,12 +99,13 @@ const ProfessionalDashboard = () => {
     {
       accessorKey: "user.phoneNumber",
       header: "Contact",
-      cell: ({ row }) => <span>+{row.original.user?.phoneNumber || "N/A"}</span>
+      cell: ({ row }) => <span>{row.original.user?.phoneNumber || "N/A"}</span>
     },
     {
-      accessorKey: "isVerified",
+      id: "isActive",
+      accessorKey: "isActive",
       header: "Status",
-      cell: ({row}) => getStatusBadge(row.original.isVerified ? "Verified" : "Pending")
+      cell: ({row}) => getStatusBadge(row.getValue("isActive") ? "Active" : "Inactive")
     },
     {
       header: 'Actions',
@@ -154,7 +150,7 @@ const ProfessionalDashboard = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   if (isError) {
