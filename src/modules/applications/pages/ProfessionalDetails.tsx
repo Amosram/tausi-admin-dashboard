@@ -340,11 +340,11 @@ const ProfessionalDetails = () => {
 
   return (
     <div className="container mx-auto p-4">
-      {/* Verification Management */}
+      {/* Professional Management */}
       <div className="w-full bg-muted p-4 rounded-lg flex flex-col sm:flex-row justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
           <h2 className="text-xl font-bold">
-                 Verification Management
+                 Professional Management
           </h2>
           <Badge variant={professional.isActive ? "default" : "destructive"}>
             {professional.isActive ? "Active" : "Inactive"}
