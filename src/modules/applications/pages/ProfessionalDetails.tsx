@@ -240,6 +240,37 @@ const ServiceProvidedCard: React.FC<{
   </Card>
 );
 
+// products card
+const ProductCard: React.FC<{
+  professional: Professional;
+}> = (professional) => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Products</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="space-y-4">
+        {professional.professional.services.map((product, index) => (
+          <div key={index} className="flex items-center space-x-4 p-2 rounded-lg hover:bg-muted">
+            <img
+              src='/tausi-logo.png'
+              width={50}
+              height={50}
+              className="rounded-md"
+            />
+            <div>
+              <h3 className="font-semibold capitalize text-xl">{product.brands}</h3>
+              {/* <p className="text-sm text-muted-foreground">{product.description}</p>
+              <p className="font-semibold mt-1">KES{product.price}</p> */}
+            </div>
+          </div>
+        ))}
+      </div>
+    </CardContent>
+  </Card>
+);
+
+
 const ProfessionalDetails = () => {
   const {professionalId} = useParams();
   const {data, isLoading, isError} = useGetProfessionalsByIdQuery(professionalId!);
@@ -358,7 +389,7 @@ const ProfessionalDetails = () => {
           <ServiceProvidedCard professional={professional} />
         </div>
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
-          {/* <ProductCard professional={professional} /> */}
+          <ProductCard professional={professional} />
         </div>
       </div>
       {/* Tab Layout for Portfolio and Location */}
