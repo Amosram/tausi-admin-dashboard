@@ -34,7 +34,7 @@ export const boothsApi = createApi({
         invalidatesTags: ["Booths"],
       }
     ),
-    updateBooth: builder.mutation<Booth, { id: string; data: Partial<Booth> }>({
+    updateBooth: builder.mutation<BoothsApiResponse<Booth>, { id: string; data: Partial<Booth> }>({
       query: ({ id, data }) => ({
         url: `/booths/${id}`,
         method: "PATCH",
