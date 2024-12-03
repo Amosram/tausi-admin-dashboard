@@ -7,6 +7,10 @@ import {
   Phone,
   Mail,
   CheckCircle,
+  Briefcase,
+  Globe,
+  ShieldCheck,
+  Star,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -82,6 +86,50 @@ const ContactInformationCard: React.FC<{
             {professional?.user?.emailVerified ? "Verified" : "Unverified"}
           </Badge>
         </div>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+// professional Card
+
+const ProfessionalDetailsCard: React.FC<{
+  professional: Professional;
+}> = ({ professional }) => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Professional Information</CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-3">
+      <div className="flex items-center space-x-2">
+        <Briefcase size={16} />
+        <span>Business Type: {professional.businessType}</span>
+      </div>
+      {professional.specialization && (
+        <div className="flex items-center space-x-2">
+          <Star size={16} />
+          <span>Specialization: {professional.specialization}</span>
+        </div>
+      )}
+      {professional.businessName && (
+        <div className="flex items-center space-x-2">
+          <Globe size={16} />
+          <span>Business Name: {professional.businessName}</span>
+        </div>
+      )}
+      <div className="flex items-center space-x-2">
+        <ShieldCheck size={16} />
+        <span>Registration Progress: {professional.registrationProgress}</span>
+        <Badge variant={professional.isVerified ? "default" : "outline"}>
+          {professional.isVerified ? "Verified" : "Pending"}
+        </Badge>
+      </div>
+      <div className="flex items-center space-x-2">
+        <Star size={16} />
+        <span>Rating: {professional?.rating.toFixed(1)}</span>
+        <Badge variant={professional.topRated ? "success" : "secondary"}>
+          {professional.topRated ? "Top Rated" : "Regular"}
+        </Badge>
       </div>
     </CardContent>
   </Card>
@@ -172,10 +220,6 @@ const ProfessionalDetails = () => {
               <span>Activate</span>
             </Button>
           )}
-          {/* <Button variant="destructive" className="flex items-center space-x-2">
-            <XCircle size={16} />
-            <span>Decline</span>
-          </Button> */}
           {
             professional.isActive && (
               <DeactivateDialog professionalId={professionalId} />
@@ -186,10 +230,10 @@ const ProfessionalDetails = () => {
       </div>
       {/* professional Profile */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* <div className="md:col-span-1 grid grid-cols-1 gap-4">
+        <div className="md:col-span-1 grid grid-cols-1 gap-4">
           <ProfileCard professional={professional} />
           <ProfessionalDetailsCard professional={professional} />
-        </div> */}
+        </div>
         {/* Contact information */}
         <div className="md:col-span-2 grid grid-cols-1 gap-4">
           <ContactInformationCard professional={professional} />
