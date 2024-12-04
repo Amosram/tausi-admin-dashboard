@@ -72,15 +72,19 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
             </>
           )}
 
-          <img
-            src={images[currentImageIndex].imageUrl}
-            alt={`Portfolio image ${currentImageIndex + 1}`}
-            className="sm:max-h-full sm:max-w-full object-contain"
-          />
+          {images.length > 0 && (
+            <>
+              <img
+                src={images[currentImageIndex].imageUrl}
+                alt={`Portfolio image ${currentImageIndex + 1}`}
+                className="sm:max-h-full sm:max-w-full object-contain"
+              />
 
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white">
-            {currentImageIndex + 1} / {images.length}
-          </div>
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white">
+                {currentImageIndex + 1} / {images.length}
+              </div>
+            </>
+          )}
         </div>
       </DialogContent>
     </Dialog>

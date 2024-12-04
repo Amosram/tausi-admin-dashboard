@@ -71,7 +71,7 @@ export interface Service {
   updatedAt: string;
   professionalId: string;
   serviceId: string;
-  brands: string[];
+  brands: string[] | null;
   duration: number;
   description: string | null;
   imagePath: string | null;
@@ -270,7 +270,9 @@ export interface VerifiedBeauticians extends UpdateVerifiedBeautician {
 }
 
 export interface UpdateVerifiedBeautician {
+    isActive:               boolean;
     verificationStatus:      string;
+    verificationTitle:      string;
     verificationDescription: string;
     reviewedBy:              string;
 }
@@ -314,6 +316,7 @@ export enum VerificationStatus {
   Pending = "pending",
   Rejected = "rejected",
   Review = "review",
+  Approved = "approved",
 }
 
 export enum VerificationTitle {

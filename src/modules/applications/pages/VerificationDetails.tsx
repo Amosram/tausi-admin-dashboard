@@ -12,15 +12,20 @@ import {
   Star,
   CheckCircle,
   XCircle,
-  Clock,
+  Clock10,
+  CircleEllipsis,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
-import { useUseGetVerifiedBeauticianByIdQuery } from "../api/professionalApi";
+import { useGetProfessionalsPorfolioQuery, useUpdateverifiedBeauticiansMutation, useUseGetVerifiedBeauticianByIdQuery } from "../api/professionalApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DEFAULT_LOCATION } from "@/Utils/constants";
 import DeclineDialog from "../components/DeclineDialog";
+import { ImageLightbox } from "../components/ImageGallery";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
+import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 const Maps = lazy(() => import("@/components/ui/maps"));
 
@@ -97,9 +102,10 @@ const VerificationDetailsCard: React.FC<{ verificationData: VerifiedBeauticians 
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center capitalize">
-          {verificationData.verificationData?.verificationStatus === "review" && <CheckCircle className="mr-2 h-5 w-5 text-green-500" />}
+          {verificationData.verificationData?.verificationStatus === "approved" && <CheckCircle className="mr-2 h-5 w-5 text-green-500" />}
+          {verificationData.verificationData?.verificationStatus === "review" && <Clock10 className="mr-2 h-5 w-5 text-red-500" />}
           {verificationData.verificationData?.verificationStatus === "rejected" && <XCircle className="mr-2 h-5 w-5 text-red-500" />}
-          {verificationData.verificationData?.verificationStatus === "pending" && <Clock className="mr-2 h-5 w-5 text-yellow-500" />}
+          {verificationData.verificationData?.verificationStatus === "pending" && <CircleEllipsis className="mr-2 h-5 w-5 text-yellow-500" />}
           Verification Status: {verificationData.verificationData?.verificationStatus}
         </CardTitle>
         <CardDescription className='text-sm text-muted-foreground font-semibold'>{verificationData.verificationData?.verificationTitle}</CardDescription>
@@ -159,23 +165,158 @@ const ProfessionalDetailsCard: React.FC<{
   </Card>
 );
 
+// business card
+
+const BusinessCard: React.FC<{
+  beautician: VerifiedBeauticians;
+}> = ({beautician}) => (
+  <Card>
+    <CardHeader className="flex flex-row items-start gap-4">
+      <div className="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center">
+        <div className="w-8 h-8 relative">
+          <div className="absolute inset-0 bg-white rounded-full" />
+          <div className="absolute bottom-0 right-0 w-4 h-4 bg-yellow-300 rounded-full" />
+          <div className="absolute top-0 right-0 w-4 h-4 bg-green-500 rounded-full" />
+        </div>
+      </div>
+      <div className="flex-1">
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle className="text-2xl mb-1">Service Provider</CardTitle>
+            <div className="space-y-1">
+              <div>
+                <span className="text-muted-foreground">{beautician.user.name}</span>
+                <p className="text-lg font-semibold text-blue-900">{beautician.businessName}</p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Provider Location</span>
+                <p className="text-lg font-semibold text-blue-900">{beautician.locationAddress}</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Star className="w-5 h-5 fill-red-500 text-red-500" />
+            <span className="text-2xl">{beautician.rating}</span>
+          </div>
+        </div>
+        {/*TODO: FETCH THE DATA FROM THE API  */}
+        <div className="grid grid-cols-3 gap-4 my-6 py-6 border-y">
+          <div>
+            <p className="text-muted-foreground">Completed Orders</p>
+            <p className="text-xl font-semibold text-blue-900">123</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Cancelled Orders</p>
+            <p className="text-xl font-semibold text-blue-900">10</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Total Revenue</p>
+            <p className="text-xl font-semibold text-blue-900">$2,500</p>
+          </div>
+        </div>
+      
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-muted-foreground">Provider Phone</p>
+            <p className="text-lg font-semibold text-blue-900">{beautician.user.phoneNumber}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Provider Email;</p>
+            <p className="text-lg font-semibold text-blue-900">{beautician.user.email}</p>
+          </div>
+        </div>
+      </div>
+    </CardHeader>
+  </Card>
+  
+);
+
+// service provided card
+const ServiceProvidedCard: React.FC<{
+  beautician: VerifiedBeauticians;
+}> = (beautician) => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Services</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="grid grid-cols-1 gap-4">
+        {beautician.beautician?.services.map((service, index) => (
+          <Card key={index}>
+            <CardHeader className="pb-2">
+              <div className="flex items-center space-x-4">
+                <img
+                  src={service.serviceData.imageUrl}
+                  alt={service.serviceData.name}
+                  width={100}
+                  height={100}
+                  className="rounded-md"
+                />
+                <div>
+                  <CardTitle className="text-xl capitalize mb-2">{service.serviceData.name}</CardTitle>
+                  <CardDescription className="text-lg"> Category: N/A</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-lg mb-2">{service.serviceData.description}</p>
+              <p className="font-medium"><b>Price:</b> KES {service.serviceData.minimumPrice}</p>
+              <p className="font-medium"><b>Duration:</b> {Math.floor(service.duration / 60)} min</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </CardContent>
+  </Card>
+);
+
+// products card
+const ProductCard: React.FC<{
+  beautician: VerifiedBeauticians;
+}> = (beautician) => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Products</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="space-y-4">
+        {beautician.beautician.services.map((product, index) => (
+          <div key={index} className="flex items-center space-x-4 p-2 rounded-lg hover:bg-muted">
+            <img
+              src='/tausi-logo.png'
+              width={50}
+              height={50}
+              className="rounded-md"
+            />
+            <div>
+              <h3 className="font-semibold capitalize text-xl">{product.brands}</h3>
+              {/* <p className="text-sm text-muted-foreground">{product.description}</p>
+              <p className="font-semibold mt-1">KES{product.price}</p> */}
+            </div>
+          </div>
+        ))}
+      </div>
+    </CardContent>
+  </Card>
+);
 
 const VerificationDetails: React.FC = () => {
   
-  const {beauticianId} = useParams();
-  const {data, isLoading, isError} = useUseGetVerifiedBeauticianByIdQuery(beauticianId!);
+  const {professionalId} = useParams();
+  const {data, isLoading, isError} = useUseGetVerifiedBeauticianByIdQuery(professionalId!);
+  const {data: portfolio, isLoading: isPortfolioLoading, isError: isPortfolioError} = useGetProfessionalsPorfolioQuery(professionalId!);
+  const [updateVerifiedBeauticians] = useUpdateverifiedBeauticiansMutation();
 
   const beautician = data?.data;
-
-
+  
   // using the map component
   const [coordinates, setCoordinates] = useState<Coordinates>(beautician?.coordinates || DEFAULT_LOCATION);
-
-  if (!beauticianId) {
+  
+  if (!professionalId) {
     return <div>Invalid beautician ID</div>;
   }
 
-  if (isLoading) {
+  if (isLoading || isPortfolioLoading) {
     return (
       <div className="container mx-auto p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -192,7 +333,7 @@ const VerificationDetails: React.FC = () => {
     );
   }
 
-  if (isError || !beautician) {
+  if (isError || !beautician || isPortfolioError) {
     return (
       <div className="container mx-auto p-4">
         <div className="bg-destructive text-destructive-foreground p-4 rounded-lg">
@@ -201,6 +342,27 @@ const VerificationDetails: React.FC = () => {
       </div>
     );
   }
+
+  const handleApprove = async () => {
+    try{
+      await updateVerifiedBeauticians({
+        id: beautician.id,
+        // isVerified: true,
+        verificationStatus: "approved",
+        verificationTitle: "Verification Approved",
+        verificationDescription: "Verification approved successfully",
+      }).unwrap();
+      toast({ title: "Success", description: "Application approved successfully!", variant: "success" });
+    }
+    catch (error) {
+      console.error("Approve failed:", error);
+      toast({ title: "Error", description: "An error occurred while approving the application.", variant: "destructive" });
+    }
+  };
+
+  const isActionCompleted =
+    beautician.isVerified || beautician.verificationData?.verificationStatus === "approved" || beautician.verificationData?.verificationStatus === "rejected";
+
   return (
     <div className="container mx-auto p-4">
       {/* Verification Management */}
@@ -214,24 +376,27 @@ const VerificationDetails: React.FC = () => {
           </Badge>
         </div>
         <div className="flex gap-3">
-          <Button className="flex items-center space-x-2 bg-green-600">
-            <CheckCircle size={16} />
-            <span>Approve</span>
-          </Button>
-          {/* <Button variant="destructive" className="flex items-center space-x-2">
-            <XCircle size={16} />
-            <span>Decline</span>
-          </Button> */}
-          <DeclineDialog beauticianId={beauticianId} />
+          {!beautician.verificationData?.verificationStatus.includes("rejected") && !beautician.isVerified && (
+            <Button
+              className="flex items-center space-x-2 bg-green-600"
+              onClick={handleApprove}
+              disabled={beautician.isVerified || beautician.verificationData?.verificationStatus.includes("approved")}
+            >
+              <CheckCircle size={16} />
+              <span>Approve</span>
+            </Button>
+          )}
+          {!beautician.verificationData?.verificationStatus.includes("approved") && !beautician.isVerified && !isActionCompleted && !beautician.isVerified && (
+            <DeclineDialog beauticianId={professionalId}/>
+          )}
         </div>
       </div>
       {/* beautician Profile */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
           <ProfileCard beautician={beautician} />
           <ProfessionalDetailsCard beautician={beautician} />
         </div>
-
         {/* Contact information */}
         <div className="md:col-span-2 grid grid-cols-1 gap-4">
           <ContactInformationCard beautician={beautician} />
@@ -239,23 +404,90 @@ const VerificationDetails: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
             <VerificationDetailsCard verificationData={beautician}/>
           </div>
-        </div>
-        {/* Location*/}
-        <div className="md:col-span-3 grid-cols-1">
-          <Maps
-            coordinates={{
-              lat: Number(beautician.latitude) || coordinates.x,
-              lng: Number(beautician.longitude) || coordinates.y,
-            }}
-            setCoordinates={(coords) => {
-              setCoordinates({
-                x: coords.lat,
-                y: coords.lng
-              });
-            }}
-          />
+          {/* Business Card */}
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+            <BusinessCard beautician={beautician} />
+          </div>
         </div>
       </div>
+      {/* Service and Product Card */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <div className="md:col-span-1 grid grid-cols-1 gap-4">
+          <ServiceProvidedCard beautician={beautician} />
+        </div>
+        <div className="md:col-span-1 grid grid-cols-1 gap-4">
+          <ProductCard beautician={beautician} />
+        </div>
+      </div>
+      {/* Tab Layout for Portfolio and Location */}
+      <Tabs className="w-full mt-8" defaultValue="location">
+        {/* Tab List */}
+        <TabsList className="flex border-b border-muted space-x-4 pb-2 " aria-label="Portfolio and Location">
+          <TabsTrigger
+            value="location"
+            className={cn(
+              "border-b-4 border-transparent px-4 py-2 font-medium text-lg",
+              "data-[state=active]:border-red-500 data-[state=active]:text-red-500"
+            )}
+          >
+            Location
+          </TabsTrigger>
+          <TabsTrigger
+            value="portfolio"
+            className={cn(
+              "border-b-4 border-transparent px-4 py-2 font-medium text-lg",
+              "data-[state=active]:border-red-500 data-[state=active]:text-red-500"
+            )}
+          >
+            Portfolio
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Tab Content */}
+        <TabsContent value="portfolio" className="mt-4">
+          <div className="md:col-span-3 grid-cols-3">
+            {Array.isArray(portfolio?.data) ? (
+              <ImageLightbox
+                images={portfolio.data}
+                trigger={(openLightbox) => (
+                  <>
+                    {portfolio.data.map((item, index) => (
+                      <img
+                        key={item.id}
+                        src={item.imageUrl}
+                        alt="Portfolio Image"
+                        className="w-full h-full object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => openLightbox(index)}
+                        onLoad={() => console.log(`Image ${item.id} loaded successfully:`, item.imageUrl)}
+                        onError={() => console.error(`Failed to load image ${item.id}:`, item.imageUrl)}
+                      />
+                    ))}
+                  </>
+                )}
+              />
+            ) : (
+              <p>No images available in the portfolio.</p>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="location" className="mt-4">
+          <div className="md:col-span-3 grid-cols-3">
+            <Maps
+              coordinates={{
+                lat: Number(beautician.latitude) || coordinates.x,
+                lng: Number(beautician.longitude) || coordinates.y,
+              }}
+              setCoordinates={(coords) => {
+                setCoordinates({
+                  x: coords.lat,
+                  y: coords.lng,
+                });
+              }}
+            />
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

@@ -75,7 +75,7 @@ const CreateLoanBookModal: React.FC<CreateLoanBookModalProps> = ({isOpen, onClos
                 <label className="block text-sm font-medium mb-2">Loan Book Name</label>
                 <Input
                   type="text"
-                  value={name}
+                  defaultValue={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full p-2 border rounded"
                   placeholder="Enter loan book name"

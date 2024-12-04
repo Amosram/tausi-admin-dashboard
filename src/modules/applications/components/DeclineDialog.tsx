@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { VerificationStatus } from "@/models";
+import { VerificationStatus, VerifiedBeauticians } from "@/models";
 import { useUpdateverifiedBeauticiansMutation } from "../api/professionalApi";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { XCircle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 
 const DeclineDialog = ({ beauticianId }: { beauticianId: string }) => {
   const [description, setDescription] = useState("");
+  const [reviewedBy, setReviewedBy] = useState("");
   const [updateVerifiedBeauticians, { isLoading }] = useUpdateverifiedBeauticiansMutation();
 
   const handleDecline = async () => {
-    if (!description.trim()) {
+    if (!description.trim() || !reviewedBy.trim()) {
       toast({ title: "Error", description: "Please provide a reason for declining.", variant: "destructive" });
       return;
     }
@@ -21,11 +23,15 @@ const DeclineDialog = ({ beauticianId }: { beauticianId: string }) => {
       await updateVerifiedBeauticians({
         id: beauticianId,
         verificationStatus: VerificationStatus.Rejected,
+        verificationTitle: "Verification Rejected",
         verificationDescription: description,
-        reviewedBy: "Tausi Admin"
+        reviewedBy:  reviewedBy as VerifiedBeauticians["reviewedBy"],
       }).unwrap();
 
-      toast({ title: "Success", description: "Application declined successfully!" });
+      setDescription("");
+      setReviewedBy("");
+
+      toast({ title: "Success", description: "Application declined successfully!", variant: "success" });
     } catch (error) {
       console.error("Decline failed:", error);
       toast({ title: "Error", description: "An error occurred while declining the application.", variant: "destructive" });
@@ -35,7 +41,10 @@ const DeclineDialog = ({ beauticianId }: { beauticianId: string }) => {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <Button variant="destructive" className="flex items-center space-x-2">
+        <Button
+          variant="destructive"
+          className="flex items-center space-x-2"
+        >
           <XCircle size={16} />
           <span>Decline</span>
         </Button>
@@ -53,6 +62,12 @@ const DeclineDialog = ({ beauticianId }: { beauticianId: string }) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter reason here..."
+              className="w-full mt-4 p-2 border rounded-md"
+            />
+            <Input
+              defaultValue={reviewedBy}
+              onChange={(e) => setReviewedBy(e.target.value)}
+              placeholder="Reviewed by"
               className="w-full mt-4 p-2 border rounded-md"
             />
             <div className="mt-4 flex justify-end gap-4">

@@ -22,6 +22,7 @@ const Maps: React.FC<MapsProps> = (props) => {
           className="w-full h-[500px] mt-3"
           defaultCenter={{ lat: -1.286389, lng: 36.817223 }}
           defaultZoom={14}
+          center={{ lat: coordinates.lat, lng: coordinates.lng }}
           reuseMaps
           gestureHandling={'greedy'}>
           <Marker coordinates={coordinates}

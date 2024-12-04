@@ -4,6 +4,7 @@ import { Clock, Book } from "lucide-react";
 import { useGetBooksByIdQuery } from "../api/ledgersApi";
 import Loader from "@/components/layout/Loader";
 import { useParams } from "react-router-dom";
+import LedgerBookEntriesCard from "../components/LedgerBookEntriesCard";
 
 
 const LedgerBookDetailsCard: React.FC<{
@@ -11,7 +12,7 @@ const LedgerBookDetailsCard: React.FC<{
 }> = ({ book }) => (
   <Card>
     <CardHeader>
-      <CardTitle>book Information</CardTitle>
+      <CardTitle>Book Information</CardTitle>
     </CardHeader>
     <CardContent className="space-y-3">
       {book.name && (
@@ -42,11 +43,11 @@ const LedgerBookDetails = () => {
   const book = data;
   
   if (isLoading) {
-    return <Loader/>
+    return <Loader/>;
   }
 
   if (isError) {
-    return <div>Error fetching book details</div>
+    return <div>Error fetching book details</div>;
   }
 
   return (
@@ -65,6 +66,10 @@ const LedgerBookDetails = () => {
         <div className='md:col-span-1 grid grid-cols-1 gap-4'>
           {/* Book Details Card */}
           <LedgerBookDetailsCard book={book} />
+        </div>
+        {/* Entries Card */}
+        <div className="md:col-span-2 grid grid-cols-1">
+          <LedgerBookEntriesCard />
         </div>
       </div>
     </div>

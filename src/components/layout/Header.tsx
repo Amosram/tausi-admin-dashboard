@@ -22,7 +22,7 @@ const routeMappings: Record<string, RouteDetails> = {
   "/users/:id": { title: "User Details", backLink: "/users" },
   "/professionals": { title: "Beauticians List" },
   "/professionals/:id": { title: "Professional Details", backLink: "/professionals" },
-  "/dashboard/verifications": { title: "Verified Beauticians" },
+  "/dashboard/verifications": { title: "Applications" },
   "/messaging": { title: "Messaging" },
   "/settings": { title: "Settings" },
   "/users/create-user": { title: "Create User", backLink: "/users" },
@@ -34,7 +34,7 @@ const routeMappings: Record<string, RouteDetails> = {
   "/ledgers/create-loan": { title: "Create Loan" },
   "/ledgers/books": { title: "Books" },
   "/ledgers/books/:id": { title: "Books Details", backLink: "/ledgers/books" },
-  "/dashboard/verifications/:id": { title: "Verified Beauticians Details", backLink: "/dashboard/verifications" }
+  "/dashboard/verifications/:id": { title: "Applications Details", backLink: "/dashboard/verifications" },
 };
 
 const getDynamicRouteDetails = (pathname: string): RouteDetails => {
@@ -49,10 +49,56 @@ const getDynamicRouteDetails = (pathname: string): RouteDetails => {
 };
 
 const Header = () => {
-  const navigate = useNavigate();
   const location = useLocation();
 
-  const { title, backLink } = getDynamicRouteDetails(location.pathname);
+  const titles: { [key: string]: string } = {
+    "/": "Dashboard",
+    "/orders": "Orders",
+    "/revenue": "Revenue",
+    "/users": "Users",
+    "/professionals": "Beauticians List",
+    "/dashboard/verifications": "Applications",
+    "/ledgers/books": "Books",
+    "/messaging": "Messaging",
+    "/settings": "Settings",
+    "/users/create-user": "Create User",
+    "/ledgers/create-loan":"Create Loan"
+  };
+
+  const getTitle = () => {
+    const path = location.pathname;
+
+    if (path.startsWith("/orders/") && path.split("/").length > 2) {
+      return "Order Details";
+    }
+
+    if (path.startsWith("/professionals/") && path.split("/").length > 2) {
+      return "Professional Details";
+    }
+
+    if (path.startsWith("/dashboard/verifications/") && path.split("/").length > 2) {
+      return "Applications Details";
+    }
+
+
+    if (path.startsWith("/users/") && path.split("/").length > 2) {
+      if (path === "/users/create-user") {
+        return "Create User";
+      }
+      return "User Details";
+    }
+
+    if (path.startsWith("/ledgers/books/") && path.split("/").length > 2) {
+      return "Books Details";
+    }
+    
+
+    return titles[path] || "Dashboard";
+  };
+
+  const { title: dynamicTitle, backLink } = getDynamicRouteDetails(location.pathname);
+
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     navigate("/auth/login");
@@ -72,10 +118,10 @@ const Header = () => {
                 className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
               >
                 <FaChevronLeft />
-                <span>{title}</span>
+                <span>{dynamicTitle}</span>
               </Link>
             ) : (
-              <div className="text-gray-600 font-bold">{title}</div>
+              <div className="text-gray-600 font-bold">{dynamicTitle}</div>
             )}
           </div>
         </div>
