@@ -24,7 +24,7 @@ const Ledger = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Books | null>(null);
-  const [editData, setEditData] = useState<{ id: string; name: string; ledgerId: string } | null>(
+  const [editData, setEditData] = useState<{ id: string; name: string; ledgerId: string, ownerId: string } | null>(
     null
   );
 
@@ -100,6 +100,11 @@ const Ledger = () => {
       cell: ({row}) => <span>{row.original.ledgerId}</span>
     },
     {
+      accessorKey:'ownerId',
+      header: 'Owner ID',
+      cell: ({row}) => <span>{row.original.ownerId}</span>
+    },
+    {
       header: 'Actions',
       enableSorting: false,
       cell: ({ row }) => (
@@ -124,6 +129,7 @@ const Ledger = () => {
                   id: row.original.id,
                   name: row.original.name,
                   ledgerId: row.original.id,
+                  ownerId: row.original.ownerId,
                 });
                 setModalOpen(true);
               }}
@@ -144,7 +150,7 @@ const Ledger = () => {
   ];
 
   const AddLoanButton = {
-    label: "Add Loan",
+    label: "Create Book",
     onClick: () => {
       setEditData(null); // Reset edit data for create mode
       setModalOpen(true);
