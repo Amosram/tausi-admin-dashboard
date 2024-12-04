@@ -48,6 +48,7 @@ import DummyBoothDetails from "../components/dummy-booth-details";
 import Maps from "@/components/ui/maps";
 import { Coordinates } from "@/models";
 import { DEFAULT_LOCATION } from "@/Utils/constants";
+import { AssignBoothDialog } from "../components/assign-booth";
 
 const BoothDetails: React.FC = () => {
   const { boothId } = useParams<{ boothId: string }>();
@@ -58,6 +59,7 @@ const BoothDetails: React.FC = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
 
   const {
     data: boothData,
@@ -68,7 +70,7 @@ const BoothDetails: React.FC = () => {
   });
 
   const currentBooth = boothData?.data;
-  console.log("Current bootc, ", currentBooth)
+  console.log("Current bootc, ", currentBooth);
 
   const [coordinates, setCoordinates] = useState<Coordinates>(
     currentBooth?.coordinates || DEFAULT_LOCATION
@@ -136,11 +138,14 @@ const BoothDetails: React.FC = () => {
       <div className="w-full bg-muted p-4 rounded-lg flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
           <h2 className="text-xl font-bold uppercase">Booth Details</h2>
-          <Badge variant={currentBooth.isActive ? "default" : "destructive"}>
+          <Badge variant={currentBooth.isActive ? "success" : "destructive"}>
             {currentBooth.isActive ? "Active" : "Inactive"}
           </Badge>
         </div>
         <div className="flex space-x-2">
+          <Button variant="outline" onClick={() => setIsAssignDialogOpen(true)}>
+            <Edit className="mr-2 h-4 w-4" /> Assign Booth
+          </Button>
           <Button variant="outline" onClick={() => setIsEditDialogOpen(true)}>
             <Edit className="mr-2 h-4 w-4" /> Edit
           </Button>
@@ -158,11 +163,49 @@ const BoothDetails: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <MapPin className="mr-2 h-5 w-5" /> Location
+              <MapPin className="mr-2 h-5 w-5" /> Assignments
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p>{currentBooth.locationAddress}</p>
+            {currentBooth.assignments.length > 0 ? (
+              <div className="mt-2">
+                {currentBooth.assignments.map((assignment) => (
+                  <div key={assignment.id} className="mb-2 p-2 border rounded">
+                    <div className="flex justify-between">
+                      <div>
+                        <p className="font-semibold">Beautician ID</p>
+                        <p>{assignment.beauticianId}</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Assignment Period</p>
+                        <p>
+                          {new Date(assignment.startDate).toLocaleDateString()}{" "}
+                          - {new Date(assignment.endDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-2 flex justify-between">
+                      <span
+                        className={`px-2 py-1 rounded text-sm ${
+                          assignment.isLapsed
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {assignment.isLapsed ? "Lapsed" : "Active"}
+                      </span>
+                      {assignment.isTerminated && (
+                        <span className="px-2 py-1 rounded text-sm bg-red-100 text-red-800">
+                          Terminated
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 mt-2">No assignments</p>
+            )}
           </CardContent>
         </Card>
         <Card>
@@ -440,6 +483,12 @@ const BoothDetails: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AssignBoothDialog
+        boothId={boothId}
+        isOpen={isAssignDialogOpen}
+        onOpenChange={setIsAssignDialogOpen}
+      />
     </div>
   );
 };

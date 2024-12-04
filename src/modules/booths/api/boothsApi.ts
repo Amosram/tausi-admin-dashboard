@@ -1,11 +1,11 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "../../../Utils/axios";
-import { Booth, BoothsApiResponse, CreateBoothPayload } from "@/models";
+import { Booth, BoothAssignmentResponse, BoothsApiResponse, CreateBoothAssignmentRequest, CreateBoothPayload } from "@/models";
 
 export const boothsApi = createApi({
   reducerPath: "boothsApi",
   baseQuery: axiosBaseQuery({ isAuthorizedApi: true }),
-  tagTypes: ["Booths"],
+  tagTypes: ["Booths", "Booths Details"],
   refetchOnMountOrArgChange: false,
   endpoints: (builder) => ({
     getBooths: builder.query<BoothsApiResponse<Booth[]>, void>({
@@ -21,8 +21,7 @@ export const boothsApi = createApi({
         url: `/booths/${boothId}`,
         method: "GET",
       }),
-      providesTags: (result, error, boothId) =>
-        result ? [{ type: "Booths", id: boothId }] : [],
+      providesTags: ["Booths Details"],
     }),
     createBooth: builder.mutation<BoothsApiResponse<Booth>, CreateBoothPayload>(
       {
@@ -43,6 +42,14 @@ export const boothsApi = createApi({
       invalidatesTags: (result, error, { id }) =>
         result ? [{ type: "Booths", id }] : [],
     }),
+    assignBooth: builder.mutation<BoothAssignmentResponse, CreateBoothAssignmentRequest>({
+      query: (assignmentRequest) => ({
+        url: `/booth-assignments`,
+        method: "POST",
+        data: assignmentRequest,
+      }),
+      invalidatesTags: ["Booths Details"]
+    }),
     deleteBooth: builder.mutation<void, { id: string; deletedReason?: string }>(
       {
         query: ({ id, deletedReason }) => ({
@@ -61,5 +68,6 @@ export const {
   useCreateBoothMutation,
   useDeleteBoothMutation,
   useUpdateBoothMutation,
-  useGetBoothByIdQuery
+  useGetBoothByIdQuery,
+  useAssignBoothMutation,
 } = boothsApi;
