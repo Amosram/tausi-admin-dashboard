@@ -28,6 +28,7 @@ const CreateLoanLazy = lazy(() => import('@/modules/ledger/pages/LoanCreatePage'
 const BoothsLazy = lazy(() => import("@/modules/booths/pages/Booths"));
 const BoothDetailsLazy = lazy(() => import("@/modules/booths/pages/BoothDetails"));
 const CreateBoothLazy = lazy(() => import("@/modules/booths/pages/CreateBoothPage"));
+const EditBoothLazy = lazy(() => import("@/modules/booths/pages/EditBoothPage"));
 
 export const routes: RouteObject[] = [
   {
@@ -208,6 +209,14 @@ export const routes: RouteObject[] = [
             element: (
               <Suspense fallback={<Loader />}>
                 <BoothDetailsLazy />
+              </Suspense>
+            )
+          },
+          {
+            path: ":boothId/edit",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <EditBoothLazy />
               </Suspense>
             )
           },

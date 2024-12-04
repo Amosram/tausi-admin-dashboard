@@ -143,24 +143,21 @@ export const boothColumns: ColumnDef<Booth>[] = [
         <DropdownMenuContent align="end">
           <DropdownMenuItem>
             <Link
-              to={`/orders/${row.original.id}`}
+              to={`/booths/${row.original.id}`}
               state={{ order: row.original }}
               className="hover:text-primary"
             >
               View details
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => console.log("Edit:", row.original)}
-            className="cursor-pointer"
-          >
-            Edit Booth
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => console.log("Delete:", row.original)}
-            className="bg-destructive text-white cursor-pointer"
-          >
-            Delete Booth
+          <DropdownMenuItem>
+            <Link
+              to={`/booths/${row.original.id}/edit`}
+              state={{ order: row.original }}
+              className="hover:text-primary"
+            >
+              Edit details
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -9,13 +9,8 @@ import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormInputField } from "@/components/ui/Form/FormInputField";
-import { useCreateBoothMutation } from "../api/boothsApi";
-import {
-  Booth,
-  BoothsApiResponse,
-  Coordinates,
-  CreateBoothPayload,
-} from "@/models";
+import { useGetBoothByIdQuery, useUpdateBoothMutation } from "../api/boothsApi";
+import { Booth, BoothsApiResponse, Coordinates } from "@/models";
 import {
   Dialog,
   DialogContent,
@@ -23,19 +18,24 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Maps from "@/components/ui/maps";
+import Loader from "@/components/layout/Loader";
 
 const boothFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   locationAddress: z.string().min(5, "Location must be at least 5 characters"),
   numberOfBeauticians: z
-    .string()
-    .transform((value) => parseInt(value, 10))
-    .refine((value) => Number.isInteger(value) && value > 0, "Must be a positive integer")
+    .number()
+    .refine(
+      (value) => Number.isInteger(value) && value > 0,
+      "Must be a positive integer"
+    )
     .refine((value) => value <= 100, "Too many beauticians"),
   numberOfStations: z
-    .string()
-    .transform((value) => parseInt(value, 10))
-    .refine((value) => Number.isInteger(value) && value > 0, "Must be a positive integer")
+    .number()
+    .refine(
+      (value) => Number.isInteger(value) && value > 0,
+      "Must be a positive integer"
+    )
     .refine((value) => value <= 50, "Too many stations"),
   occupancyStatus: z.enum(["empty", "occupied"], {
     required_error: "Please select the occupancy status",
@@ -46,15 +46,25 @@ const boothFormSchema = z.object({
     x: z.number().min(-180).max(180, "Longitude must be between -180 and 180"),
     y: z.number().min(-90).max(90, "Latitude must be between -90 and 90"),
   }),
+  isActive: z.boolean().optional(),
 });
-
 
 type BoothFormValues = z.infer<typeof boothFormSchema>;
 
-const CreateBoothPage: React.FC = () => {
+const EditBoothPage: React.FC = () => {
+  const { boothId } = useParams<{ boothId: string }>();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [createBooth, { isLoading }] = useCreateBoothMutation();
+
+  const {
+    data: boothData,
+    isLoading: isBoothLoading,
+    isError,
+  } = useGetBoothByIdQuery(boothId || "", {
+    skip: !boothId,
+  });
+
+  const [updateBooth, { isLoading: isUpdating }] = useUpdateBoothMutation();
   const [isCoordinateModalOpen, setIsCoordinateModalOpen] = useState(false);
 
   const form = useForm<BoothFormValues>({
@@ -66,34 +76,58 @@ const CreateBoothPage: React.FC = () => {
       imagePath: "",
       imageUrl: "",
       coordinates: { x: 0, y: 0 },
+      isActive: true,
     },
   });
 
+  useEffect(() => {
+    if (boothData?.data) {
+      const booth = boothData.data;
+      form.reset({
+        name: booth.name,
+        locationAddress: booth.locationAddress,
+        numberOfBeauticians: booth.numberOfBeauticians,
+        numberOfStations: booth.numberOfStations,
+        occupancyStatus: booth.occupancyStatus as "empty" | "occupied",
+        imagePath: booth.imagePath || "",
+        imageUrl: booth.imageUrl || "",
+        coordinates: {
+          x: booth.coordinates.x,
+          y: booth.coordinates.y,
+        },
+        isActive: booth.isActive,
+      });
+    }
+  }, [boothData, form]);
+
   const onSubmit = async (formData: BoothFormValues) => {
     try {
-      const boothData: CreateBoothPayload = {
-        name: formData.name,
-        locationAddress: formData.locationAddress,
-        numberOfBeauticians: formData.numberOfBeauticians,
-        numberOfStations: formData.numberOfStations,
-        occupancyStatus: formData.occupancyStatus,
-        imagePath: formData.imagePath,
-        imageUrl: formData.imageUrl,
-        coordinates: {
-          x: formData.coordinates.x,
-          y: formData.coordinates.y,
+      if (!boothId) throw new Error("Booth ID is required");
+
+      const boothData: { id: string; data: Partial<Booth> } = {
+        id: boothId,
+        data: {
+          name: formData.name,
+          locationAddress: formData.locationAddress,
+          numberOfBeauticians: formData.numberOfBeauticians,
+          numberOfStations: formData.numberOfStations,
+          occupancyStatus: formData.occupancyStatus,
+          imagePath: formData.imagePath,
+          imageUrl: formData.imageUrl,
+          coordinates: {
+            x: formData.coordinates.x,
+            y: formData.coordinates.y,
+          },
+          boundaries: null,
+          underMaintenance: false,
         },
-        boundaries: null,
-        underMaintenance: false,
       };
 
-      const response = (await createBooth(
-        boothData
-      ).unwrap()) as BoothsApiResponse<Booth>;
+      const response: BoothsApiResponse<Booth> = await updateBooth(boothData).unwrap();
 
       toast({
         title: "Success",
-        description: "Booth created successfully",
+        description: "Booth updated successfully",
       });
 
       navigate(`/booths/${response.data.id}`);
@@ -102,26 +136,38 @@ const CreateBoothPage: React.FC = () => {
         error instanceof Error ? error.message : String(error);
 
       toast({
-        title: "Failed to create booth",
+        title: "Failed to update booth",
         description: `Error: ${errorMessage}`,
         variant: "destructive",
       });
 
-      console.error("Booth creation error:", error);
+      console.error("Booth update error:", error);
     }
   };
 
   const handleCoordinatesSelect = (coordinates: Coordinates) => {
-    form.setValue("coordinates.x", coordinates.x); // Set x
-    form.setValue("coordinates.y", coordinates.y); // Set y
+    form.setValue("coordinates.x", coordinates.x);
+    form.setValue("coordinates.y", coordinates.y);
     setIsCoordinateModalOpen(false);
   };
+
+  if (isBoothLoading) {
+    return <Loader />;
+  }
+
+  if (isError || !boothData?.data) {
+    return (
+      <div className="container mx-auto py-10">
+        <p>Error loading booth details. Please try again.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-10">
       <Card>
         <CardHeader>
-          <CardTitle>Create New Booth</CardTitle>
+          <CardTitle>Edit Booth</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -191,7 +237,7 @@ const CreateBoothPage: React.FC = () => {
                   name="coordinates.x"
                   label="X Coordinate *"
                   placeholder="0.0"
-                  description="X coordinate (Latitude)"
+                  description="X coordinate (Longitude)"
                 />
 
                 <FormInputField
@@ -199,7 +245,7 @@ const CreateBoothPage: React.FC = () => {
                   name="coordinates.y"
                   label="Y Coordinate *"
                   placeholder="0.0"
-                  description="Y coordinate (Longitude)"
+                  description="Y coordinate (Latitude)"
                 />
 
                 <Button
@@ -216,12 +262,12 @@ const CreateBoothPage: React.FC = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate("/booths")}
+                  onClick={() => navigate(`/booths/${boothId}`)}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading ? "Creating..." : "Create Booth"}
+                <Button type="submit" disabled={isUpdating}>
+                  {isUpdating ? "Updating..." : "Update Booth"}
                 </Button>
               </div>
             </form>
@@ -239,11 +285,10 @@ const CreateBoothPage: React.FC = () => {
           </DialogHeader>
           <Maps
             coordinates={{
-              lat: form.getValues("coordinates.y") || -1.286389, // Map y to lat
-              lng: form.getValues("coordinates.x") || 36.817223, // Map x to lng
+              lat: form.getValues("coordinates.y") || -1.286389,
+              lng: form.getValues("coordinates.x") || 36.817223,
             }}
             setCoordinates={(coords) => {
-              // Map lat/lng back to x/y for the form
               handleCoordinatesSelect({
                 x: coords.lng,
                 y: coords.lat,
@@ -256,4 +301,4 @@ const CreateBoothPage: React.FC = () => {
   );
 };
 
-export default CreateBoothPage;
+export default EditBoothPage;
