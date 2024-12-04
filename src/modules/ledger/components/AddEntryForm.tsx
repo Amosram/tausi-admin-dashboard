@@ -1,129 +1,169 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
-import { DialogTitle } from "@radix-ui/react-dialog";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
-import { FC, useState } from "react";
-// Removed incorrect Label import
+import { Label } from "@/components/ui/label";
+import Select from "react-select";
+import { toast } from "@/hooks/use-toast";
+import {
+  useGetAllCategoriesQuery,
+  useGetAllPaymentModesQuery,
+  useCreateBookEntryMutation,
+  useGetBooksQuery,
+} from "../api/ledgersApi";
+import { CreateUpdateBookEntry } from "@/models";
 
-// Define EntryForm before using it
-const EntryForm: FC<{
-  entryType: string;
-}> = ({ entryType }) => {
-  const handleSave = () => {
-    alert(`${entryType} entry saved!`);
+// Validation schema
+const entrySchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  type: z.enum(["Expense", "Revenue"]),
+  amount: z.number().positive("Amount must be positive"),
+  categoryId: z.string().min(1, "Category is required"),
+  paymentModeId: z.string().min(1, "Payment mode is required"),
+  bookId: z.string().min(1, "Book ID is required"),
+  ownerId: z.string().min(1, "Owner ID is required"),
+});
+
+// Infer TypeScript type from the schema
+type EntryFormValues = z.infer<typeof entrySchema>;
+
+const AddEntryDialog: React.FC<{ bookId: string; ownerId: string }> = ({ bookId, ownerId }) => {
+  // API hooks
+  const { data: categoriesData } = useGetAllCategoriesQuery();
+  const { data: paymentModesData } = useGetAllPaymentModesQuery();
+  const {data: booksData} = useGetBooksQuery();
+  const [createBookEntry] = useCreateBookEntryMutation();
+
+  // Form setup
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<EntryFormValues>({
+    resolver: zodResolver(entrySchema),
+    defaultValues: { bookId, ownerId, type: "Expense" },
+  });
+
+  // Handle form submission
+  const onSubmit = async (data: EntryFormValues) => {
+    try {
+      // Ensure all required fields are present
+      const payload: CreateUpdateBookEntry = {
+        title: data.title,
+        type: data.type, // Zod ensures this is always present
+        amount: Number(data.amount), // Ensure amount is a number
+        categoryId: data.categoryId!,
+        paymentModeId: data.paymentModeId!,
+        bookId: data.bookId!,
+        ownerId: data.ownerId!,
+      };
+  
+      await createBookEntry(payload).unwrap();
+      toast({ title: "Success", description: "Entry created successfully!", variant: "success" });
+    } catch (error: any) {
+      console.error("Error ================>", error);
+      toast({
+        title: "Error",
+        description: error?.data?.message || "Failed to create entry. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
-
-  return (
-    <div className="space-y-4">
-      {/* Date and Time */}
-      <div className="flex space-x-4">
-        <div className="w-1/2">
-          <Label htmlFor="date" >Date</Label>
-          <Input id="date" type="date" defaultValue={new Date().toISOString().split("T")[0]} />
-        </div>
-        <div className="w-1/2">
-          <Label htmlFor="time">Time</Label>
-          <Input id="time" type="time" defaultValue={new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} />
-        </div>
-      </div>
-
-      {/* Amount */}
-      <div>
-        <Label htmlFor="amount">Amount</Label>
-        <Input id="amount" type="number" placeholder="Enter amount" />
-      </div>
-
-      {/* Contact Name */}
-      <div>
-        <Label htmlFor="contactName">Contact Name</Label>
-        <Select>
-          <SelectTrigger id="contactName">Select Contact</SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Timothy">Timothy</SelectItem>
-            <SelectItem value="John">John</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Remarks */}
-      <div>
-        <Label htmlFor="remarks">Remarks</Label>
-        <Input id="remarks" placeholder="Add remarks" />
-      </div>
-
-      {/* Category and Payment Mode */}
-      <div className="flex space-x-4">
-        <div className="w-1/2">
-          <Label htmlFor="category">Category</Label>
-          <Select>
-            <SelectTrigger id="category">Select Category</SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Sale">Sale</SelectItem>
-              <SelectItem value="Expense">Expense</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="w-1/2">
-          <Label htmlFor="paymentMode">Payment Mode</Label>
-          <Select>
-            <SelectTrigger id="paymentMode">Select Payment Mode</SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Cash">Cash</SelectItem>
-              <SelectItem value="Credit">Credit</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {/* Attach Bills */}
-      <div>
-        <Button variant="outline" className="w-full">
-          Attach Bills
-        </Button>
-        <p className="text-xs text-muted">Attach up to 4 images or PDF files</p>
-      </div>
-
-      {/* Save Button */}
-      <Button className="w-full" onClick={handleSave}>
-        Save
-      </Button>
-    </div>
-  );
-};
-
-// AddEntryDialog Component
-const AddEntryDialog: React.FC = () => {
-  const [entryType, setEntryType] = useState("Cash In");
+  
 
   return (
     <Dialog>
-        <DialogTitle>Add New Entry</DialogTitle>
       <DialogTrigger asChild>
         <Button>Add New Entry</Button>
       </DialogTrigger>
-      <DialogContent className="w-full max-w-md space-y-4">
-        <Tabs defaultValue="cashIn" className="space-y-4">
-          {/* Tabs for Cash In / Cash Out */}
-          <TabsList>
-            <TabsTrigger className={`rounded-xl p-2 w-24 text-white font-medium mr-4 ${entryType === "Cash In" ? "bg-green-600" : "bg-gray-400"}`} value="cashIn" onClick={() => setEntryType("Cash In")}>
-              Cash In
-            </TabsTrigger>
-            <TabsTrigger className={`rounded-xl w-24 p-2 text-white font-medium mr-4 ${entryType === "Cash Out" ? "bg-red-600" : "bg-gray-400"}`} value="cashOut" onClick={() => setEntryType("Cash Out")}>
-              Cash Out
-            </TabsTrigger>
-          </TabsList>
+      <DialogContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Title */}
+          <div>
+            <Label htmlFor="title">Title</Label>
+            <Input id="title" {...register("title")} placeholder="Enter title" />
+            {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
+          </div>
 
-          {/* Cash In / Cash Out Content */}
-          <TabsContent value="cashIn">
-            <EntryForm entryType={entryType} />
-          </TabsContent>
-          <TabsContent value="cashOut">
-            <EntryForm entryType={entryType} />
-          </TabsContent>
-        </Tabs>
+          {/* Amount */}
+          <div>
+            <Label htmlFor="amount">Amount</Label>
+            <Input
+              id="amount"
+              type="number"
+              {...register("amount", { valueAsNumber: true })} // Automatically parse as number
+              placeholder="Enter amount"
+            />
+            {errors.amount && <p className="text-red-500 text-sm">{errors.amount.message}</p>}
+          </div>
+
+          {/* Type */}
+          <div>
+            <Label htmlFor="type">Type</Label>
+            <Select
+              options={[
+                { value: "Expense", label: "Expense" },
+                { value: "Revenue", label: "Revenue" },
+              ]}
+              onChange={(selected) =>
+                setValue("type", (selected?.value as "Expense" | "Revenue") || "Expense")
+              }
+              defaultValue={{ value: "Expense", label: "Expense" }}
+            />
+            {errors.type && <p className="text-red-500 text-sm">{errors.type.message}</p>}
+          </div>
+
+          {/* Category */}
+          <div>
+            <Label htmlFor="categoryId">Category</Label>
+            <Select
+              options={categoriesData?.data.map((category) => ({
+                value: category.id,
+                label: category.name,
+              }))}
+              onChange={(selected) => setValue("categoryId", selected?.value || "")}
+            />
+            {errors.categoryId && <p className="text-red-500 text-sm">{errors.categoryId.message}</p>}
+          </div>
+
+          {/* Payment Mode */}
+          <div>
+            <Label htmlFor="paymentModeId">Payment Mode</Label>
+            <Select
+              options={paymentModesData?.data.map((mode) => ({
+                value: mode.id,
+                label: mode.mode,
+              }))}
+              onChange={(selected) => setValue("paymentModeId", selected?.value || "")}
+            />
+            {errors.paymentModeId && (
+              <p className="text-red-500 text-sm">{errors.paymentModeId.message}</p>
+            )}
+          </div>
+
+          {/* Book */}
+          <div>
+            <Label htmlFor="bookId">Book</Label>
+            <Select
+              options={booksData?.data.map((book) => ({
+                value: book.id,
+                label: book.name,
+              }))}
+              onChange={(selected) => setValue("bookId", selected?.value || "")}
+            />
+            {errors.bookId && (
+              <p className="text-red-500 text-sm">{errors.bookId.message}</p>
+            )}
+            </div>
+
+          {/* Save Button */}
+          <Button type="submit" className="w-full">
+            Save Entry
+          </Button>
+        </form>
       </DialogContent>
     </Dialog>
   );
