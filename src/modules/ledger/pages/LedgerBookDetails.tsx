@@ -2,6 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { BookDetails } from "@/models";
 import { Clock, Book } from "lucide-react";
 import { useGetBooksByIdQuery } from "../api/ledgersApi";
+import dayjs from 'dayjs';
 import Loader from "@/components/layout/Loader";
 import { useParams } from "react-router-dom";
 import LedgerBookEntriesCard from "../components/LedgerBookEntriesCard";
@@ -23,17 +24,15 @@ const LedgerBookDetailsCard: React.FC<{
       )}
       <div className="flex items-center space-x-2">
         <Clock size={16} />
-        <span>Creation Date: {book.createdAt ? book.createdAt.toLocaleDateString() : "N/A"}</span>
+        <span>Creation Date: {dayjs(book.createdAt).format('MM/DD/YYYY')}</span>
       </div>
       <div className="flex items-center space-x-2">
         <Clock size={16} />
-        <span>Creation Date: {book.updatedAt ? book.updatedAt.toLocaleDateString() : "N/A"}</span>
+        <span>Last Updated: {dayjs(book.updatedAt).format('MM/DD/YYYY')}</span>
       </div>
     </CardContent>
   </Card>
 );
-
-
 
 const LedgerBookDetails = () => {
 
@@ -63,12 +62,12 @@ const LedgerBookDetails = () => {
       </div>
       {/* Ledger Book Details */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-        <div className='md:col-span-1 grid grid-cols-1 gap-4'>
+        <div className='md:col-span-1'>
           {/* Book Details Card */}
           <LedgerBookDetailsCard book={book} />
         </div>
         {/* Entries Card */}
-        <div className="md:col-span-2 grid grid-cols-1">
+        <div className="md:col-span-2">
           <LedgerBookEntriesCard />
         </div>
       </div>
