@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetProfessionalsPorfolioQuery, useUpdateverifiedBeauticiansMutation, useUseGetVerifiedBeauticianByIdQuery } from "../api/professionalApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DEFAULT_LOCATION } from "@/Utils/constants";
@@ -102,7 +102,6 @@ const VerificationDetailsCard: React.FC<{ verificationData: VerifiedBeauticians 
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center capitalize">
-          {verificationData.verificationData?.verificationStatus === "approved" && <CheckCircle className="mr-2 h-5 w-5 text-green-500" />}
           {verificationData.verificationData?.verificationStatus === "review" && <Clock10 className="mr-2 h-5 w-5 text-red-500" />}
           {verificationData.verificationData?.verificationStatus === "rejected" && <XCircle className="mr-2 h-5 w-5 text-red-500" />}
           {verificationData.verificationData?.verificationStatus === "pending" && <CircleEllipsis className="mr-2 h-5 w-5 text-yellow-500" />}
@@ -231,45 +230,6 @@ const BusinessCard: React.FC<{
   
 );
 
-// service provided card
-const ServiceProvidedCard: React.FC<{
-  beautician: VerifiedBeauticians;
-}> = (beautician) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Services</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div className="grid grid-cols-1 gap-4">
-        {beautician.beautician?.services.map((service, index) => (
-          <Card key={index}>
-            <CardHeader className="pb-2">
-              <div className="flex items-center space-x-4">
-                <img
-                  src={service.serviceData.imageUrl}
-                  alt={service.serviceData.name}
-                  width={100}
-                  height={100}
-                  className="rounded-md"
-                />
-                <div>
-                  <CardTitle className="text-xl capitalize mb-2">{service.serviceData.name}</CardTitle>
-                  <CardDescription className="text-lg"> Category: N/A</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-lg mb-2">{service.serviceData.description}</p>
-              <p className="font-medium"><b>Price:</b> KES {service.serviceData.minimumPrice}</p>
-              <p className="font-medium"><b>Duration:</b> {Math.floor(service.duration / 60)} min</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </CardContent>
-  </Card>
-);
-
 // products card
 const ProductCard: React.FC<{
   beautician: VerifiedBeauticians;
@@ -306,6 +266,7 @@ const VerificationDetails: React.FC = () => {
   const {data, isLoading, isError} = useUseGetVerifiedBeauticianByIdQuery(professionalId!);
   const {data: portfolio, isLoading: isPortfolioLoading, isError: isPortfolioError} = useGetProfessionalsPorfolioQuery(professionalId!);
   const [updateVerifiedBeauticians] = useUpdateverifiedBeauticiansMutation();
+  const navigate = useNavigate();
 
   const beautician = data?.data;
   
@@ -361,7 +322,7 @@ const VerificationDetails: React.FC = () => {
   };
 
   const isActionCompleted =
-    beautician.isVerified || beautician.verificationData?.verificationStatus === "approved" || beautician.verificationData?.verificationStatus === "rejected";
+    beautician.isVerified || beautician.verificationData?.verificationStatus === "rejected";
 
   return (
     <div className="container mx-auto p-4">
@@ -380,7 +341,8 @@ const VerificationDetails: React.FC = () => {
             <Button
               className="flex items-center space-x-2 bg-green-600"
               onClick={handleApprove}
-              disabled={beautician.isVerified || beautician.verificationData?.verificationStatus.includes("approved")}
+              
+              // disabled={beautician.isVerified || beautician.verificationData?.verificationStatus.includes("approved")}
             >
               <CheckCircle size={16} />
               <span>Approve</span>
@@ -413,7 +375,7 @@ const VerificationDetails: React.FC = () => {
       {/* Service and Product Card */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
-          <ServiceProvidedCard beautician={beautician} />
+          {/* <ServiceProvidedCard beautician={beautician} /> */}
         </div>
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
           <ProductCard beautician={beautician} />
