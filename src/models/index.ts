@@ -336,6 +336,20 @@ export interface Ledgers {
   books:       Books[];
 }
 
+export interface LedgerDetails {
+    id:           string;
+    name:         string;
+    createdAt:    Date;
+    updatedAt:    Date;
+    isDeleted:    boolean;
+    deletedAt:    null;
+    description?: null;
+    ownerId:      string;
+    books?:       Books[];
+    ledgerId?:    string;
+    bookEntries?: BookEntries[];
+}
+
 export interface Owner {
   businessName: null | string;
 }
@@ -343,7 +357,7 @@ export interface LedgersApiResponse {
   statusCode: string;
   code:       number;
   message:    string;
-  data:       Ledgers[];
+  data:       Ledgers;
 }
 
 export interface BooksApiResponse {
@@ -403,7 +417,7 @@ export interface BookEntries {
   title:         string;
   remark:        null;
   amount:        string;
-  type:          string;
+  type:          "Expense" | "Revenue";
   createdAt:     Date;
   updatedAt:     Date;
   isDeleted:     boolean;

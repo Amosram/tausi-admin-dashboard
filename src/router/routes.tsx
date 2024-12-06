@@ -165,7 +165,7 @@ export const routes: RouteObject[] = [
         )
       },
       {
-        path: "/ledgers/books",
+        path: "/ledgers",
         children:[
           {
             index: true,
@@ -176,7 +176,7 @@ export const routes: RouteObject[] = [
             )
           },
           {
-            path: ":bookId",
+            path: ":ownerId",
             element: (
               <Suspense fallback={<Loader />}>
                 <LedgerLazyDetail />

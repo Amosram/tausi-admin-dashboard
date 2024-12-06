@@ -35,8 +35,8 @@ export const ledgersApi = createApi({
     }),
 
     getLedgersById: builder.query<LedgersApiResponse, string> ({
-      query:(ledgersId) => ({
-        url: `/ledgers/${ledgersId}`,
+      query:(ownerId) => ({
+        url: `/ledgers/${ownerId}`,
         method:"GET"
       }),
       providesTags: ['LedgersDetails']
