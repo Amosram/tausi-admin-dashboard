@@ -316,7 +316,6 @@ export enum VerificationStatus {
   Pending = "pending",
   Rejected = "rejected",
   Review = "review",
-  Approved = "approved",
 }
 
 export enum VerificationTitle {

@@ -283,7 +283,7 @@ const VerificationDetails: React.FC = () => {
     try{
       await updateVerifiedBeauticians({
         id: beautician.id,
-        // isVerified: true,
+        isVerified: true,
         verificationStatus: "approved",
         verificationTitle: "Verification Approved",
         verificationDescription: "Verification approved successfully",
