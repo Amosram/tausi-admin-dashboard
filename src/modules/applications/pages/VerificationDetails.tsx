@@ -164,70 +164,45 @@ const ProfessionalDetailsCard: React.FC<{
   </Card>
 );
 
-// business card
+// service card
 
-const BusinessCard: React.FC<{
+const ServiceProvidedCard: React.FC<{
   beautician: VerifiedBeauticians;
-}> = ({beautician}) => (
+}> = (beautician) => (
   <Card>
-    <CardHeader className="flex flex-row items-start gap-4">
-      <div className="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center">
-        <div className="w-8 h-8 relative">
-          <div className="absolute inset-0 bg-white rounded-full" />
-          <div className="absolute bottom-0 right-0 w-4 h-4 bg-yellow-300 rounded-full" />
-          <div className="absolute top-0 right-0 w-4 h-4 bg-green-500 rounded-full" />
-        </div>
-      </div>
-      <div className="flex-1">
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="text-2xl mb-1">Service Provider</CardTitle>
-            <div className="space-y-1">
-              <div>
-                <span className="text-muted-foreground">{beautician.user.name}</span>
-                <p className="text-lg font-semibold text-blue-900">{beautician.businessName}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Provider Location</span>
-                <p className="text-lg font-semibold text-blue-900">{beautician.locationAddress}</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Star className="w-5 h-5 fill-red-500 text-red-500" />
-            <span className="text-2xl">{beautician.rating}</span>
-          </div>
-        </div>
-        {/*TODO: FETCH THE DATA FROM THE API  */}
-        <div className="grid grid-cols-3 gap-4 my-6 py-6 border-y">
-          <div>
-            <p className="text-muted-foreground">Completed Orders</p>
-            <p className="text-xl font-semibold text-blue-900">123</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Cancelled Orders</p>
-            <p className="text-xl font-semibold text-blue-900">10</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Total Revenue</p>
-            <p className="text-xl font-semibold text-blue-900">$2,500</p>
-          </div>
-        </div>
-      
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-muted-foreground">Provider Phone</p>
-            <p className="text-lg font-semibold text-blue-900">{beautician.user.phoneNumber}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Provider Email;</p>
-            <p className="text-lg font-semibold text-blue-900">{beautician.user.email}</p>
-          </div>
-        </div>
-      </div>
+    <CardHeader>
+      <CardTitle>Services</CardTitle>
     </CardHeader>
+    <CardContent>
+      <div className="grid grid-cols-1 gap-4">
+        {beautician.beautician?.services.map((service, index) => (
+          <Card key={index}>
+            <CardHeader className="pb-2">
+              <div className="flex items-center space-x-4">
+                <img
+                  src={service.serviceData.imageUrl}
+                  alt={service.serviceData.name}
+                  width={100}
+                  height={100}
+                  className="rounded-md"
+                />
+                <div>
+                  <CardTitle className="text-xl capitalize mb-2">{service.serviceData.name}</CardTitle>
+                  <CardDescription className="text-lg"> Category: N/A</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-lg mb-2">{service.serviceData.description}</p>
+              <p className="font-medium"><b>Price:</b> KES {service.serviceData.minimumPrice}</p>
+              <p className="font-medium"><b>Duration:</b> {Math.floor(service.duration / 60)} min</p>
+              <p className="font-medium mt-1"><b>Last Updated:</b> {new Date(service.serviceData.updatedAt).toLocaleDateString()}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </CardContent>
   </Card>
-  
 );
 
 // products card
@@ -314,6 +289,7 @@ const VerificationDetails: React.FC = () => {
         verificationDescription: "Verification approved successfully",
       }).unwrap();
       toast({ title: "Success", description: "Application approved successfully!", variant: "success" });
+      navigate(`/professionals/${beautician.id}`);
     }
     catch (error) {
       console.error("Approve failed:", error);
@@ -341,8 +317,7 @@ const VerificationDetails: React.FC = () => {
             <Button
               className="flex items-center space-x-2 bg-green-600"
               onClick={handleApprove}
-              
-              // disabled={beautician.isVerified || beautician.verificationData?.verificationStatus.includes("approved")}
+              disabled={beautician.isVerified || beautician.verificationData?.verificationStatus.includes("approved")}
             >
               <CheckCircle size={16} />
               <span>Approve</span>
@@ -368,14 +343,14 @@ const VerificationDetails: React.FC = () => {
           </div>
           {/* Business Card */}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-            <BusinessCard beautician={beautician} />
+            {/* <BusinessCard beautician={beautician} /> */}
           </div>
         </div>
       </div>
       {/* Service and Product Card */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
-          {/* <ServiceProvidedCard beautician={beautician} /> */}
+          <ServiceProvidedCard beautician={beautician} />
         </div>
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
           <ProductCard beautician={beautician} />
