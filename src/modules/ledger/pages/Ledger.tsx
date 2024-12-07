@@ -51,7 +51,6 @@ const Ledger = () => {
         variant: "destructive",
       });
     } else {
-      console.log("Deleted book:=================>", selectedBook); // Log the deleted book data
       toast.toast({
         title: "Success",
         description: "Book deleted successfully",
