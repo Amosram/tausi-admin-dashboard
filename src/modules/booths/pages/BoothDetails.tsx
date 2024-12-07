@@ -30,21 +30,35 @@ import { DeleteBoothDialog } from "../components/delete-booth-dialog";
 import { BoothsAssignmentCard } from "../components/booths-assignment-card";
 import { BoothsMaintenanceCard } from "../components/booths-maintenance-card";
 import BoothsLogsCard from "../components/booths-logs-card";
+import { boothDetails } from "../constants";
 
 const BoothDetails: React.FC = () => {
   const { boothId } = useParams<{ boothId: string }>();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
+  const [isAssignButtonDisabled, setIsAssignButtonDisabled] = useState(false);
   const [deleteBooth, { isLoading: isDeleting }] = useDeleteBoothMutation();
 
   const {
     data: boothData,
     isLoading,
     isError,
+    refetch,
+    isFetching,
   } = useGetBoothByIdQuery(boothId || "", {
     skip: !boothId,
   });
+
+  // Incase polling is needed
+  // const {
+  //   data: boothData,
+  //   isLoading,
+  //   isError,
+  // } = useBoothPolling(boothId || "", {
+  //   pollingInterval: 50000, // 5 seconds
+  //   enabled: true // You can toggle this based on user preference or app state
+  // });
 
   const currentBooth = boothData?.data;
   const [coordinates, setCoordinates] = useState<Coordinates>(
@@ -63,88 +77,11 @@ const BoothDetails: React.FC = () => {
     return <DummyBoothDetails />;
   }
 
-  const boothDetails = [
-    {
-      id: "detail-1",
-      icon: <LayoutGrid className="h-6 w-6" />,
-      label: "General Details",
-      content: [
-        {
-          id: "content-1",
-          label: "Booth ID",
-          icon: <IdCard className="h-4 w-4 text-muted-foreground" />,
-          value: currentBooth.id,
-        },
-        {
-          id: "content-2",
-          label: "Booth Location",
-          icon: <MapPin className="h-4 w-4 text-muted-foreground" />,
-          value: currentBooth.locationAddress,
-        },
-        {
-          id: "content-3",
-          label: "Created At",
-          icon: <Clock className="h-4 w-4 text-muted-foreground" />,
-          value: (
-            <p>
-              {currentBooth.createdAt
-                ? format(new Date(currentBooth.createdAt), "PPP")
-                : "N/A"}
-            </p>
-          ),
-        },
-        {
-          id: "content-4",
-          label: "Created By",
-          icon: <User className="h-4 w-4 text-muted-foreground" />,
-          value: "Admin",
-        },
-        {
-          id: "content-5",
-          label: "Last Update",
-          icon: <Calendar className="h-4 w-4 text-muted-foreground" />,
-          value: (
-            <p>
-              {currentBooth.updatedAt
-                ? format(new Date(currentBooth.updatedAt), "PPP")
-                : "N/A"}
-            </p>
-          ),
-        },
-      ],
-    },
-    {
-      id: "detail-2",
-      icon: <Building2 className="h-6 w-6" />,
-      label: "Booth Overview",
-      content: [
-        {
-          id: "content-1",
-          label: "Total Stations",
-          icon: <Building2 className="h-4 w-4 text-muted-foreground" />,
-          value: currentBooth.numberOfStations || 0,
-        },
-        {
-          id: "content-2",
-          label: "Total Beauticians",
-          icon: <Tag className="h-4 w-4 text-muted-foreground" />,
-          value: currentBooth.numberOfBeauticians || 0,
-        },
-        {
-          id: "content-3",
-          label: "Occupancy status",
-          icon: <Info className="h-4 w-4 text-muted-foreground" />,
-          value: currentBooth.occupancyStatus || "Unknown",
-        },
-        {
-          id: "content-4",
-          label: "Status",
-          icon: <Tag className="h-4 w-4 text-muted-foreground" />,
-          value: <p>{currentBooth.isActive ? "Active" : "Inactive"}</p>,
-        },
-      ],
-    },
-  ];
+  const details = boothDetails(currentBooth);
+
+  const handleRefresh = () => {
+    refetch();
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -156,7 +93,11 @@ const BoothDetails: React.FC = () => {
           </Badge>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline" onClick={() => setIsAssignDialogOpen(true)}>
+          <Button
+            variant="outline"
+            onClick={() => setIsAssignDialogOpen(true)}
+            disabled={isAssignButtonDisabled}
+          >
             <Edit className="mr-2 h-4 w-4" /> Assign Booth
           </Button>
           <Button variant="outline" onClick={() => setIsEditDialogOpen(true)}>
@@ -172,8 +113,8 @@ const BoothDetails: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex w-full gap-4 flex-col md:flex-row">
-        {boothDetails.map((details) => (
+      <div className="flex w-full gap-4 flex-col lg:flex-row">
+        {details.map((details) => (
           <Card
             key={details.id}
             className="flex-1 flex flex-col border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
@@ -204,9 +145,17 @@ const BoothDetails: React.FC = () => {
         ))}
       </div>
 
-      <div className="flex w-full gap-4 flex-col md:flex-row">
-        <BoothsAssignmentCard currentBooth={currentBooth} />
-        <BoothsMaintenanceCard currentBooth={currentBooth} />
+      <div className="flex w-full gap-4 flex-col lg:flex-row">
+        <BoothsAssignmentCard
+          currentBooth={currentBooth}
+          handleRefresh={handleRefresh}
+          isFetching={isFetching}
+        />
+        <BoothsMaintenanceCard
+          currentBooth={currentBooth}
+          isAssignButtonDisabled={isAssignButtonDisabled}
+          setIsAssignButtonDisabled={setIsAssignButtonDisabled}
+        />
       </div>
 
       <div className="flex w-full">

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Calendar, ShieldAlert, Tag } from "lucide-react";
+import { Calendar, RefreshCw, ShieldAlert, Tag } from "lucide-react";
 import { toZonedTime, format as formatWithTZ } from "date-fns-tz";
 
 import {
@@ -21,16 +21,25 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Booth } from "@/models";
-import { useUpdateBoothMutation } from "../api/boothsApi";
+import { useGetBoothByIdQuery, useUpdateBoothMutation } from "../api/boothsApi";
 
 interface BoothsMaintenanceCardProps {
   currentBooth: Booth;
+  isAssignButtonDisabled: boolean;
+  setIsAssignButtonDisabled: (
+    value: boolean | ((prevState: boolean) => boolean)
+  ) => void;
 }
 
 export const BoothsMaintenanceCard: React.FC<BoothsMaintenanceCardProps> = ({
   currentBooth,
+  isAssignButtonDisabled,
+  setIsAssignButtonDisabled,
 }) => {
   const [updateBooth, { isLoading: isUpdating }] = useUpdateBoothMutation();
+  const { refetch, isFetching } = useGetBoothByIdQuery(currentBooth.id, {
+    skip: !currentBooth.id,
+  });
   const [isDialogOpen, setDialogOpen] = useState(false);
 
   const handleToggleMaintenance = async () => {
@@ -43,14 +52,21 @@ export const BoothsMaintenanceCard: React.FC<BoothsMaintenanceCardProps> = ({
           isActive: !currentBooth.isActive,
         },
       }).unwrap();
+      await refetch();
       alert(
         currentBooth.underMaintenance
           ? "The booth is now operational."
           : "The booth is now under maintenance."
       );
+
+      setIsAssignButtonDisabled(!isAssignButtonDisabled);
     } catch (error) {
       alert(`Failed to update maintenance status. Please try again. ${error}`);
     }
+  };
+
+  const handleRefresh = () => {
+    refetch();
   };
 
   const timeZone = "Africa/Nairobi";
@@ -62,9 +78,20 @@ export const BoothsMaintenanceCard: React.FC<BoothsMaintenanceCardProps> = ({
   return (
     <Card className="flex-1 flex justify-between flex-col border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
       <CardHeader className="bg-gray-50 p-4 border-b">
-        <CardTitle className="flex items-center gap-3">
-          <ShieldAlert className="h-5 w-5" />
-          Maintenance History
+        <CardTitle className="flex justify-between">
+          <div className="flex items-center gap-3">
+            <ShieldAlert className="h-5 w-5" />
+            Maintenance
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={isFetching}
+            className="hover:bg-gray-100 p-1 rounded-full transition-colors"
+          >
+            <RefreshCw
+              className={`h-5 w-5 ${isFetching ? "animate-spin" : ""}`}
+            />
+          </button>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 pt-2">

@@ -6,7 +6,7 @@ export const boothsApi = createApi({
   reducerPath: "boothsApi",
   baseQuery: axiosBaseQuery({ isAuthorizedApi: true }),
   tagTypes: ["Booths", "Booths Details"],
-  refetchOnMountOrArgChange: false,
+  refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
     getBooths: builder.query<BoothsApiResponse<Booth[]>, void>({
       query: () => ({
@@ -22,6 +22,7 @@ export const boothsApi = createApi({
         method: "GET",
       }),
       providesTags: ["Booths Details"],
+      keepUnusedDataFor: 0,
     }),
     createBooth: builder.mutation<BoothsApiResponse<Booth>, CreateBoothPayload>(
       {

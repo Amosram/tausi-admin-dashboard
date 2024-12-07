@@ -5,7 +5,6 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { useBoothMetrics } from "@/hooks/useBoothMetrics";
 import { Booth } from "@/models";
 import {
   Building2,
@@ -16,6 +15,7 @@ import {
   PieChart,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useBoothMetrics } from "../hooks/useBoothMetrics";
 
 interface BoothsStatsProps {
   booths: Booth[];

@@ -16,9 +16,8 @@ import { useToast } from "@/hooks/use-toast";
 import { FormInputField } from "@/components/ui/Form/FormInputField";
 import { useAssignBoothMutation } from "../api/boothsApi";
 import { CreateBoothAssignmentRequest } from "@/models";
-import { useGetUsersQuery } from "@/modules/users/api/usersApi";
+import { useGetVerifiedBeauticiansQuery } from "@/modules/applications/api/professionalApi";
 
-// Zod schema for booth assignment validation
 const boothAssignmentSchema = z
   .object({
     beauticianId: z.string().min(1, "Beautician is required"),
@@ -58,8 +57,10 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
   const { toast } = useToast();
   const [assignBooth, { isLoading }] = useAssignBoothMutation();
 
-  // Fetch users to populate beautician dropdown
-  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery(100);
+  const { data: professionalData, isLoading: isProfessionalsLoading } =
+    useGetVerifiedBeauticiansQuery(100);
+
+  const professional = professionalData?.data || [];
 
   const form = useForm<BoothAssignmentFormValues>({
     resolver: zodResolver(boothAssignmentSchema),
@@ -117,9 +118,9 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
               label="Beautician"
               type="select"
               options={
-                users?.map((user) => ({
-                  label: `${user.users.name}`,
-                  value: user.users.id,
+                professional?.map((professional) => ({
+                  label: `${professional.user.email}`,
+                  value: professional.user.id,
                 })) || []
               }
               placeholder="Select a beautician"
@@ -149,7 +150,10 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isLoading || isUsersLoading}>
+              <Button
+                type="submit"
+                disabled={isLoading || isProfessionalsLoading}
+              >
                 {isLoading ? "Assigning..." : "Assign Booth"}
               </Button>
             </DialogFooter>

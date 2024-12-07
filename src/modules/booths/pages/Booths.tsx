@@ -11,19 +11,10 @@ const Booths = () => {
   const { data, error, isLoading, refetch } = useGetBoothsQuery();
   const { toast } = useToast();
 
-  console.log("data from booths", data)
-
   const [retryCount, setRetryCount] = React.useState(0);
   const maxRetries = 3;
 
   const booths: Booth[] = data?.data || [];
-
-  console.log("Booths page",booths)
-
-  const boothCoordinates = booths.map((booth) => ({
-    lat: booth.coordinates.y,
-    lng: booth.coordinates.x,
-  }));
 
   useEffect(() => {
     if (error) {

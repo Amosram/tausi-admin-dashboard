@@ -1,4 +1,4 @@
-import { MapPin } from "lucide-react";
+import { MapPin, RefreshCw } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -14,18 +14,39 @@ import { Booth } from "@/models";
 
 interface BoothsAssignmentCardProps {
   currentBooth: Booth;
+  handleRefresh: () => void;
+  isFetching: boolean;
 }
 
 export const BoothsAssignmentCard: React.FC<BoothsAssignmentCardProps> = ({
   currentBooth,
+  handleRefresh,
+  isFetching,
 }) => {
-  const recentAssignments = currentBooth.assignments.slice(0, 2);
+  const recentAssignments = [...currentBooth.assignments]
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+    .slice(0, 2);
+
   return (
     <Card className="flex-1 flex flex-col border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
       <CardHeader className="bg-gray-50 p-4 border-b">
-        <CardTitle className="flex items-center gap-3">
-          <MapPin className="h-5 w-5" />
-          Assignments
+        <CardTitle className="flex justify-between">
+          <div className="flex items-center gap-3">
+            <MapPin className="h-5 w-5" />
+            Assignments
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={isFetching}
+            className="hover:bg-gray-100 p-1 rounded-full transition-colors"
+          >
+            <RefreshCw
+              className={`h-5 w-5 ${isFetching ? "animate-spin" : ""}`}
+            />
+          </button>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -71,7 +92,7 @@ export const BoothsAssignmentCard: React.FC<BoothsAssignmentCardProps> = ({
       </CardContent>
       <CardFooter className="mt-auto">
         <Button variant="link" asChild>
-          <Link to="">View More</Link>
+          <Link to="assignments">View More</Link>
         </Button>
       </CardFooter>
     </Card>
