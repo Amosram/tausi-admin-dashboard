@@ -93,6 +93,14 @@ export const ledgersApi = createApi({
       invalidatesTags: ['Books']
     }),
 
+    deleteBookEntry: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/books/records/${id}`,
+        method: "DELETE"
+      }),
+      invalidatesTags: ['Books']
+    }),
+
     getAllCategories: builder.query<ApiResponse<BookCategories[]>, void>({
       query: () => ({
         url: "/books/categories",
@@ -140,4 +148,5 @@ export const {
   useGetAllPaymentModesQuery,
   useCreateBookEntryMutation,
   useDeleteLedgerMutation,
+  useDeleteBookEntryMutation
 } = ledgersApi;
