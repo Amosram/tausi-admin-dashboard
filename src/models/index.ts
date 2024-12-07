@@ -350,6 +350,13 @@ export interface LedgerDetails {
     bookEntries?: BookEntries[];
 }
 
+export interface LedgerDetailsApiResponse {
+  statusCode: string;
+  code:       number;
+  message:    string;
+  data:       LedgerDetails;
+}
+
 export interface Owner {
   businessName: null | string;
 }
@@ -367,7 +374,7 @@ export interface BooksApiResponse {
   data:       Books;
 }
 
-export interface Books {
+export interface Books extends BookDetails {
   id:        string;
   name:      string;
   createdAt: Date;
