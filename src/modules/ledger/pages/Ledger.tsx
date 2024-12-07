@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDeleteLoanBookMutation, useGetLedgersQuery } from "../api/ledgersApi";
+import { useDeleteLedgerMutation, useGetLedgersQuery } from "../api/ledgersApi";
 import { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -23,47 +23,49 @@ const Ledger = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedBook, setSelectedBook] = useState<Books | null>(null);
+  const [selectedBook, setSelectedBook] = useState<Ledgers | null>(null);
   const [editData, setEditData] = useState<{ id: string; name: string; ledgerId: string, ownerId: string } | null>(
     null
   );
 
   const [deleteBook, {
     isSuccess: isDeleteSuccess,
-  }] = useDeleteLoanBookMutation();
+  }] = useDeleteLedgerMutation();
 
-  // const handleDelete = async (book: Books) => {
-  //   setSelectedBook(book);
-  //   setDeleteDialogOpen(true);
-  // };
+  const handleDelete = async (ledger: Ledgers) => {
+    setSelectedBook(ledger);
+    setDeleteDialogOpen(true);
+  };
 
-  // const handleDeleteConfirm = async () => {
-  //   if (!selectedBook) {
-  //     return;
-  //   }
+  const handleDeleteConfirm = async () => {
+    if (!selectedBook) {
+      return;
+    }
   
-  //   const response = await deleteBook(selectedBook.id);
+    const response = await deleteBook(selectedBook.ownerId);
   
-  //   if (response.error) {
-  //     toast.toast({
-  //       title: "Error",
-  //       description: "Error deleting book",
-  //     });
-  //   } else {
-  //     toast.toast({
-  //       title: "Success",
-  //       description: "Book deleted successfully",
-  //     });
+    if (response.error) {
+      toast.toast({
+        title: "Error",
+        description: "Error deleting book",
+        variant: "destructive",
+      });
+    } else {
+      console.log("Deleted book:=================>", selectedBook); // Log the deleted book data
+      toast.toast({
+        title: "Success",
+        description: "Book deleted successfully",
+        variant: "success",
+      });
   
-  //     // Refetch ledgers after deletion
-  //     await refetch();
+      // Refetch ledgers after deletion
+      await refetch();
   
-  //     // Close the delete dialog
-  //     setDeleteDialogOpen(false);
-  //     setSelectedBook(null);
-  //   }
-  // };
-  
+      // Close the delete dialog
+      setDeleteDialogOpen(false);
+      setSelectedBook(null);
+    }
+  };
 
   const columns: ColumnDef<Ledgers>[] = [
     {
@@ -133,7 +135,7 @@ const Ledger = () => {
               Edit Loan Book
             </DropdownMenuItem> */}
             <DropdownMenuItem
-              // onClick={() => handleDelete(row.original)}
+              onClick={() => handleDelete(row.original)}
               className="bg-destructive text-white cursor-pointer"
             >
                   Delete Book
@@ -179,12 +181,12 @@ const Ledger = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the Country.
+              This action cannot be undone. This will permanently delete the Ledger.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="bg-black text-white">Cancel</AlertDialogCancel>
-            {/* <AlertDialogAction className="bg-red-500 hover:bg-red-600" onClick={() => handleDeleteConfirm()}>Continue</AlertDialogAction> */}
+            <AlertDialogAction className="bg-red-500 hover:bg-red-600" onClick={() => handleDeleteConfirm()}>Continue</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

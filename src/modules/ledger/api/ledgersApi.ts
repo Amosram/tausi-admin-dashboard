@@ -1,4 +1,4 @@
-import { ApiResponse, BookCategories, BookDetails, BookEntries, Books, CreateUpdateBookEntry, CreateUpdateLoanBook, Ledgers, LedgersApiResponse, PaymentModes } from "@/models";
+import { ApiResponse, BookCategories, BookDetails, BookEntries, Books, CreateUpdateBookEntry, CreateUpdateLoanBook, LedgerDetails, LedgerDetailsApiResponse, Ledgers, LedgersApiResponse, PaymentModes } from "@/models";
 import { axiosBaseQuery } from "@/Utils/axios";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { create } from "domain";
@@ -34,12 +34,20 @@ export const ledgersApi = createApi({
       providesTags: ['Books']
     }),
 
-    getLedgersById: builder.query<LedgersApiResponse, string> ({
+    getLedgersById: builder.query<LedgerDetailsApiResponse, string> ({
       query:(ownerId) => ({
         url: `/ledgers/${ownerId}`,
         method:"GET"
       }),
       providesTags: ['LedgersDetails']
+    }),
+
+    deleteLedger: builder.mutation<void, string>({
+      query: (ownerId) => ({
+        url: `/ledgers/${ownerId}`,
+        method: "DELETE"
+      }),
+      invalidatesTags: ['Ledgers']
     }),
 
     createLoanBook: builder.mutation<Ledgers, CreateUpdateLoanBook>({
@@ -131,4 +139,5 @@ export const {
   useGetAllCategoriesQuery,
   useGetAllPaymentModesQuery,
   useCreateBookEntryMutation,
+  useDeleteLedgerMutation,
 } = ledgersApi;
