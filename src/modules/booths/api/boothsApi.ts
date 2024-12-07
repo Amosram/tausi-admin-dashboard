@@ -39,8 +39,7 @@ export const boothsApi = createApi({
         method: "PATCH",
         data,
       }),
-      invalidatesTags: (result, error, { id }) =>
-        result ? [{ type: "Booths", id }] : [],
+      invalidatesTags: ["Booths", "Booths Details"],
     }),
     assignBooth: builder.mutation<BoothAssignmentResponse, CreateBoothAssignmentRequest>({
       query: (assignmentRequest) => ({

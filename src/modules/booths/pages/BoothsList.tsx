@@ -1,29 +1,19 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BoothsTable } from "../components/booths-table";
-import BoothsMap from "../components/booths-maps";
-import { useGetBoothsQuery } from "../api/boothsApi";
-import { Booth } from "@/models";
-import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/layout/Loader";
-import { BoothStats } from "../components/booth-stats";
+import { Booth } from "@/models";
+import { useGetBoothsQuery } from "../api/boothsApi";
+import { useToast } from "@/hooks/use-toast";
+import BoothsFilter from "../components/booths-filter";
 
-const Booths = () => {
+const BoothsList = () => {
   const { data, error, isLoading, refetch } = useGetBoothsQuery();
   const { toast } = useToast();
 
-  console.log("data from booths", data)
-
-  const [retryCount, setRetryCount] = React.useState(0);
+  const [retryCount, setRetryCount] = useState(0);
   const maxRetries = 3;
 
   const booths: Booth[] = data?.data || [];
-
-  console.log("Booths page",booths)
-
-  const boothCoordinates = booths.map((booth) => ({
-    lat: booth.coordinates.y,
-    lng: booth.coordinates.x,
-  }));
 
   useEffect(() => {
     if (error) {
@@ -48,14 +38,12 @@ const Booths = () => {
   if (error && retryCount >= maxRetries && isDataEmpty)
     return <div>Error: Unable to load booth data after multiple attempts.</div>;
   if (isDataEmpty) return <div>No booths found.</div>;
-
   return (
     <div>
-      {/* <BoothsMap coordinates={boothCoordinates} />
-      <BoothsTable booths={booths} /> */}
-      <BoothStats booths={booths}/>
+      <BoothsFilter />
+      <BoothsTable booths={booths} />
     </div>
   );
 };
 
-export default Booths;
+export default BoothsList;

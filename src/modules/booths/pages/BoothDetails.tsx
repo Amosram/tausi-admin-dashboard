@@ -1,65 +1,42 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { format } from "date-fns";
 import {
-  Building,
   MapPin,
   Info,
   Trash2,
   Edit,
-  ShieldAlert,
   Tag,
   LayoutGrid,
-  Users,
   Calendar,
+  Building2,
+  IdCard,
+  Clock,
+  User,
 } from "lucide-react";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/layout/Loader";
 
-import {
-  useGetBoothByIdQuery,
-  useDeleteBoothMutation,
-  useUpdateBoothMutation,
-} from "../api/boothsApi";
+import { useGetBoothByIdQuery, useDeleteBoothMutation } from "../api/boothsApi";
 import DummyBoothDetails from "../components/dummy-booth-details";
 import Maps from "@/components/ui/maps";
 import { Coordinates } from "@/models";
 import { DEFAULT_LOCATION } from "@/Utils/constants";
 import { AssignBoothDialog } from "../components/assign-booth";
+import { EditBoothDialog } from "../components/edit-booth-dialog";
+import { DeleteBoothDialog } from "../components/delete-booth-dialog";
+import { BoothsAssignmentCard } from "../components/booths-assignment-card";
+import { BoothsMaintenanceCard } from "../components/booths-maintenance-card";
+import BoothsLogsCard from "../components/booths-logs-card";
 
 const BoothDetails: React.FC = () => {
   const { boothId } = useParams<{ boothId: string }>();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const [deleteReason, setDeleteReason] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
+  const [deleteBooth, { isLoading: isDeleting }] = useDeleteBoothMutation();
 
   const {
     data: boothData,
@@ -70,56 +47,9 @@ const BoothDetails: React.FC = () => {
   });
 
   const currentBooth = boothData?.data;
-  console.log("Current bootc, ", currentBooth);
-
   const [coordinates, setCoordinates] = useState<Coordinates>(
     currentBooth?.coordinates || DEFAULT_LOCATION
   );
-
-  const [deleteBooth, { isLoading: isDeleting }] = useDeleteBoothMutation();
-  const [updateBooth, { isLoading: isUpdating }] = useUpdateBoothMutation();
-
-  const handleDelete = async () => {
-    try {
-      if (!boothId) return;
-
-      await deleteBooth({
-        id: boothId,
-        deletedReason: deleteReason,
-      }).unwrap();
-
-      toast({
-        title: "Booth Deleted",
-        description: "The booth has been successfully deleted.",
-        variant: "default",
-      });
-
-      navigate("/booths");
-    } catch (error) {
-      toast({
-        title: "Delete Failed",
-        description: `Unable to delete the booth. Please try again. ${error}`,
-        variant: "destructive",
-      });
-    } finally {
-      setIsDeleteDialogOpen(false);
-      setIsConfirmDialogOpen(false);
-    }
-  };
-
-  const handleEdit = async () => {
-    try {
-      if (!boothId) return;
-      setIsEditDialogOpen(false);
-      navigate(`/booths/${boothId}/edit`);
-    } catch (error) {
-      toast({
-        title: "Edit Failed",
-        description: `Unable to edit the booth. Please try again. ${error}`,
-        variant: "destructive",
-      });
-    }
-  };
 
   if (isError || !boothId) {
     return <DummyBoothDetails />;
@@ -133,11 +63,94 @@ const BoothDetails: React.FC = () => {
     return <DummyBoothDetails />;
   }
 
+  const boothDetails = [
+    {
+      id: "detail-1",
+      icon: <LayoutGrid className="h-6 w-6" />,
+      label: "General Details",
+      content: [
+        {
+          id: "content-1",
+          label: "Booth ID",
+          icon: <IdCard className="h-4 w-4 text-muted-foreground" />,
+          value: currentBooth.id,
+        },
+        {
+          id: "content-2",
+          label: "Booth Location",
+          icon: <MapPin className="h-4 w-4 text-muted-foreground" />,
+          value: currentBooth.locationAddress,
+        },
+        {
+          id: "content-3",
+          label: "Created At",
+          icon: <Clock className="h-4 w-4 text-muted-foreground" />,
+          value: (
+            <p>
+              {currentBooth.createdAt
+                ? format(new Date(currentBooth.createdAt), "PPP")
+                : "N/A"}
+            </p>
+          ),
+        },
+        {
+          id: "content-4",
+          label: "Created By",
+          icon: <User className="h-4 w-4 text-muted-foreground" />,
+          value: "Admin",
+        },
+        {
+          id: "content-5",
+          label: "Last Update",
+          icon: <Calendar className="h-4 w-4 text-muted-foreground" />,
+          value: (
+            <p>
+              {currentBooth.updatedAt
+                ? format(new Date(currentBooth.updatedAt), "PPP")
+                : "N/A"}
+            </p>
+          ),
+        },
+      ],
+    },
+    {
+      id: "detail-2",
+      icon: <Building2 className="h-6 w-6" />,
+      label: "Booth Overview",
+      content: [
+        {
+          id: "content-1",
+          label: "Total Stations",
+          icon: <Building2 className="h-4 w-4 text-muted-foreground" />,
+          value: currentBooth.numberOfStations || 0,
+        },
+        {
+          id: "content-2",
+          label: "Total Beauticians",
+          icon: <Tag className="h-4 w-4 text-muted-foreground" />,
+          value: currentBooth.numberOfBeauticians || 0,
+        },
+        {
+          id: "content-3",
+          label: "Occupancy status",
+          icon: <Info className="h-4 w-4 text-muted-foreground" />,
+          value: currentBooth.occupancyStatus || "Unknown",
+        },
+        {
+          id: "content-4",
+          label: "Status",
+          icon: <Tag className="h-4 w-4 text-muted-foreground" />,
+          value: <p>{currentBooth.isActive ? "Active" : "Inactive"}</p>,
+        },
+      ],
+    },
+  ];
+
   return (
     <div className="p-6 space-y-6">
       <div className="w-full bg-muted p-4 rounded-lg flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
-          <h2 className="text-xl font-bold uppercase">Booth Details</h2>
+          <h2 className="text-xl font-bold uppercase">{currentBooth.name}</h2>
           <Badge variant={currentBooth.isActive ? "success" : "destructive"}>
             {currentBooth.isActive ? "Active" : "Inactive"}
           </Badge>
@@ -159,230 +172,49 @@ const BoothDetails: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <MapPin className="mr-2 h-5 w-5" /> Assignments
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {currentBooth.assignments.length > 0 ? (
-              <div className="mt-2">
-                {currentBooth.assignments.map((assignment) => (
-                  <div key={assignment.id} className="mb-2 p-2 border rounded">
-                    <div className="flex justify-between">
-                      <div>
-                        <p className="font-semibold">Beautician ID</p>
-                        <p>{assignment.beauticianId}</p>
-                      </div>
-                      <div>
-                        <p className="font-semibold">Assignment Period</p>
-                        <p>
-                          {new Date(assignment.startDate).toLocaleDateString()}{" "}
-                          - {new Date(assignment.endDate).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-2 flex justify-between">
-                      <span
-                        className={`px-2 py-1 rounded text-sm ${
-                          assignment.isLapsed
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-green-100 text-green-800"
-                        }`}
-                      >
-                        {assignment.isLapsed ? "Lapsed" : "Active"}
-                      </span>
-                      {assignment.isTerminated && (
-                        <span className="px-2 py-1 rounded text-sm bg-red-100 text-red-800">
-                          Terminated
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
+      <div className="flex w-full gap-4 flex-col md:flex-row">
+        {boothDetails.map((details) => (
+          <Card
+            key={details.id}
+            className="flex-1 flex flex-col border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
+          >
+            <CardHeader className="bg-gray-50 p-4 border-b">
+              <div className="flex items-center gap-4">
+                {details.icon}
+                <CardTitle>{details.label}</CardTitle>
               </div>
-            ) : (
-              <p className="text-gray-500 mt-2">No assignments</p>
-            )}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex-row items-center space-x-3 pb-2">
-            <Users className="h-6 w-6" />
-            <CardTitle className="m-0">Beautician Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Tag className="h-4 w-4 text-muted-foreground" />
-                <span>Total Beauticians</span>
-              </div>
-              <span className="font-semibold">
-                {currentBooth.numberOfBeauticians || 0}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span>Last Beautician Update</span>
-              </div>
-              <span>
-                {currentBooth.updatedAt
-                  ? format(new Date(currentBooth.updatedAt), "PPP")
-                  : "N/A"}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex-row items-center space-x-3 pb-2">
-            <ShieldAlert className="h-6 w-6" />
-            <CardTitle className="m-0">Maintenance History</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span>Last Maintenance</span>
-              </div>
-              <span>
-                {currentBooth.updatedAt
-                  ? format(new Date(currentBooth.updatedAt), "PPP")
-                  : "N/A"}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Tag className="h-4 w-4 text-muted-foreground" />
-                <span>Maintenance Status</span>
-              </div>
-              <span className="font-semibold">
-                {currentBooth.underMaintenance
-                  ? "Under Maintenance"
-                  : "Operational"}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex-row items-center space-x-3 pb-2">
-            <Trash2 className="h-6 w-6" />
-            <CardTitle className="m-0">Deleted Booth History</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Tag className="h-4 w-4 text-muted-foreground" />
-                <span>Deleted At</span>
-              </div>
-              <span>
-                {currentBooth.deletedAt
-                  ? format(new Date(currentBooth.deletedAt), "PPP")
-                  : "N/A"}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Info className="h-4 w-4 text-muted-foreground" />
-                <span>Reason for Deletion</span>
-              </div>
-              <span>{currentBooth.deletedReason || "No reason provided"}</span>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex-row items-center space-x-3 pb-2">
-            <LayoutGrid className="h-6 w-6" />
-            <CardTitle className="m-0">Station Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Tag className="h-4 w-4 text-muted-foreground" />
-                <span>Total Stations</span>
-              </div>
-              <span className="font-semibold">
-                {currentBooth.numberOfStations || 0}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Users className="h-4 w-4 text-muted-foreground" />
-                <span>Stations Occupied</span>
-              </div>
-              <span className="font-semibold">TBD</span>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex-row items-center space-x-3 pb-2">
-            <ShieldAlert className="h-6 w-6" />
-            <CardTitle className="m-0">Booth Security</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Info className="h-4 w-4 text-muted-foreground" />
-                <span>Occupancy Status</span>
-              </div>
-              <Badge
-                variant={
-                  currentBooth.occupancyStatus === "occupied"
-                    ? "default"
-                    : "outline"
-                }
-              >
-                {currentBooth.occupancyStatus || "Unknown"}
-              </Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <ShieldAlert className="h-4 w-4 text-muted-foreground" />
-                <span>Security Alert</span>
-              </div>
-              <span>
-                {currentBooth.isActive ? "No alerts" : "Security Alert"}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent className="p-4">
+              {details.content.map((content) => (
+                <div
+                  key={content.id}
+                  className="flex justify-between items-center w-full py-2 border-b last:border-none"
+                >
+                  <span className="flex items-center gap-2 text-sm text-gray-700">
+                    {content.icon}
+                    {content.label}
+                  </span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {content.value}
+                  </span>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Building className="mr-2 h-5 w-5" /> Booth Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>
-              <strong>Booth ID:</strong> {currentBooth.id}
-            </p>
-            <p>
-              <strong>Created:</strong>{" "}
-              {format(new Date(currentBooth.createdAt), "PPP")}
-            </p>
-          </CardContent>
-        </Card>
+      <div className="flex w-full gap-4 flex-col md:flex-row">
+        <BoothsAssignmentCard currentBooth={currentBooth} />
+        <BoothsMaintenanceCard currentBooth={currentBooth} />
+      </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Info className="mr-2 h-5 w-5" /> Additional Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>
-              <strong>Status:</strong>{" "}
-              {currentBooth.isActive ? "Active" : "Inactive"}
-            </p>
-          </CardContent>
-        </Card>
+      <div className="flex w-full">
+        <BoothsLogsCard currentBoothLogs={currentBooth.logs} />
       </div>
 
       <div className="mt-8">
-        <h3 className="text-lg font-semibold mb-4">Map View</h3>
+        <h3 className="text-lg font-semibold mb-4">Map</h3>
         <Maps
           coordinates={{
             lat: currentBooth.coordinates.y,
@@ -397,92 +229,18 @@ const BoothDetails: React.FC = () => {
         />
       </div>
 
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Booth</DialogTitle>
-            <DialogDescription>
-              Provide a reason for deleting this booth
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <Input
-              placeholder="Reason for deletion"
-              value={deleteReason}
-              onChange={(e) => setDeleteReason(e.target.value)}
-            />
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => {
-                setIsDeleteDialogOpen(false);
-                setIsConfirmDialogOpen(true);
-              }}
-              disabled={!deleteReason.trim()}
-            >
-              Proceed to Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteBoothDialog
+        isDeleteDialogOpen={isDeleteDialogOpen}
+        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
+        boothId={boothId}
+      />
 
-      <AlertDialog
-        open={isConfirmDialogOpen}
-        onOpenChange={setIsConfirmDialogOpen}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center">
-              <ShieldAlert className="mr-2 h-6 w-6 text-destructive" />
-              Are you absolutely sure?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              booth.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
-              {isDeleting ? "Deleting..." : "Confirm Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Booth</DialogTitle>
-            <DialogDescription>
-              You are about to edit details for Booth: {boothData.data.name}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p>
-              You will be redirected to the edit page. Do you want to continue?
-            </p>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsEditDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleEdit} disabled={isUpdating}>
-              {isUpdating ? "Updating..." : "Proceed to Edit"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <EditBoothDialog
+        isEditDialogOpen={isEditDialogOpen}
+        setIsEditDialogOpen={setIsEditDialogOpen}
+        boothData={boothData}
+        boothId={boothId}
+      />
 
       <AssignBoothDialog
         boothId={boothId}

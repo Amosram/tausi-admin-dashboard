@@ -1,56 +1,50 @@
-"use client";
-import React, { useState } from 'react';
-import {
-  AdvancedMarker,
-  InfoWindow,
-  useAdvancedMarkerRef
-} from '@vis.gl/react-google-maps';
-import { Coordinates } from "./types";
-import {DEFAULT_LOCATION} from '@/Utils/constants';
+import React, { useRef, useState } from "react";
+import { AdvancedMarker, InfoWindow } from "@vis.gl/react-google-maps";
+import { MapCoordinate } from "./types";
 
 interface MarkerProps {
-    coordinates: Coordinates;
-    setCoordinates: (coordinates: Coordinates) => void;
+  coordinates: MapCoordinate[];
+  setCoordinates?: (coordinates: MapCoordinate) => void;
 }
 
-const Marker: React.FC<MarkerProps> = (props) => {
-  const { coordinates, setCoordinates } = props;
-  const [showInfo, setShowInfo] = useState(false);
-  const [markerRef, marker] = useAdvancedMarkerRef();
-
-  const defaultLocation = {
-    lat: DEFAULT_LOCATION.x,
-    lng: DEFAULT_LOCATION.y
-  };
+const Marker: React.FC<MarkerProps> = ({ coordinates, setCoordinates }) => {
+  const [infoIndex, setInfoIndex] = useState<number | null>(null);
+  const markerRefs = useRef<(google.maps.marker.AdvancedMarkerElement | null)[]>(
+    []
+  );
 
   return (
     <>
-      <AdvancedMarker
-        ref={markerRef}
-        position={Object.keys(coordinates).length === 0 ? defaultLocation  : coordinates}
-        onClick={() => setShowInfo(true)}
-        title={'Marker'}
-        draggable
-        clickable
-        onDragEnd={(e) => {
-          setCoordinates({
-            lat: e.latLng.lat(),
-            lng: e.latLng.lng()
-          });
-        }}
-      />
+      {coordinates.map((coord, index) => (
+        <React.Fragment key={`${coord.lat}-${coord.lng}`}>
+          <AdvancedMarker
+            ref={(el) => (markerRefs.current[index] = el)}
+            position={coord}
+            onClick={() => setInfoIndex(index)}
+            title={`Marker ${index + 1}`}
+            draggable={!!setCoordinates}
+            clickable
+            onDragEnd={(e) => {
+              if (setCoordinates) {
+                setCoordinates({
+                  lat: e.latLng.lat(),
+                  lng: e.latLng.lng(),
+                });
+              }
+            }}
+          />
 
-      {showInfo && (
-        <InfoWindow
-          anchor={marker}
-          maxWidth={200}
-          onCloseClick={() => {
-            setShowInfo(false);
-          }}
-        >
-          <div>Info Window</div>
-        </InfoWindow>
-      )}
+          {infoIndex === index && markerRefs.current[index] && (
+            <InfoWindow
+              anchor={markerRefs.current[index]}
+              maxWidth={200}
+              onCloseClick={() => setInfoIndex(null)}
+            >
+              <div>Info Window {index + 1}</div>
+            </InfoWindow>
+          )}
+        </React.Fragment>
+      ))}
     </>
   );
 };

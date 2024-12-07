@@ -29,6 +29,9 @@ const BoothsLazy = lazy(() => import("@/modules/booths/pages/Booths"));
 const BoothDetailsLazy = lazy(() => import("@/modules/booths/pages/BoothDetails"));
 const CreateBoothLazy = lazy(() => import("@/modules/booths/pages/CreateBoothPage"));
 const EditBoothLazy = lazy(() => import("@/modules/booths/pages/EditBoothPage"));
+const BoothsListLazy = lazy(() => import('@/modules/booths/pages/BoothsList'));
+const BoothAssignmentsLazy = lazy(() => import('@/modules/booths/pages/BoothAssignments'));
+const BoothLogsLazy = lazy(() => import('@/modules/booths/pages/BoothLogs'));
 
 export const routes: RouteObject[] = [
   {
@@ -205,20 +208,49 @@ export const routes: RouteObject[] = [
             )
           },
           {
-            path: ":boothId",
+            path: "list",
             element: (
               <Suspense fallback={<Loader />}>
-                <BoothDetailsLazy />
+                <BoothsListLazy />
               </Suspense>
             )
           },
           {
-            path: ":boothId/edit",
-            element: (
-              <Suspense fallback={<Loader />}>
-                <EditBoothLazy />
-              </Suspense>
-            )
+            path: ":boothId",
+            children: [
+              {
+                index: true,
+                element: (
+                  <Suspense fallback={<Loader />}>
+                    <BoothDetailsLazy />
+                  </Suspense>
+                ),
+              },
+              {
+                path: "edit",
+                element: (
+                  <Suspense fallback={<Loader />}>
+                    <EditBoothLazy />
+                  </Suspense>
+                ),
+              },
+              {
+                path: "assignments",
+                element: (
+                  <Suspense fallback={<Loader />}>
+                    <BoothAssignmentsLazy />
+                  </Suspense>
+                ),
+              },
+              {
+                path: "logs",
+                element: (
+                  <Suspense fallback={<Loader />}>
+                    <BoothLogsLazy />
+                  </Suspense>
+                ),
+              },
+            ],
           },
           {
             path: "create-booth",

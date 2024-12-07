@@ -399,26 +399,7 @@ export interface Booth {
   underMaintenance: boolean;
   occupancyStatus: "empty" | "occupied" | string;
   assignments: BoothAssignmentDetails[] | [];
-};
-export interface BoothTrial {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  isActive: boolean;
-  isDeleted: boolean;
-  deletedAt: string | null;
-  deletedReason: string | null;
-  name: string;
-  locationAddress: string;
-  coordinates: Coordinates;
-  boundaries: unknown | null;
-  numberOfBeauticians: number;
-  numberOfStations: number;
-  imagePath: string | null;
-  imageUrl: string | null;
-  underMaintenance: boolean;
-  occupancyStatus: "empty" | "occupied" | string;
-  assignments: BoothAssignmentDetails[] | [];
+  logs: BoothLog[] | [];
 };
 
 export interface CreateBoothPayload {
@@ -463,6 +444,22 @@ export interface BoothAssignmentDetails {
   terminatedAt: string | null;
   terminationReason: string | null;
 }
+
+export interface BoothLog {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
+  isDeleted: boolean;
+  deletedAt: string | null;
+  deletedReason: string | null;
+  boothId: string;
+  action: string;
+  description: string;
+  performedBy: string;
+  oldValues: Booth;
+  newValues: Booth;
+};
 
 export interface CreateBoothAssignmentRequest {
   boothId: string;
