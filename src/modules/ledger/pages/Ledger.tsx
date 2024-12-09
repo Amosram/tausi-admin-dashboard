@@ -168,7 +168,7 @@ const Ledger = () => {
       <TanStackTable
         data={data.data}
         columns={columns}
-        button={AddLoanButton}
+        // button={AddLoanButton}
       />
       <CreateLoanBookModal
         isOpen={isModalOpen}
