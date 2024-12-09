@@ -4,7 +4,6 @@ import Loader from "@/components/layout/Loader";
 import { Booth } from "@/models";
 import { useGetBoothsQuery } from "../api/boothsApi";
 import { useToast } from "@/hooks/use-toast";
-import BoothsFilter from "../components/booths-filter";
 
 const BoothsList = () => {
   const { data, error, isLoading, refetch } = useGetBoothsQuery();

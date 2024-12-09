@@ -5,101 +5,81 @@ import { FaPlus } from "react-icons/fa";
 import { Booth } from "@/models";
 import TanStackTable from "@/components/ui/Table/Table";
 import { boothColumns } from "../components/booths-columns";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import BoothsFilter from "./booths-filter";
+import { TableFilters } from "@/components/ui/Filters/TableFilters";
+import { TimeFilter } from "@/components/ui/Filters/TimeFilters";
+import { filterDataByTime } from "@/components/ui/Filters/timeFilterUtils";
 
 interface BoothsTableProps {
   booths: Booth[];
 }
 
-const timeFilterOptions = [
-  { label: "Today", days: 1 },
-  { label: "Past 1 Week", days: 7 },
-  { label: "Past 1 Month", days: 30 },
-  { label: "Past 90 Days", days: 90 },
-  { label: "Past 1 Year", days: 365 },
-  { label: "Past 10 Years", days: 3650 },
-  { label: "All Time", days: null },
-];
-
 export const BoothsTable = ({ booths }: BoothsTableProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [filteredData, setFilteredData] = useState<Booth[]>(booths);
-  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
-  const [selectedTimeFilter, setSelectedTimeFilter] = useState<string | null>(
-    null
-  );
+  const [timeFilteredData, setTimeFilteredData] = useState<Booth[]>(booths);
 
-  const isDateWithinRange = (date: string, days: number | null) => {
-    if (!days) return true;
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() - days);
-    return new Date(date) >= targetDate;
-  };
+  const boothFilters = [
+    { label: "All", value: null },
+    { label: "Under Maintenance", value: "maintenance" },
+    { label: "Fully Occupied", value: "fully-occupied" },
+    { label: "Partially Occupied", value: "partially-occupied" },
+    { label: "Empty", value: "empty" },
+  ];
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const filterParam = searchParams.get("filter");
-    const timeFilter = searchParams.get("timeFilter");
+    if (booths.length > 0) {
+      const searchParams = new URLSearchParams(location.search);
+      const timeFilterParam = searchParams.get("timeFilter");
 
-    let filtered = booths;
-
-    switch (filterParam) {
-      case "maintenance":
-        filtered = booths.filter((booth) => booth.underMaintenance);
-        setSelectedFilter("Maintenance");
-        break;
-      case "fully-occupied":
-        filtered = booths.filter(
-          (booth) =>
-            booth.occupancyStatus === "occupied" &&
-            booth.assignments.length === booth.numberOfStations
-        );
-        setSelectedFilter("Fully Occupied");
-        break;
-      case "partially-occupied":
-        filtered = booths.filter(
-          (booth) =>
-            booth.occupancyStatus === "occupied" &&
-            booth.assignments.length > 0 &&
-            booth.assignments.length < booth.numberOfStations
-        );
-        setSelectedFilter("Partially Occupied");
-        break;
-      case "empty":
-        filtered = booths.filter(
-          (booth) =>
-            booth.occupancyStatus === "empty" || booth.assignments.length === 0
-        );
-        setSelectedFilter("Empty");
-        break;
-      default:
-        filtered = booths;
-        setSelectedFilter(null);
-    }
-
-    if (timeFilter) {
-      const selectedTimeOption = timeFilterOptions.find(
-        (option) => option.label === timeFilter
+      const processedTimeFilteredData = filterDataByTime(
+        booths,
+        "createdAt",
+        timeFilterParam
       );
-      if (selectedTimeOption) {
-        filtered = filtered.filter((booth) =>
-          isDateWithinRange(booth.createdAt, selectedTimeOption.days)
-        );
-        setSelectedTimeFilter(selectedTimeOption.label);
-      }
-    }
 
-    setFilteredData(filtered);
-  }, [location.search, booths]);
+      setTimeFilteredData(processedTimeFilteredData);
+
+      const filterParam = searchParams.get("filter");
+      let finalFilteredData = processedTimeFilteredData;
+
+      if (filterParam) {
+        switch (filterParam) {
+        case "maintenance":
+          finalFilteredData = finalFilteredData.filter(
+            (booth) => booth.underMaintenance
+          );
+          break;
+        case "fully-occupied":
+          finalFilteredData = finalFilteredData.filter(
+            (booth) =>
+              booth.occupancyStatus === "occupied" &&
+                booth.assignments.length === booth.numberOfStations
+          );
+          break;
+        case "partially-occupied":
+          finalFilteredData = finalFilteredData.filter(
+            (booth) =>
+              booth.occupancyStatus === "occupied" &&
+                booth.assignments.length > 0 &&
+                booth.assignments.length < booth.numberOfStations
+          );
+          break;
+        case "empty":
+          finalFilteredData = finalFilteredData.filter(
+            (booth) =>
+              booth.occupancyStatus === "empty" ||
+                booth.assignments.length === 0
+          );
+          break;
+        default:
+          finalFilteredData = timeFilteredData;
+        }
+      }
+
+      setFilteredData(finalFilteredData);
+    }
+  }, [location.search, timeFilteredData]);
 
   const AddBoothButton = {
     label: "Create Booth",
@@ -110,39 +90,16 @@ export const BoothsTable = ({ booths }: BoothsTableProps) => {
 
   return (
     <div>
-      <div className=" md:px-4 px-1 my-4 flex gap-2 md:flex-row flex-col items-center">
+      <div className="md:px-4 px-1 my-4 flex gap-2 md:flex-row flex-col items-center">
         <div className="flex-1">
-          <BoothsFilter />
+          <TableFilters filters={boothFilters} queryParam="filter" />
         </div>
-        <Select
-          value={selectedTimeFilter}
-          onValueChange={(value) => {
-            const searchParams = new URLSearchParams(location.search);
-            searchParams.set("timeFilter", value);
-            navigate({ search: searchParams.toString() });
-          }}
-        >
-          <SelectTrigger className="max-w-[30%] border border-black bg-white">
-            <SelectValue placeholder="Select Time Filter" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {timeFilterOptions.map((option) => (
-                <SelectItem
-                  key={option.label}
-                  value={option.label}
-                  className={`${
-                    selectedTimeFilter === option.label
-                      ? "bg-blue-500 text-white"
-                      : ""
-                  }`}
-                >
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <TimeFilter
+          queryParam="timeFilter"
+          data={booths}
+          field="createdAt"
+          onFilter={setTimeFilteredData}
+        />
       </div>
       <TanStackTable
         data={filteredData}

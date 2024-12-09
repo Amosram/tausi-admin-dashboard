@@ -475,7 +475,9 @@ const TanStackTable = <T,>({
               ) : null}
             </table>
             <div className="bottom-0 flex items-baseline justify-end mt-3">
-              {showNavigation ? PaginationButtons() : null}
+              {table.getPageCount() > 1 && (
+                showNavigation ? PaginationButtons() : null
+              )}
             </div>
           </div>
         </div>
