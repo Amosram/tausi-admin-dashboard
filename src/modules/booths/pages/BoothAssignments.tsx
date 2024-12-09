@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { useBoothAssignments } from "../hooks/useBoothAssignments";
 import { Link, useParams } from "react-router-dom";
 import { AssignmentDetailsDialog } from "../components/assignment-details-dialog";
+import { DeleteBoothAssignmentDialog } from "../components/delete-assignment-dialog";
 
 const BoothsAssignments = () => {
   const { boothId } = useParams();
   const { assignments, isLoading, isError } = useBoothAssignments(boothId);
   const [selectedAssignment, setSelectedAssignment] = useState(null);
+  const [isTerminateDialogOpen, setTerminateDialogOpen] = useState(false);
 
   const handleOpenDetailsDialog = (assignment) => {
     setSelectedAssignment(assignment);
@@ -25,7 +27,10 @@ const BoothsAssignments = () => {
 
   return (
     <div className="space-y-4">
-      <Link to={`/booths/${boothId}`} className="w-full items-center flex flex-col p-4 hover:underline text-blue-500">
+      <Link
+        to={`/booths/${boothId}`}
+        className="w-full items-center flex flex-col p-4 hover:underline text-blue-500"
+      >
         Go Back
       </Link>
       {sortedAssignments.length > 0 ? (
@@ -94,8 +99,16 @@ const BoothsAssignments = () => {
           isOpen={!!selectedAssignment}
           onOpenChange={() => setSelectedAssignment(null)}
           boothId={boothId}
+          setTerminateDialogOpen={setTerminateDialogOpen}
         />
       )}
+
+      <DeleteBoothAssignmentDialog
+        isDeleteDialogOpen={isTerminateDialogOpen}
+        setDeleteDialogOpen={setTerminateDialogOpen}
+        assignment={selectedAssignment}
+        boothId={boothId}
+      />
     </div>
   );
 };

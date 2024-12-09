@@ -311,29 +311,30 @@ const TanStackTable = <T,>({
               {showGlobalFilter ? (
                 <>
                   <div className="flex gap-2 md:flex-row flex-col md:w-auto w-full">
-                    {STATUS_OPTIONS.map((status) => (
-                      <Button
-                        key={status.label}
-                        variant={
-                          status.value ===
-                          (columnFilters.find(
-                            (f) =>
-                              f.id === (columnToBeFiltered || defaultColumn)
-                          )?.value ?? null)
-                            ? "default"
-                            : "outline"
-                        }
-                        onClick={() => handleStatusFilter(status.value)}
-                        className="px-4 py-2 md:rounded-3xl"
-                      >
-                        {status.label}
-                      </Button>
-                    ))}
+                    {STATUS_OPTIONS?.length > 0 &&
+                      STATUS_OPTIONS.map((status) => (
+                        <Button
+                          key={status.label}
+                          variant={
+                            status.value ===
+                            (columnFilters.find(
+                              (f) =>
+                                f.id === (columnToBeFiltered || defaultColumn)
+                            )?.value ?? null)
+                              ? "default"
+                              : "outline"
+                          }
+                          onClick={() => handleStatusFilter(status.value)}
+                          className="px-4 py-2 md:rounded-3xl"
+                        >
+                          {status.label}
+                        </Button>
+                      ))}
                   </div>
                   <DebouncedInput
                     value={globalFilter ?? ""}
                     onChange={(value) => setGlobalFilter(String(value))}
-                    className="font-lg border-block border p-2 shadow bg-background rounded-full w-1/2 border-gray-400"
+                    className="font-lg border-block border p-2 shadow bg-background rounded-full w-1/2 border-gray-400 flex-1 px-4"
                     placeholder="Search all columns..."
                   />
                   {!button ? (
@@ -400,9 +401,9 @@ const TanStackTable = <T,>({
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                         {header.column.getCanSort() && (
                           <span className="ml-2 inline-flex items-center">
                             {header.column.getIsSorted() === "asc" && (
@@ -419,27 +420,41 @@ const TanStackTable = <T,>({
                 ))}
               </thead>
 
-
               <tbody className="bg-white border-b hover:bg-gray-50">
-                {table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="bg-white border-b hover:bg-gray-50"
-                  >
-                    <td className="w-4 p-3">
-                      <RowCheckbox row={row} />
-                    </td>
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="py-3 px-2 whitespace-nowrap">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
+                {table.getRowModel().rows.length > 0 ? (
+                  table.getRowModel().rows.map((row) => (
+                    <tr
+                      key={row.id}
+                      className="bg-white border-b hover:bg-gray-50"
+                    >
+                      <td className="w-4 p-3">
+                        <RowCheckbox row={row} />
                       </td>
-                    ))}
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className="py-3 px-2 whitespace-nowrap"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={table.getAllColumns().length} // Span all columns
+                      className="py-4 px-3 text-center text-gray-500"
+                    >
+                      No data available
+                    </td>
                   </tr>
-                ))}
+                )}
               </tbody>
+
               {showFooter ? (
                 <tfoot className="border-t bg-gray-50">
                   {table.getFooterGroups().map((footerGroup) => (
@@ -449,9 +464,9 @@ const TanStackTable = <T,>({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                              header.column.columnDef.footer,
-                              header.getContext()
-                            )}
+                                header.column.columnDef.footer,
+                                header.getContext()
+                              )}
                         </th>
                       ))}
                     </tr>

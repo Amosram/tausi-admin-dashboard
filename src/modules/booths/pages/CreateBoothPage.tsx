@@ -23,6 +23,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Maps from "@/components/ui/maps";
+import { AutocompleteAddress } from "../components/location-autocomplete";
+
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 const boothFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -30,12 +33,18 @@ const boothFormSchema = z.object({
   numberOfBeauticians: z
     .string()
     .transform((value) => parseInt(value, 10))
-    .refine((value) => Number.isInteger(value) && value > 0, "Must be a positive integer")
+    .refine(
+      (value) => Number.isInteger(value) && value > 0,
+      "Must be a positive integer"
+    )
     .refine((value) => value <= 100, "Too many beauticians"),
   numberOfStations: z
     .string()
     .transform((value) => parseInt(value, 10))
-    .refine((value) => Number.isInteger(value) && value > 0, "Must be a positive integer")
+    .refine(
+      (value) => Number.isInteger(value) && value > 0,
+      "Must be a positive integer"
+    )
     .refine((value) => value <= 50, "Too many stations"),
   occupancyStatus: z.enum(["empty", "occupied"], {
     required_error: "Please select the occupancy status",
@@ -47,7 +56,6 @@ const boothFormSchema = z.object({
     y: z.number().min(-90).max(90, "Latitude must be between -90 and 90"),
   }),
 });
-
 
 type BoothFormValues = z.infer<typeof boothFormSchema>;
 
@@ -61,7 +69,6 @@ const CreateBoothPage: React.FC = () => {
     resolver: zodResolver(boothFormSchema),
     defaultValues: {
       name: "",
-      locationAddress: "",
       occupancyStatus: "empty",
       imagePath: "",
       imageUrl: "",
@@ -111,11 +118,41 @@ const CreateBoothPage: React.FC = () => {
     }
   };
 
-  const handleCoordinatesSelect = (coordinates: Coordinates) => {
+  const handleCoordinatesSelect = async (coordinates: Coordinates) => {
     form.setValue("coordinates.x", coordinates.x); // Set x
     form.setValue("coordinates.y", coordinates.y); // Set y
+
+    try {
+      // Reverse geocode to get the address
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.y},${coordinates.x}&key=${API_KEY}`
+      );
+      const data = await response.json();
+
+      if (data.status === "OK" && data.results.length > 0) {
+        const address = data.results[0].formatted_address;
+        form.setValue("locationAddress", address);
+      } else {
+        console.error("Geocoding failed:", data.status, data.error_message);
+      }
+    } catch (error) {
+      console.error("Failed to fetch address:", error);
+    }
+
     setIsCoordinateModalOpen(false);
   };
+
+  const handleAddressSelect = (
+    address: string,
+    coordinates: { lat: number; lng: number }
+  ) => {
+    console.log("Address in handleAddressSelect:", address);
+    form.setValue("locationAddress", address);
+    form.setValue("coordinates.x", coordinates.lng); // Set longitude as x
+    form.setValue("coordinates.y", coordinates.lat); // Set latitude as y
+  };
+
+  console.log(form.getValues("locationAddress"));
 
   return (
     <div className="container mx-auto py-10">
@@ -131,13 +168,6 @@ const CreateBoothPage: React.FC = () => {
                 name="name"
                 label="Booth Name"
                 placeholder="Enter booth name"
-              />
-
-              <FormInputField
-                form={form}
-                name="locationAddress"
-                label="Location Address"
-                placeholder="Enter booth location"
               />
 
               <FormInputField
@@ -160,29 +190,16 @@ const CreateBoothPage: React.FC = () => {
 
               <FormInputField
                 form={form}
-                name="occupancyStatus"
-                label="Occupancy Status"
-                type="select"
-                options={[
-                  { label: "Empty", value: "empty" },
-                  { label: "Occupied", value: "occupied" },
-                ]}
-              />
-
-              <FormInputField
-                form={form}
-                name="imagePath"
-                label="Image Path"
-                placeholder="/path/to/image.jpg"
-                description="Optional: Path to the booth's image on the server"
-              />
-
-              <FormInputField
-                form={form}
                 name="imageUrl"
                 label="Image URL"
                 placeholder="https://example.com/booth.jpg"
                 description="Optional: URL to the booth's image"
+              />
+
+              <AutocompleteAddress
+                value={form.watch("locationAddress")}
+                onChange={(value) => form.setValue("locationAddress", value)}
+                onAddressSelect={handleAddressSelect}
               />
 
               <div className="grid grid-cols-2 gap-4">

@@ -60,6 +60,7 @@ export interface Professional {
   topRated: boolean;
   rating: number;
   services: Service[];
+  assignments: BoothAssignmentDetails[] | [];
 }
 
 export interface Service {
@@ -422,7 +423,7 @@ export interface BoothAssignmentResponse {
   statusCode: string;
   code: number;
   message: string;
-  data: BoothAssignmentDetails;
+  data: BoothAssignmentDetails[];
 }
 
 export interface BoothAssignmentDetails {

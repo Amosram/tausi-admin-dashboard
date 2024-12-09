@@ -1,25 +1,19 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { format } from "date-fns";
 import {
-  MapPin,
-  Info,
   Trash2,
   Edit,
-  Tag,
-  LayoutGrid,
-  Calendar,
-  Building2,
-  IdCard,
-  Clock,
-  User,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/layout/Loader";
 
-import { useGetBoothByIdQuery, useDeleteBoothMutation } from "../api/boothsApi";
+import {
+  useGetBoothByIdQuery,
+  useDeleteBoothMutation,
+  useAssignBoothMutation,
+} from "../api/boothsApi";
 import DummyBoothDetails from "../components/dummy-booth-details";
 import Maps from "@/components/ui/maps";
 import { Coordinates } from "@/models";
@@ -49,6 +43,9 @@ const BoothDetails: React.FC = () => {
   } = useGetBoothByIdQuery(boothId || "", {
     skip: !boothId,
   });
+
+  const [assignBooth, { isLoading: isAssigning }] =
+    useAssignBoothMutation();
 
   // Incase polling is needed
   // const {
@@ -195,6 +192,8 @@ const BoothDetails: React.FC = () => {
         boothId={boothId}
         isOpen={isAssignDialogOpen}
         onOpenChange={setIsAssignDialogOpen}
+        assignBooth={assignBooth}
+        isAssigning={isAssigning}
       />
     </div>
   );

@@ -10,7 +10,7 @@ import {
   Info,
 } from "lucide-react";
 import { format } from "date-fns";
-import { Booth, BoothAssignmentDetails, VerifiedBeauticians } from "@/models";
+import { Booth, BoothAssignmentDetails, Professional } from "@/models";
 
 export const boothDetails = (currentBooth: Booth) => [
   {
@@ -103,7 +103,7 @@ export const assignmentDetailsArray = ({
 }: {
   beauticianLoading: boolean;
   beauticianError: boolean;
-  beautician: VerifiedBeauticians | null;
+  beautician: Professional | null;
   assignment: BoothAssignmentDetails;
 }) => [
   {

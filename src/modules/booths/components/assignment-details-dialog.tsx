@@ -7,30 +7,30 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { useUseGetVerifiedBeauticianByIdQuery } from "@/modules/applications/api/professionalApi";
+import { useGetProfessionalsByIdQuery } from "@/modules/applications/api/professionalApi";
 import { assignmentDetailsArray } from "../constants";
 
 export const AssignmentDetailsDialog = ({
   assignment,
   isOpen,
   onOpenChange,
-  boothId,
+  setTerminateDialogOpen,
+  // boothId,
 }) => {
   const {
     data,
     isLoading: beauticianLoading,
     isError: beauticianError,
-  } = useUseGetVerifiedBeauticianByIdQuery(assignment.beauticianId);
+  } = useGetProfessionalsByIdQuery(assignment.beauticianId);
   
-  const handleTerminateAssignment = (assignmentId) => {
-    console.log(`Terminating assignment ${assignmentId}`);
-    // API call to terminate assignment
+  const handleTerminateAssignment = () => {
+    setTerminateDialogOpen(true);
   };
 
-  const handleRestoreAssignment = (assignmentId) => {
-    console.log(`Restoring assignment ${assignmentId}`);
-    // API call to restore assignment
-  };
+  // const handleRestoreAssignment = (assignmentId) => {
+  //   console.log(`Restoring assignment ${assignmentId}`);
+  //   // API call to restore assignment
+  // };
 
   const beautician = data?.data;
 
@@ -59,25 +59,26 @@ export const AssignmentDetailsDialog = ({
           ))}
         </div>
         <div className="flex justify-between items-center mt-4">
-          <Button
+          {/* <Button
             className="bg-green-500"
             disabled={!assignment.isTerminated}
             onClick={() => handleRestoreAssignment(assignment.id)}
           >
             Restore Assignment
-          </Button>
+          </Button> */}
           <Button
             variant="destructive"
-            onClick={() => handleTerminateAssignment(assignment.id)}
+            onClick={() => handleTerminateAssignment()}
             disabled={assignment.isTerminated}
+            className="w-full"
           >
-            <X className="h-4 w-4" /> Terminate Assignment
+            <X className="h-4 w-4" /> Delete Assignment
           </Button>
         </div>
         {beautician && (
-          <div className="mt-4">
+          <div className="mt-4 w-full flex justify-center">
             <a
-              href={`/beauticians/${beautician.id}`}
+              href={`/professionals/${beautician.id}`}
               className="text-blue-500 text-sm hover:underline"
               target="_blank"
               rel="noopener noreferrer"

@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { useDeleteBoothMutation } from "../api/boothsApi";
+import {
+  useDeleteBoothMutation,
+  useGetBoothAssignmentsQuery,
+} from "../api/boothsApi";
 
 import {
   Dialog,
@@ -23,7 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ShieldAlert } from "lucide-react";
+import { ShieldAlert, AlertCircle } from "lucide-react";
 
 interface DeleteBoothDialogProps {
   isDeleteDialogOpen: boolean;
@@ -43,7 +46,16 @@ export const DeleteBoothDialog: React.FC<DeleteBoothDialogProps> = ({
   const [deleteReason, setDeleteReason] = useState("");
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
+  // Fetch booth assignments
+  const { data: boothAssignmentsResponse, isLoading: isAssignmentsLoading } =
+    useGetBoothAssignmentsQuery(boothId || "", { skip: !boothId });
+
   const [deleteBooth, { isLoading: isDeleting }] = useDeleteBoothMutation();
+
+  // Determine active assignments
+  const hasActiveAssignments = useMemo(() => {
+    return boothAssignmentsResponse?.data?.length > 0;
+  }, [boothAssignmentsResponse]);
 
   const handleDelete = async () => {
     try {
@@ -72,6 +84,7 @@ export const DeleteBoothDialog: React.FC<DeleteBoothDialogProps> = ({
       setIsConfirmDialogOpen(false);
     }
   };
+
   return (
     <div>
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
@@ -82,6 +95,17 @@ export const DeleteBoothDialog: React.FC<DeleteBoothDialogProps> = ({
               Provide a reason for deleting this booth
             </DialogDescription>
           </DialogHeader>
+
+          {hasActiveAssignments && (
+            <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg flex items-center space-x-3">
+              <AlertCircle className="h-6 w-6 text-yellow-500" />
+              <p className="text-yellow-700">
+                This booth has active assignments. Please remove or terminate
+                all assignments before deleting.
+              </p>
+            </div>
+          )}
+
           <div className="space-y-4">
             <Input
               placeholder="Reason for deletion"
@@ -99,12 +123,16 @@ export const DeleteBoothDialog: React.FC<DeleteBoothDialogProps> = ({
             <Button
               variant="destructive"
               onClick={() => {
-                setIsDeleteDialogOpen(false);
-                setIsConfirmDialogOpen(true);
+                if (!hasActiveAssignments) {
+                  setIsDeleteDialogOpen(false);
+                  setIsConfirmDialogOpen(true);
+                }
               }}
-              disabled={!deleteReason.trim()}
+              disabled={
+                !deleteReason.trim() || hasActiveAssignments || isAssignmentsLoading
+              }
             >
-              Proceed to Delete
+              {isAssignmentsLoading ? "Loading assignments..." : "Proceed to Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -40,7 +40,6 @@ const BoothsList = () => {
   if (isDataEmpty) return <div>No booths found.</div>;
   return (
     <div>
-      <BoothsFilter />
       <BoothsTable booths={booths} />
     </div>
   );

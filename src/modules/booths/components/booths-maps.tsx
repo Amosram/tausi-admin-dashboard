@@ -9,10 +9,11 @@ interface BoothsMapProps {
 
 const BoothsMap: React.FC<BoothsMapProps> = ({ coordinates }) => {
   return (
-    <div className="h-[500px]">
-      <Maps
-        coordinates={coordinates}
-      />
+    <div className="flex flex-col gap-3">
+      <p className="text-lg uppercase text-center font-semibold">Map</p>
+      <div className="h-[500px]">
+        <Maps coordinates={coordinates} />
+      </div>
     </div>
   );
 };

@@ -16,7 +16,10 @@ import { useToast } from "@/hooks/use-toast";
 import { FormInputField } from "@/components/ui/Form/FormInputField";
 import { useAssignBoothMutation } from "../api/boothsApi";
 import { CreateBoothAssignmentRequest } from "@/models";
-import { useGetVerifiedBeauticiansQuery } from "@/modules/applications/api/professionalApi";
+import {
+  useGetProfessionalsQuery,
+  useUpdateProfessionalMutation,
+} from "@/modules/applications/api/professionalApi";
 
 const boothAssignmentSchema = z
   .object({
@@ -47,18 +50,23 @@ interface AssignBoothDialogProps {
   boothId: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  assignBooth: ReturnType<typeof useAssignBoothMutation>[0];
+  isAssigning: boolean;
 }
 
 export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
   boothId,
   isOpen,
   onOpenChange,
+  assignBooth,
+  isAssigning,
 }) => {
   const { toast } = useToast();
-  const [assignBooth, { isLoading }] = useAssignBoothMutation();
 
   const { data: professionalData, isLoading: isProfessionalsLoading } =
-    useGetVerifiedBeauticiansQuery(100);
+    useGetProfessionalsQuery(100);
+
+  const [updateProfessional, { isLoading }] = useUpdateProfessionalMutation();
 
   const professional = professionalData?.data || [];
 
@@ -82,7 +90,16 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
         endDate: new Date(formData.endDate).toISOString(),
       };
 
-      await assignBooth(assignmentData).unwrap();
+      const assignedBoothResponse = await assignBooth(assignmentData).unwrap();
+
+      const assignmentsArray = Array.isArray(assignedBoothResponse?.data)
+        ? assignedBoothResponse.data
+        : [assignedBoothResponse?.data];
+
+      await updateProfessional({
+        id: formData.beauticianId,
+        assignments: assignmentsArray,
+      }).unwrap();
 
       toast({
         title: "Success",
@@ -119,8 +136,8 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
               type="select"
               options={
                 professional?.map((professional) => ({
-                  label: `${professional.user.email}`,
-                  value: professional.user.id,
+                  label: `${professional.businessName}`,
+                  value: professional.id,
                 })) || []
               }
               placeholder="Select a beautician"
@@ -152,9 +169,9 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
               </Button>
               <Button
                 type="submit"
-                disabled={isLoading || isProfessionalsLoading}
+                disabled={isAssigning || isProfessionalsLoading}
               >
-                {isLoading ? "Assigning..." : "Assign Booth"}
+                {isAssigning ? "Assigning..." : "Assign Booth"}
               </Button>
             </DialogFooter>
           </form>
