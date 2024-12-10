@@ -18,12 +18,12 @@ import DummyBoothDetails from "../components/dummy-booth-details";
 import Maps from "@/components/ui/maps";
 import { Coordinates } from "@/models";
 import { DEFAULT_LOCATION } from "@/Utils/constants";
-import { AssignBoothDialog } from "../components/assign-booth";
-import { EditBoothDialog } from "../components/edit-booth-dialog";
-import { DeleteBoothDialog } from "../components/delete-booth-dialog";
-import { BoothsAssignmentCard } from "../components/booths-assignment-card";
-import { BoothsMaintenanceCard } from "../components/booths-maintenance-card";
-import BoothsLogsCard from "../components/booths-logs-card";
+import { AssignBoothDialog } from "../components/dialogs/assign-booth";
+import { EditBoothDialog } from "../components/dialogs/edit-booth-dialog";
+import { DeleteBoothDialog } from "../components/dialogs/delete-booth-dialog";
+import { BoothsAssignmentCard } from "../components/cards/booths-assignment-card";
+import { BoothsMaintenanceCard } from "../components/cards/booths-maintenance-card";
+import BoothsLogsCard from "../components/cards/booths-logs-card";
 import { boothDetails } from "../constants";
 
 const BoothDetails: React.FC = () => {

@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { FormInputField } from "@/components/ui/Form/FormInputField";
-import { useAssignBoothMutation } from "../api/boothsApi";
+import { useAssignBoothMutation } from "../../api/boothsApi";
 import { CreateBoothAssignmentRequest } from "@/models";
 import {
   useGetProfessionalsQuery,

@@ -6,7 +6,7 @@ import { useGetBoothsQuery } from "../api/boothsApi";
 import { Booth } from "@/models";
 import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/layout/Loader";
-import { BoothStats } from "../components/booth-stats";
+import { BoothStats } from "../components/cards/booth-stats";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PartialBoothsTable } from "../components/partial-table";
 import { AlertCircle, Map, Table } from "lucide-react";

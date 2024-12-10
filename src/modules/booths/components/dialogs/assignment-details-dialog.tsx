@@ -8,7 +8,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useGetProfessionalsByIdQuery } from "@/modules/applications/api/professionalApi";
-import { assignmentDetailsArray } from "../constants";
+import { assignmentDetailsArray } from "../../constants";
 
 export const AssignmentDetailsDialog = ({
   assignment,

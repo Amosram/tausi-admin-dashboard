@@ -21,7 +21,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Booth } from "@/models";
-import { useGetBoothByIdQuery, useUpdateBoothMutation } from "../api/boothsApi";
+import { useGetBoothByIdQuery, useUpdateBoothMutation } from "../../api/boothsApi";
 
 interface BoothsMaintenanceCardProps {
   currentBooth: Booth;

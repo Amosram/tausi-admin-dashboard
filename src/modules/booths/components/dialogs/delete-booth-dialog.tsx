@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   useDeleteBoothMutation,
   useGetBoothAssignmentsQuery,
-} from "../api/boothsApi";
+} from "../../api/boothsApi";
 
 import {
   Dialog,

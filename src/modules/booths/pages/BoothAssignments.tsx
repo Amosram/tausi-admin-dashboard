@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useBoothAssignments } from "../hooks/useBoothAssignments";
 import { Link, useParams } from "react-router-dom";
-import { AssignmentDetailsDialog } from "../components/assignment-details-dialog";
-import { DeleteBoothAssignmentDialog } from "../components/delete-assignment-dialog";
+import { AssignmentDetailsDialog } from "../components/dialogs/assignment-details-dialog";
+import { DeleteBoothAssignmentDialog } from "../components/dialogs/delete-assignment-dialog";
 
 const BoothsAssignments = () => {
   const { boothId } = useParams();
@@ -98,7 +98,7 @@ const BoothsAssignments = () => {
           assignment={selectedAssignment}
           isOpen={!!selectedAssignment}
           onOpenChange={() => setSelectedAssignment(null)}
-          boothId={boothId}
+          // boothId={boothId}
           setTerminateDialogOpen={setTerminateDialogOpen}
         />
       )}

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { BoothAssignmentDetails } from "@/models";
-import { useDeleteBoothAssignmentMutation } from "../api/boothsApi";
+import { useDeleteBoothAssignmentMutation } from "../../api/boothsApi";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
