@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetLedgersByIdQuery } from "../api/ledgersApi";
 import Loader from "@/components/layout/Loader";
 import { Books } from "@/models";
@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ChevronDown, UserPlus } from "lucide-react";
+import { ChevronDown, User } from "lucide-react";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 
 
 const LedgerBookDetails = () => {
+  const navigate = useNavigate();
 
   const { ownerId } = useParams<{ ownerId: string }>();
   const {data, isLoading, isError} = useGetLedgersByIdQuery(ownerId);
@@ -124,7 +125,10 @@ const LedgerBookDetails = () => {
           <h1 className="text-2xl font-bold mb-6">Business Book for <span style={{ color: 'red' }}>{business.name}</span></h1>
         </div>
         <div className="flex gap-3">
-          <UserPlus />
+          <User
+            onClick={() => navigate(`/professionals/${ownerId}`)}
+            className="cursor-pointer"
+            size={30}/>
         </div>
       </div>
       {/* Business Details */}
