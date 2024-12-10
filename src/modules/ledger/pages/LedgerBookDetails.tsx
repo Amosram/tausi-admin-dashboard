@@ -1,46 +1,112 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { BookDetails } from "@/models";
-import { Clock, Book } from "lucide-react";
-import { useGetBooksByIdQuery } from "../api/ledgersApi";
-import Loader from "@/components/layout/Loader";
 import { useParams } from "react-router-dom";
-import LedgerBookEntriesCard from "../components/LedgerBookEntriesCard";
-
-
-const LedgerBookDetailsCard: React.FC<{
-  book: BookDetails;
-}> = ({ book }) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Book Information</CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-3">
-      {book.name && (
-        <div className="flex items-center space-x-2">
-          <Book size={16} />
-          <span>Book Name: {book.name}</span>
-        </div>
-      )}
-      <div className="flex items-center space-x-2">
-        <Clock size={16} />
-        <span>Creation Date: {book.createdAt ? book.createdAt.toLocaleDateString() : "N/A"}</span>
-      </div>
-      <div className="flex items-center space-x-2">
-        <Clock size={16} />
-        <span>Creation Date: {book.updatedAt ? book.updatedAt.toLocaleDateString() : "N/A"}</span>
-      </div>
-    </CardContent>
-  </Card>
-);
+import { useGetLedgersByIdQuery } from "../api/ledgersApi";
+import Loader from "@/components/layout/Loader";
+import { Books } from "@/models";
+import { useMemo, useState } from "react";
+import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ChevronDown, UserPlus } from "lucide-react";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import EntriesTable from "../components/EntriesTable";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
+import { cn } from "@/lib/utils";
 
 
 
 const LedgerBookDetails = () => {
 
-  const { bookId } = useParams<{ bookId: string }>();
-  const {data, isLoading, isError} = useGetBooksByIdQuery(bookId);
+  const { ownerId } = useParams<{ ownerId: string }>();
+  const {data, isLoading, isError} = useGetLedgersByIdQuery(ownerId);
+  const [selectedBooks, setSelectedBooks] = useState<Books[]>([]);
+  const [filterType, setFilterType] = useState<'All' | 'Expense' | 'Revenue'>('All');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [minAmount, setMinAmount] = useState('');
+  const [maxAmount, setMaxAmount] = useState('');
+  const [sortBy, setSortBy] = useState<'createdAt' | 'updatedAt' | 'amount'>('createdAt');
+  
+  const business = data?.data;
 
-  const book = data;
+  const filteredAndSortedEntries = useMemo(() => {
+    if (!business || !business.books) return [];
+  
+    // Step 1: Gather entries
+    let entries = selectedBooks.length > 0
+      ? business.books
+        .filter((book) => selectedBooks.some((selectedBook) => selectedBook.id === book.id))
+        .flatMap((book) => book.bookEntries)
+      : business.books.flatMap((book) => book.bookEntries);
+  
+    if (!entries) return [];
+  
+    // Step 2: Filter by type
+    if (filterType !== "All") {
+      entries = entries.filter((entry) => entry.type === filterType);
+    }
+  
+    // Step 3: Filter by search query
+    if (searchQuery.trim()) {
+      const searchTerm = searchQuery.toLowerCase();
+      entries = entries.filter(
+        (entry) =>
+          entry.title.toLowerCase().includes(searchTerm) ||
+          (entry.remark && typeof entry.remark === "string" && entry.remark.toLowerCase().includes(searchTerm))
+      );
+    }
+  
+    // Step 4: Filter by amount range
+    if (minAmount) {
+      entries = entries.filter((entry) => parseFloat(entry.amount) >= parseFloat(minAmount));
+    }
+    if (maxAmount) {
+      entries = entries.filter((entry) => parseFloat(entry.amount) <= parseFloat(maxAmount));
+    }
+  
+    // Step 5: Sort entries
+    entries = entries.sort((a, b) => {
+      let comparison = 0;
+  
+      if (sortBy === "amount") {
+        comparison = parseFloat(a.amount) - parseFloat(b.amount);
+      } else if (sortBy === "createdAt" || sortBy === "updatedAt") {
+        comparison = new Date(a[sortBy]).getTime() - new Date(b[sortBy]).getTime();
+      }
+  
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
+  
+    return entries;
+  }, [
+    business,
+    selectedBooks,
+    filterType,
+    searchQuery,
+    minAmount,
+    maxAmount,
+    sortBy,
+    sortOrder,
+  ]);
+  
+
+  const totalExpense = useMemo(() => {
+    return filteredAndSortedEntries
+      .filter(entry => entry.type === 'Expense')
+      .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+  }, [filteredAndSortedEntries]);
+
+  const totalRevenue = useMemo(() => {
+    return filteredAndSortedEntries
+      .filter(entry => entry.type === 'Revenue')
+      .reduce((sum, entry) => sum + parseFloat(entry.amount), 0);
+  }, [filteredAndSortedEntries]);
+
+
   
   if (isLoading) {
     return <Loader/>;
@@ -51,26 +117,238 @@ const LedgerBookDetails = () => {
   }
 
   return (
-    <div className='container mx-auto p-4'>
-      {/* Ledger Book Titles */}
-      <div className='w-full bg-muted p-4 rounded-lg flex justify-between items-center mb-4'>
-        <div className='flex items-center space-x-2'>
-          <h1 className='text-2xl font-semibold'>Book Details</h1>
+    <div className='container mx-auto p-6'>
+
+      <div className="w-full bg-muted p-4 rounded-lg flex flex-col sm:flex-row justify-between items-center mb-4">
+        <div className="flex items-center space-x-2">
+          <h1 className="text-2xl font-bold mb-6">Business Book for <span style={{ color: 'red' }}>{business.name}</span></h1>
         </div>
-        <div className='flex space-x-2'>
-          <h1 className='text-2xl font-semibold'>Entries</h1>
+        <div className="flex gap-3">
+          <UserPlus />
         </div>
       </div>
-      {/* Ledger Book Details */}
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-        <div className='md:col-span-1 grid grid-cols-1 gap-4'>
-          {/* Book Details Card */}
-          <LedgerBookDetailsCard book={book} />
+      {/* Business Details */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>{business.name}</CardTitle>
+            <CardDescription>{business.description ? business.description : "Business Description"}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Created: {format(new Date(business.createdAt), 'PPpp')}</p>
+            <p>Updated: {format(new Date(business.updatedAt), 'PPpp')}</p>
+          </CardContent>
+          <CardFooter>
+            <Badge
+              className="text-sm p-2 w-40 text-center justify-center"
+              variant={business.isDeleted ? "destructive" : "default"}
+            >
+        Status: {business.isDeleted ? "Deleted" : "Active"}
+            </Badge>
+          </CardFooter>
+        </Card>
+        {/* Books Overview */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Books Overview</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Accordion type="single" collapsible>
+              {business.books.map((book) => (
+                <AccordionItem value={book.id} key={book.id}>
+                  <AccordionTrigger>{book.name}</AccordionTrigger>
+                  <AccordionContent>
+                    <p>Created: {format(new Date(book.createdAt), "PPpp")}</p>
+                    <p>Updated: {format(new Date(book.updatedAt), "PPpp")}</p>
+                    <p className="text-gray-600 text-sm font-medium mt-3">
+                      <Badge className="font-bold text-white p-2 rounded-lg bg-destructive">Total Expense</Badge> <span className="mr-1">KES</span>
+                      {book.bookEntries
+                        ? book.bookEntries
+                          .filter((entry) => entry.type === "Expense")
+                          .reduce((sum, entry) => sum + parseFloat(entry.amount), 0)
+                          .toFixed(2)
+                        : 0}
+                    </p>
+                    <p className="text-gray-600 text-sm font-medium mt-6">
+                      <Badge className="font-bold text-white bg-green-600 p-2 rounded-lg">Total Revenue</Badge> <span className="mr-1">KES</span>
+                      {book.bookEntries
+                        ? book.bookEntries
+                          .filter((entry) => entry.type === "Revenue")
+                          .reduce((sum, entry) => sum + parseFloat(entry.amount), 0)
+                          .toFixed(2)
+                        : 0}
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </CardContent>
+        </Card>
+      </div>
+      {/* Selection and Filters */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Book Selection and Filters</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label className="mr-2">Select Books</Label>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    {selectedBooks.length > 0 ? `${selectedBooks.length} book(s) selected` : "Select books"}
+                    <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-full">
+                  <DropdownMenuLabel className="ml-6">Books</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {business.books.map((book) => (
+                    <DropdownMenuCheckboxItem
+                      className="mb-4"
+                      key={book.id}
+                      checked={selectedBooks.some((selectedBook) => selectedBook.id === book.id)}
+                      onCheckedChange={(checked) => {
+                        setSelectedBooks(
+                          checked
+                            ? [...selectedBooks, book]
+                            : selectedBooks.filter((selectedBook) => selectedBook.id !== book.id)
+                        );
+                      }}
+                    >
+                      {book.name}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="filterType">Filter by Type</Label>
+              <Select onValueChange={(value: 'All' | 'Expense' | 'Revenue') => setFilterType(value)}>
+                <SelectTrigger id="filterType">
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All</SelectItem>
+                  <SelectItem value="Expense">Expense</SelectItem>
+                  <SelectItem value="Revenue">Revenue</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="sortBy">Sort by</Label>
+              <Select onValueChange={(value: 'createdAt' | 'updatedAt' | 'amount') => setSortBy(value)}>
+                <SelectTrigger id="sortBy">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="createdAt">Created At</SelectItem>
+                  <SelectItem value="updatedAt">Updated At</SelectItem>
+                  <SelectItem value="amount">Amount</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="sapce-y-2">
+              <Label htmlFor="sortOrder">Sort Order</Label>
+              <Select onValueChange={(value: 'asc' | 'desc') => setSortOrder(value)}>
+                <SelectTrigger id="sortOrder">
+                  <SelectValue placeholder="Sort order" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="asc">Ascending</SelectItem>
+                  <SelectItem value="desc">Descending</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="search">Search</Label>
+              <Input
+                id="search"
+                placeholder="Search entries..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="minAmount">Min Amount</Label>
+              <Input
+                id="minAmount"
+                type="number"
+                placeholder="Min amount"
+                value={minAmount}
+                onChange={(e) => setMinAmount(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="maxAmount">Max Amount</Label>
+              <Input
+                id="maxAmount"
+                type="number"
+                placeholder="Max amount"
+                value={maxAmount}
+                onChange={(e) => setMaxAmount(e.target.value)}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      {/* List of all entries in a book */}
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold mb-2">Book Entries</h2>
+        <div className="flex justify-between mb-2">
+          <p>Total Expense: KES {totalExpense.toFixed(2)}</p>
+          <p>Total Revenue: KES {totalRevenue.toFixed(2)}</p>
         </div>
-        {/* Entries Card */}
-        <div className="md:col-span-2 grid grid-cols-1">
-          <LedgerBookEntriesCard />
-        </div>
+        <Tabs defaultValue={selectedBooks[0]?.id || 'all'}>
+          <TabsList className="flex border-b border-muted space-x-4 pb-2">
+            <TabsTrigger
+              className={cn(
+                "border-b-4 border-transparent px-4 py-2 font-medium text-lg",
+                "data-[state=active]:border-red-500 data-[state=active]:text-red-500"
+              )}
+              value="all"
+            >
+              All Books
+            </TabsTrigger>
+            {selectedBooks.map(book => (
+              <TabsTrigger
+                key={book.id}
+                value={book.id}
+                className={cn(
+                  "border-b-4 border-transparent px-4 py-2 font-medium text-lg",
+                  "data-[state=active]:border-red-500 data-[state=active]:text-red-500"
+                )}
+              >
+                {book.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <TabsContent value="all">
+            <EntriesTable entries={filteredAndSortedEntries.map(entry => ({
+              ...entry,
+              bookName: business.books.find(book => book.bookEntries.some(bookEntry => bookEntry.id === entry.id))?.name || ''
+            }))} />
+          </TabsContent>
+          {selectedBooks.map((book) => {
+            const foundBook = business.books.find((b) => b.id === book.id);
+            return book ? (
+              <TabsContent key={book.id} value={book.id}>
+                <EntriesTable
+                  entries={filteredAndSortedEntries
+                    .filter((entry) =>
+                      book.bookEntries.some((bookEntry) => bookEntry.id === entry.id)
+                    )
+                    .map((entry) => ({
+                      ...entry,
+                      bookName: book.name,
+                    }))}
+                />
+              </TabsContent>
+            ) : null;
+          })}
+
+        </Tabs>
       </div>
     </div>
   );

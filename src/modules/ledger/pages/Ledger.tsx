@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useDeleteLoanBookMutation, useGetBooksQuery } from "../api/ledgersApi";
+import { useDeleteLedgerMutation, useGetLedgersQuery } from "../api/ledgersApi";
 import { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Books } from "@/models";
+import { Books, Ledgers } from "@/models";
 import { format } from "date-fns";
 import { MoreVertical } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -18,22 +18,22 @@ const Ledger = () => {
 
   const navigate = useNavigate();
   const toast = useToast();
-  const {data, isLoading, isError} = useGetBooksQuery();
-  const {refetch} = useGetBooksQuery();
+  const {data, isLoading, isError} = useGetLedgersQuery();
+  const {refetch} = useGetLedgersQuery();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedBook, setSelectedBook] = useState<Books | null>(null);
-  const [editData, setEditData] = useState<{ id: string; name: string; ledgerId: string } | null>(
+  const [selectedBook, setSelectedBook] = useState<Ledgers | null>(null);
+  const [editData, setEditData] = useState<{ id: string; name: string; ledgerId: string, ownerId: string } | null>(
     null
   );
 
   const [deleteBook, {
     isSuccess: isDeleteSuccess,
-  }] = useDeleteLoanBookMutation();
+  }] = useDeleteLedgerMutation();
 
-  const handleDelete = async (book: Books) => {
-    setSelectedBook(book);
+  const handleDelete = async (ledger: Ledgers) => {
+    setSelectedBook(ledger);
     setDeleteDialogOpen(true);
   };
 
@@ -42,20 +42,22 @@ const Ledger = () => {
       return;
     }
   
-    const response = await deleteBook(selectedBook.id);
+    const response = await deleteBook(selectedBook.ownerId);
   
     if (response.error) {
       toast.toast({
         title: "Error",
         description: "Error deleting book",
+        variant: "destructive",
       });
     } else {
       toast.toast({
         title: "Success",
         description: "Book deleted successfully",
+        variant: "success",
       });
   
-      // Refetch books after deletion
+      // Refetch ledgers after deletion
       await refetch();
   
       // Close the delete dialog
@@ -63,19 +65,18 @@ const Ledger = () => {
       setSelectedBook(null);
     }
   };
-  
 
-  const columns: ColumnDef<Books>[] = [
+  const columns: ColumnDef<Ledgers>[] = [
     {
-      accessorKey: 'id',
-      header: 'Book ID',
+      accessorKey: 'ownerId',
+      header: 'Owner ID',
       cell: ({row}) => (
         <Link
-          to={`/ledgers/books/${row.getValue("id")}`}
+          to={`/ledgers/${row.getValue("ownerId")}`}
           state={{professional: row.original}}
           className="hover:text-primary hover:underline truncate block max-w-[150px]"
         >
-          {row.getValue("id")}
+          {row.getValue("ownerId")}
         </Link>
       ),
     },
@@ -87,17 +88,17 @@ const Ledger = () => {
       )
     },
     {
+      accessorKey:'owner',
+      header: 'Owner',
+      cell: ({row}) => <span>{row.original.owner.businessName}</span>
+    },
+    {
       accessorKey:'createdAt',
       header: 'Creation Date',
       cell: ({row}) => {
         const date = new Date(row.original.createdAt);
         return <span>{format(date, 'MMM dd, yyyy')}</span>;
       }
-    },
-    {
-      accessorKey:'ledgerId',
-      header: 'Ledger ID',
-      cell: ({row}) => <span>{row.original.ledgerId}</span>
     },
     {
       header: 'Actions',
@@ -111,26 +112,27 @@ const Ledger = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuItem>
               <Link
-                to={`/ledgers/books/${row.original.id}`}
+                to={`/ledgers/${row.original.ownerId}`}
                 state={{ ledger: row.original }}
                 className="hover:text-primary"
               >
                     View details
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem
+            {/* <DropdownMenuItem
               onClick={() => {
                 setEditData({
                   id: row.original.id,
                   name: row.original.name,
                   ledgerId: row.original.id,
+                  ownerId: row.original.ownerId,
                 });
                 setModalOpen(true);
               }}
               className="cursor-pointer"
             >
               Edit Loan Book
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <DropdownMenuItem
               onClick={() => handleDelete(row.original)}
               className="bg-destructive text-white cursor-pointer"
@@ -144,7 +146,7 @@ const Ledger = () => {
   ];
 
   const AddLoanButton = {
-    label: "Add Loan",
+    label: "Create Book",
     onClick: () => {
       setEditData(null); // Reset edit data for create mode
       setModalOpen(true);
@@ -166,7 +168,7 @@ const Ledger = () => {
       <TanStackTable
         data={data.data}
         columns={columns}
-        button={AddLoanButton}
+        // button={AddLoanButton}
       />
       <CreateLoanBookModal
         isOpen={isModalOpen}
@@ -178,7 +180,7 @@ const Ledger = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the Country.
+              This action cannot be undone. This will permanently delete the Ledger.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

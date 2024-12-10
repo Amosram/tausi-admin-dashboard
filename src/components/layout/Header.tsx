@@ -35,8 +35,8 @@ const routeMappings: Record<string, RouteDetails> = {
   "/booths/:id/edit": { title: "Edit Booth" },
   "/orders/:id": { title: "Order Details", backLink: "/orders" },
   "/ledgers/create-loan": { title: "Create Loan" },
-  "/ledgers/books": { title: "Books" },
-  "/ledgers/books/:id": { title: "Books Details", backLink: "/ledgers/books" },
+  "/ledgers": { title: "Businesses" },
+  "/ledgers/:ownerId": { title: "Business Details", backLink: "/ledgers" },
   "/dashboard/verifications/:id": { title: "Applications Details", backLink: "/dashboard/verifications" },
 };
 
@@ -61,7 +61,7 @@ const Header = () => {
     "/users": "Users",
     "/professionals": "Beauticians List",
     "/dashboard/verifications": "Applications",
-    "/ledgers/books": "Books",
+    "/ledgers": "Businesses",
     "/messaging": "Messaging",
     "/settings": "Settings",
     "/users/create-user": "Create User",
@@ -91,8 +91,8 @@ const Header = () => {
       return "User Details";
     }
 
-    if (path.startsWith("/ledgers/books/") && path.split("/").length > 2) {
-      return "Books Details";
+    if (path.startsWith("/ledgers") && path.split("/").length > 2) {
+      return "Business Details";
     }
     
 

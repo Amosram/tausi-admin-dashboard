@@ -1,6 +1,6 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
-import { useGetVerifiedBeauticiansQuery } from "../api/professionalApi";
+import { useGetVerifiedBeauticiansQuery, useUpdateverifiedBeauticiansMutation } from "../api/professionalApi";
 import { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import { VerifiedBeauticians } from "@/models";
 import { Link } from "react-router-dom";
@@ -9,11 +9,14 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { useMemo, useState } from "react";
 import Loader from "@/components/layout/Loader";
+import { toast, useToast } from "@/hooks/use-toast";
 
 
 const VerifiedBeuticans: React.FC = () => {
 
   const {data, isLoading, isError} = useGetVerifiedBeauticiansQuery(10000);
+
+  const toast = useToast();
 
   const STATUS_OPTIONS = useMemo(() => {
     if (!data?.data) return [];
@@ -22,9 +25,15 @@ const VerifiedBeuticans: React.FC = () => {
       new Set(data.data.map(item => item.verificationData.verificationStatus))
     );
 
+    const filteredStatuses = uniqueStatuses.filter(
+      (status: string) => status !== "approved"
+    );
+
+    // remove filteredStatuses to uniqueStatuses (if there are no any fixes for approved status)
+
     return [
       { label: "All Statuses", value: null },
-      ...uniqueStatuses.map(verificationStatus => ({
+      ...filteredStatuses.map(verificationStatus => ({
         label: verificationStatus,
         value: verificationStatus
       }))
@@ -32,6 +41,7 @@ const VerifiedBeuticans: React.FC = () => {
   }, [data]);
 
   const getStatusBadge = (verificationStatus: string) => {
+    console.log("verificationStatus===========>", verificationStatus);
     switch (verificationStatus) {
     case "pending":
       return (
@@ -51,12 +61,6 @@ const VerifiedBeuticans: React.FC = () => {
           {verificationStatus}
         </Badge>
       );
-      case "approved":
-        return (
-        <Badge className="bg-transparent border-2 font-semibold text-md border-green-500 text-green-500">
-          {verificationStatus}
-        </Badge>
-        );
     default:
       return (
         <Badge className="bg-transparent border-2 font-semibold text-md border-gray-500 text-gray-500">
@@ -66,18 +70,60 @@ const VerifiedBeuticans: React.FC = () => {
     }
   };
 
+  const BeauticianIdCell: React.FC<{
+    id: string;
+    verificationStatus: string;
+    originalData: VerifiedBeauticians;
+  }> = ({ id, verificationStatus, originalData }) => {
+    const [updateVerifiedBeauticians] = useUpdateverifiedBeauticiansMutation();
+  
+    const handleIdClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+  
+      if (verificationStatus === "pending") {
+        try {
+          await updateVerifiedBeauticians({
+            id: id,
+            verificationStatus: "review",
+            verificationTitle: "Your verification status is under review",
+            verificationDescription: "Your verification status is under review while we verify your details",
+          }).unwrap();
+        } catch (error) {
+          toast.toast({
+            "title": "Error",
+            "description": "Failed to update verification status",
+            "variant": "destructive",
+          })
+          return;
+        }
+      }
+  
+      // Navigate after successful update
+      window.location.href = `/dashboard/verifications/${id}`;
+    };
+  
+    return (
+      <Link
+        to={`/dashboard/verifications/${id}`}
+        state={{ verifiedBeautician: originalData }}
+        onClick={handleIdClick}
+        className="hover:text-primary hover:underline truncate block max-w-[150px]"
+      >
+        {id}
+      </Link>
+    );
+  };
+
   const columns: ColumnDef<VerifiedBeauticians>[] = [
     {
       accessorKey: "id",
-      header: "Beutician ID",
-      cell: ({row}) => (
-        <Link
-          to={`/dashboard/verifications/${row.getValue("id")}`}
-          state={{verifiedBeautician: row.original}}
-          className="hover:text-primary hover:underline truncate block max-w-[150px]"
-        >
-          {row.original.id}
-        </Link>
+      header: "Beautician ID",
+      cell: ({ row }) => (
+        <BeauticianIdCell
+          id={row.original.id}
+          verificationStatus={row.original.verificationData.verificationStatus}
+          originalData={row.original}
+        />
       ),
     },
     {
@@ -117,7 +163,7 @@ const VerifiedBeuticans: React.FC = () => {
       id: "verificationStatus",
       accessorKey: "verificationData.verificationStatus",
       header: "Verification Status",
-      cell: ({ row }) => getStatusBadge(row.getValue("verificationStatus"))
+      cell: ({ row }) => getStatusBadge(row.getValue("verificationStatus") ? row.getValue("verificationStatus") : "approved")
     },
     {
       header: 'Actions',
