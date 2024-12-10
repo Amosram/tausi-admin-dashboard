@@ -375,10 +375,6 @@ const ProfessionalDetails = () => {
         {/* Contact information */}
         <div className="md:col-span-2 grid grid-cols-1 gap-4">
           <ContactInformationCard professional={professional} />
-          {/* Verification Details */}
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-            {/* <VerificationDetailsCard verificationData={professional}/> */}
-          </div>
           {/* Business Card */}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
             <BusinessCard professional={professional} />
@@ -386,7 +382,7 @@ const ProfessionalDetails = () => {
         </div>
       </div>
       {/* Service and Product Card */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 items-start">
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
           <ServiceProvidedCard professional={professional} />
         </div>
