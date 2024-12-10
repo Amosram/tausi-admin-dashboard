@@ -23,6 +23,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils";
 import DeactivateDialog from "../components/DeactivateDialog";
 import { toast } from "@/hooks/use-toast";
+import BoothAssignmentCard from "../components/BoothAssignmentCard";
 
 const Maps = lazy(() => import("@/components/ui/maps"));
 
@@ -393,6 +394,10 @@ const ProfessionalDetails = () => {
           <ProductCard professional={professional} />
         </div>
       </div>
+
+      {/* Booth Assignemts */}
+      <BoothAssignmentCard assignment={professional} />
+
       {/* Tab Layout for Portfolio and Location */}
       <Tabs className="w-full mt-8" defaultValue="location">
         {/* Tab List */}

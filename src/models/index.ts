@@ -60,7 +60,21 @@ export interface Professional {
   topRated: boolean;
   rating: number;
   services: Service[];
-  assignments: BoothAssignmentDetails[] | [];
+  verificationData:     {
+    id:                      string;
+    verificationStatus:      VerificationStatus;
+    verificationTitle:       VerificationTitle;
+    verificationDescription: string;
+    reviewedBy:              null | string;
+    isDeleted:               boolean;
+    deletedAt:               null;
+    createdAt:               Date;
+    updatedAt:               Date;
+    verificationDocuments:   any[];
+  };
+  bookAccess: any[];
+  assignments: Assignment[];
+  
 }
 
 export interface Service {
