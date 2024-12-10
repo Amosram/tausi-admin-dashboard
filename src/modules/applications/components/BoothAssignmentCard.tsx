@@ -9,8 +9,6 @@ interface BoothAssignmentProps {
 
 const BoothAssignmentCard = ({ assignment }: BoothAssignmentProps) => {
 
-  const placeholderImg = "/placeholder.png";
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
       {assignment.assignments.map((boothAssignment) => (
@@ -60,7 +58,7 @@ const BoothAssignmentCard = ({ assignment }: BoothAssignmentProps) => {
               <div className="relative h-48 overflow-hidden rounded-lg">
                 {boothAssignment.booth.imageUrl ? (
                   <img
-                    src={boothAssignment.booth.imageUrl || placeholderImg}
+                    src={boothAssignment.booth.imageUrl || "/placeholder.png"}
                     alt={boothAssignment.booth.name}
                     className="object-cover w-full h-full"
                   />

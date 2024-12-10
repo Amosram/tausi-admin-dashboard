@@ -26,6 +26,7 @@ import { ImageLightbox } from "../components/ImageGallery";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import VerificationDocuments from "../components/VerificationDocuments";
 
 const Maps = lazy(() => import("@/components/ui/maps"));
 
@@ -348,7 +349,7 @@ const VerificationDetails: React.FC = () => {
         </div>
       </div>
       {/* Service and Product Card */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 items-start">
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
           <ServiceProvidedCard beautician={beautician} />
         </div>
@@ -356,6 +357,9 @@ const VerificationDetails: React.FC = () => {
           <ProductCard beautician={beautician} />
         </div>
       </div>
+      {/* Verification Documents */}
+          <VerificationDocuments verificationDocuments={beautician} />
+
       {/* Tab Layout for Portfolio and Location */}
       <Tabs className="w-full mt-8" defaultValue="location">
         {/* Tab List */}

@@ -101,12 +101,12 @@ const ProfessionalDashboard = () => {
       header: "Contact",
       cell: ({ row }) => <span>{row.original.user?.phoneNumber || "N/A"}</span>
     },
-    {
-      id: "isActive",
-      accessorKey: "isActive",
-      header: "Status",
-      cell: ({row}) => getStatusBadge(row.getValue("isActive") ? "Active" : "Inactive")
-    },
+    // {
+    //   id: "isActive",
+    //   accessorKey: "isActive",
+    //   header: "Status",
+    //   cell: ({row}) => getStatusBadge(row.getValue("isActive") ? "Active" : "Inactive")
+    // },
     {
       header: 'Actions',
       enableSorting: false,
@@ -164,7 +164,7 @@ const ProfessionalDashboard = () => {
         columns={columns}
         columnFilters={columnFilters}
         handleStatusFilter={handleStatusFilter}
-        STATUS_OPTIONS={STATUS_OPTIONS}
+        // STATUS_OPTIONS={STATUS_OPTIONS}
         onRowSelection={handleRowSelection}
       />
     </div>
