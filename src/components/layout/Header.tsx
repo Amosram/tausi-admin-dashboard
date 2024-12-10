@@ -8,6 +8,7 @@ import { FaChevronDown, FaChevronLeft } from "react-icons/fa";
 import { IoExitOutline } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "../ui/sidebar";
+import { auth } from "@/app/firebase";
 
 interface RouteDetails {
   title: string;
@@ -141,9 +142,13 @@ const Header = () => {
           </div>
           {/* Avatar */}
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gray-300 rounded-md cursor-pointer"></div>
+            <div className="w-8 h-8 bg-gray-300 rounded-md cursor-pointer">
+              <img
+                src="/placeholder.png"
+              />
+            </div>
             <div className="flex flex-col">
-              <span className="text-gray-700">Franklin</span>
+              <span className="text-gray-700">{auth.currentUser?.displayName}</span>
               <span className="text-gray-500 text-sm">Admin</span>
             </div>
             <DropdownMenu>
