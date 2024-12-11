@@ -68,7 +68,7 @@ const ProfessionalDashboard = () => {
   const columns: ColumnDef<Professional>[] = [
     {
       accessorKey: 'id',
-      header: 'Application ID',
+      header: 'Beautician ID',
       cell: ({row}) => (
         <Link
           to={`/professionals/${row.getValue("id")}`}
@@ -108,41 +108,41 @@ const ProfessionalDashboard = () => {
     //   header: "Status",
     //   cell: ({row}) => getStatusBadge(row.getValue("isActive") ? "Active" : "Inactive")
     // },
-    {
-      header: 'Actions',
-      enableSorting: false,
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreVertical className="h-4 w-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <Link
-                to={`/professionals/${row.original.id}`}
-                state={{ professional: row.original }}
-                className="hover:text-primary"
-              >
-                  View Beauticians Details
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => console.log("Edit:", row.original)}
-              className="cursor-pointer"
-            >
-                Edit Beauticians
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => console.log("Delete:", row.original)}
-              className="bg-destructive text-white cursor-pointer"
-            >
-                Deactivate Beauticians
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    }
+    // {
+    //   header: 'Actions',
+    //   enableSorting: false,
+    //   cell: ({ row }) => (
+    //     <DropdownMenu>
+    //       <DropdownMenuTrigger className="h-8 w-8 p-0">
+    //         <span className="sr-only">Open menu</span>
+    //         <MoreVertical className="h-4 w-4" />
+    //       </DropdownMenuTrigger>
+    //       <DropdownMenuContent align="end">
+    //         <DropdownMenuItem>
+    //           <Link
+    //             to={`/professionals/${row.original.id}`}
+    //             state={{ professional: row.original }}
+    //             className="hover:text-primary"
+    //           >
+    //               View Beauticians Details
+    //           </Link>
+    //         </DropdownMenuItem>
+    //         <DropdownMenuItem
+    //           onClick={() => console.log("Edit:", row.original)}
+    //           className="cursor-pointer"
+    //         >
+    //             Edit Beauticians
+    //         </DropdownMenuItem>
+    //         <DropdownMenuItem
+    //           onClick={() => console.log("Delete:", row.original)}
+    //           className="bg-destructive text-white cursor-pointer"
+    //         >
+    //             Deactivate Beauticians
+    //         </DropdownMenuItem>
+    //       </DropdownMenuContent>
+    //     </DropdownMenu>
+    //   ),
+    // }
   ];
 
   const handleRowSelection = (selectedRows: Professional[]) => {
