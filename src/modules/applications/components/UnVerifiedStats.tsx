@@ -1,0 +1,74 @@
+import { Professional, VerifiedBeauticians } from "@/models";
+import { BriefcaseBusiness, ListChecks, FileCheck, Ban, CircleEllipsis } from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+
+
+interface UnVerifiedBeauticianStatsProps {
+    beauticians: VerifiedBeauticians[];
+}
+
+const UnVerifiedBeauticianStats = ({beauticians}: UnVerifiedBeauticianStatsProps) => {
+
+
+  const statsItems = [
+    {
+      icon: <FileCheck className="h-8 w-8 text-blue-600" />,
+      label: "Total Beauticians Applications",
+      filter: null,
+      value: 150,
+      bgColor: "bg-blue-50",
+      textColor: "text-blue-800",
+    },
+    {
+        icon: <CircleEllipsis className="h-8 w-8 text-green-600" />,
+        label: "Pending Applications",
+        filter: "active",
+        value: 0,
+        bgColor: "bg-green-50",
+        textColor: "text-green-800",
+    },
+    {
+        icon: <Ban className="h-8 w-8 text-red-600" />,
+        label: "Total Rejected Applications",
+        filter: "inactive",
+        value: 40,
+        bgColor: "bg-red-50",
+        textColor: "text-red-800",
+    },
+    {
+        icon: <ListChecks className="h-8 w-8  text-orange-600" />,
+        label: "Aplications in Review",
+        filter: "top-rated",
+        value: 2,
+        bgColor: "bg-orange-50",
+        textColor: "text-orange-800",
+    },
+    
+  ];
+
+  return (
+    <div className="w-full p-4 mx-auto">
+      <p className="text-lg uppercase text-center font-semibold mb-3">STATS</p>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        {statsItems.map((item, index) => (
+          <Card
+            key={index}
+            className="flex flex-col justify-between border-2 border-transparent hover:shadow-xl hover:border-opacity-50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 rounded-xl overflow-hidden"
+          >
+            <CardHeader className="flex flex-row items-center justify-center p-4 pb-2">
+              <div className="p-3 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+                {item.icon}
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 pt-2 text-center flex-grow flex flex-col justify-center">
+              <div className="text-2xl font-bold mb-1">{item.value}</div>
+              <p className="text-xs opacity-70 uppercase tracking-wider truncate">{item.label}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default UnVerifiedBeauticianStats;

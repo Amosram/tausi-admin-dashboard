@@ -9,6 +9,7 @@ import { MoreVertical } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
 import Loader from "@/components/layout/Loader";
+import BeauticianListStats from "../components/BeauticianListStats";
 
 const ProfessionalDashboard = () => {
   const {data, isLoading, isError} = useGetProfessionalsQuery(10000);
@@ -159,6 +160,7 @@ const ProfessionalDashboard = () => {
 
   return (
     <div className="pr-6 pl-6">
+      <BeauticianListStats beauticians={data.data} />
       <TanStackTable
         data={data.data}
         columns={columns}

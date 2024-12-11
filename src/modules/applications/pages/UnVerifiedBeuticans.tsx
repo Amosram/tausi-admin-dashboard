@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useMemo, useState } from "react";
 import Loader from "@/components/layout/Loader";
 import { toast, useToast } from "@/hooks/use-toast";
+import UnVerifiedBeauticianStats from "../components/UnVerifiedStats";
 
 
 const VerifiedBeuticans: React.FC = () => {
@@ -212,6 +213,7 @@ const VerifiedBeuticans: React.FC = () => {
 
   return (
     <div className="pr-6 pl-6">
+      <UnVerifiedBeauticianStats beauticians={data.data} />
       <TanStackTable
         data={data.data}
         columns={columns}
