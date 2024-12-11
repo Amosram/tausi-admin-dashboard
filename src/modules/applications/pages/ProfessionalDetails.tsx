@@ -309,7 +309,7 @@ const ProfessionalDetails = () => {
     return (
       <div className="container mx-auto p-4">
         <div className="bg-destructive text-destructive-foreground p-4 rounded-lg">
-          Unable to load professional details. Please try again later.
+          Unable to load Verified Beautician details. Please try again later.
         </div>
       </div>
     );
@@ -327,13 +327,13 @@ const ProfessionalDetails = () => {
 
       toast({
         title: "Success",
-        description: "Professional has been activated successfully.",
+        description: "Beautician has been activated successfully.",
         variant: "success",
       });
     }  catch(error) {
       toast({
         title: "Error",
-        description: "An error occurred while activating the Professional.",
+        description: "An error occurred while activating the Beautician.",
         variant: "destructive",
       });
     }
@@ -345,7 +345,7 @@ const ProfessionalDetails = () => {
       <div className="w-full bg-muted p-4 rounded-lg flex flex-col sm:flex-row justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
           <h2 className="text-xl font-bold">
-                 Professional Management
+                 Beautician Management
           </h2>
           <Badge variant={professional.isActive ? "default" : "destructive"}>
             {professional.isActive ? "Active" : "Inactive"}

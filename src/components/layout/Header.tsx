@@ -62,9 +62,52 @@ const getDynamicRouteDetails = (pathname: string): RouteDetails => {
 const Header = () => {
   const location = useLocation();
 
-  const { title: dynamicTitle, backLink } = getDynamicRouteDetails(
-    location.pathname
-  );
+  const titles: { [key: string]: string } = {
+    "/": "Dashboard",
+    "/orders": "Orders",
+    "/revenue": "Revenue",
+    "/users": "Users",
+    "/professionals": "Beauticians List",
+    "/dashboard/verifications": "Applications",
+    "/ledgers": "Businesses",
+    "/messaging": "Messaging",
+    "/settings": "Settings",
+    "/users/create-user": "Create User",
+    "/ledgers/create-loan":"Create Loan"
+  };
+
+  const getTitle = () => {
+    const path = location.pathname;
+
+    if (path.startsWith("/orders/") && path.split("/").length > 2) {
+      return "Order Details";
+    }
+
+    if (path.startsWith("/professionals/") && path.split("/").length > 2) {
+      return "Verified Beautician Details";
+    }
+
+    if (path.startsWith("/dashboard/verifications/") && path.split("/").length > 2) {
+      return "Applications Details";
+    }
+
+
+    if (path.startsWith("/users/") && path.split("/").length > 2) {
+      if (path === "/users/create-user") {
+        return "Create User";
+      }
+      return "User Details";
+    }
+
+    if (path.startsWith("/ledgers") && path.split("/").length > 2) {
+      return "Business Details";
+    }
+    
+
+    return titles[path] || "Dashboard";
+  };
+
+  const { title: dynamicTitle, backLink } = getDynamicRouteDetails(location.pathname);
 
   const navigate = useNavigate();
 
