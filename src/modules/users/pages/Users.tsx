@@ -10,15 +10,15 @@ import { useNavigate } from "react-router-dom";
 const Users: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { data, error, isLoading, refetch } = useGetUsersQuery(20000);
+  const { data, error, isLoading, refetch } = useGetUsersQuery(2000);
 
   const [retryCount, setRetryCount] = React.useState(0);
   const maxRetries = 3;
 
   const usersData =
     data?.map((item) => ({
-      ...item.users,
-      role: item.userSessionData?.userTypeSession,
+      ...item,
+      role: item.sessionData?.userTypeSession,
     })) || [];
 
   const ROLE_OPTIONS = [

@@ -67,6 +67,7 @@ export interface TausiUser {
   profilePictureUrl: string | null;
   updatedAt: Date;
   sessionData: SessionData;
+  professional: TausiProfessional | null;
 }
 
 export interface TausiProfessional {

@@ -1,29 +1,54 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ordersColumns } from "../components/orders-columns";
 import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/layout/Loader";
-import { useGetOrdersQuery } from "../api/ordersApi";
+import { useGetOrdersQuery, useSearchOrdersMutation } from "../api/ordersApi";
 import TanStackTable from "@/components/ui/Table/Table";
-import { useLocation } from "react-router-dom";
-import { Appointment } from "@/models";
-import { TableFilters } from "@/components/ui/Filters/TableFilters";
-import { TimeFilter } from "@/components/ui/Filters/TimeFilters";
-import { filterDataByTime } from "@/components/ui/Filters/timeFilterUtils";
+import SearchBar from "@/components/ui/Table/SearchBar";
+import { searchPresets, useSearch } from "@/hooks/useSearch";
 
 const Orders: React.FC = () => {
   const { data, error, isLoading, refetch } = useGetOrdersQuery(50);
   const { toast } = useToast();
-  const location = useLocation();
 
   const ordersData = data?.data || [];
 
-  const [filteredData, setFilteredData] = useState<Appointment[]>([]);
-  const [timeFilteredData, setTimeFilteredData] = useState<Appointment[]>([]);
+  const searchableColumns = [
+    "appointmentDate",
+    "customerName",
+    "status",
+    "serviceType",
+    "createdAt", // Default time filter column
+  ];
+
+  const {
+    data: displayData,
+    isSearchActive,
+    triggerSearch,
+    clearSearch,
+    searchParams: currentSearchParams,
+  } = useSearch({
+    initialData: ordersData,
+    searchMutation: useSearchOrdersMutation,
+    searchableColumns: searchableColumns,
+    onSearchError: (error) => {
+      toast({
+        title: "Search Error",
+        description: "Failed to perform search. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Search error:", error);
+    },
+    // Custom clear handler to refetch original data
+    onClearSearch: () => {
+      refetch();
+    },
+  });
 
   const [retryCount, setRetryCount] = React.useState(0);
   const maxRetries = 3;
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (error) {
       if (retryCount < maxRetries) {
         setTimeout(() => {
@@ -40,110 +65,17 @@ const Orders: React.FC = () => {
     }
   }, [error, toast, retryCount, refetch]);
 
-  // Initial data setup and filtering
-  useEffect(() => {
-    if (ordersData.length > 0) {
-      const searchParams = new URLSearchParams(location.search);
-      const timeFilterParam = searchParams.get("timeFilter");
+  const isDataEmpty = !displayData || displayData.length === 0;
 
-      const processedTimeFilteredData = filterDataByTime(
-        ordersData,
-        "createdAt",
-        timeFilterParam
-      );
+  const handleClearFilters = () => {
+    clearSearch(); // Clear all search and filter params
+  };
 
-      setTimeFilteredData(processedTimeFilteredData);
-
-      // Then, handle status/other filtering based on URL
-      const filterParam = searchParams.get("filter");
-      let finalFilteredData = processedTimeFilteredData;
-
-      if (filterParam) {
-        switch (filterParam) {
-          // Appointment Status
-          case "pending":
-            finalFilteredData = finalFilteredData.filter(
-              (order) => order.status === "pending"
-            );
-            break;
-          case "completed":
-            finalFilteredData = finalFilteredData.filter(
-              (order) => order.status === "completed"
-            );
-            break;
-          case "cancelled":
-            finalFilteredData = finalFilteredData.filter(
-              (order) => order.status === "cancelled"
-            );
-            break;
-          // Payment Status
-          case "paid":
-            finalFilteredData = finalFilteredData.filter(
-              (order) => order.isPaid
-            );
-            break;
-          case "unpaid":
-            finalFilteredData = finalFilteredData.filter(
-              (order) => !order.isPaid
-            );
-            break;
-          // Booking Type
-          case "group":
-            finalFilteredData = finalFilteredData.filter(
-              (order) => order.bookingForGroup
-            );
-            break;
-          case "individual":
-            finalFilteredData = finalFilteredData.filter(
-              (order) => !order.bookingForGroup
-            );
-            break;
-          // Price Range
-          case "low":
-            finalFilteredData = finalFilteredData.filter(
-              (order) => order.totalPrice < 50
-            );
-            break;
-          case "medium":
-            finalFilteredData = finalFilteredData.filter(
-              (order) => order.totalPrice >= 50 && order.totalPrice <= 150
-            );
-            break;
-          case "high":
-            finalFilteredData = finalFilteredData.filter(
-              (order) => order.totalPrice > 150
-            );
-            break;
-          case "active":
-            finalFilteredData = finalFilteredData.filter(
-              (order) => !order.isDeleted
-            );
-            break;
-          default:
-            finalFilteredData = processedTimeFilteredData;
-        }
-      }
-
-      setFilteredData(finalFilteredData);
-    }
-  }, [ordersData, location.search]);
-
-  const orderFilters = [
-    { label: "All", value: null },
-    { label: "Pending", value: "pending" },
-    { label: "Completed", value: "completed" },
-    { label: "Cancelled", value: "cancelled" },
-    { label: "Paid", value: "paid" },
-    { label: "Unpaid", value: "unpaid" },
-    { label: "Group Booking", value: "group" },
-    { label: "Individual Booking", value: "individual" },
-    { label: "Low Price", value: "low" },
-    { label: "Medium Price", value: "medium" },
-    { label: "High Price", value: "high" },
-    { label: "Active", value: "active" },
-  ];
-
-  const isDataEmpty = !ordersData || ordersData.length === 0;
+  const handleCombinedSearch = (criteria) => {
+    criteria.forEach(({ column, value, operator, timeRange }) => {
+      triggerSearch(column, value, operator, timeRange);
+    });
+  };
 
   if (isLoading && isDataEmpty) return <Loader />;
   if (error && retryCount >= maxRetries && isDataEmpty)
@@ -151,24 +83,48 @@ const Orders: React.FC = () => {
   if (isDataEmpty) return <div>No orders found.</div>;
 
   return (
-    <>
-      <div className="md:px-4 px-1 my-4 flex gap-2 md:flex-row flex-col items-center">
-        <div className="flex-1">
-          <TableFilters filters={orderFilters} queryParam="filter" />
-        </div>
-        <TimeFilter
-          queryParam="timeFilter"
-          data={ordersData}
-          field="createdAt"
-          onFilter={setTimeFilteredData}
-        />
+    <div>
+      <SearchBar
+        columns={searchableColumns}
+        onSearch={(column, value, operator, timeRange) =>
+          handleCombinedSearch([{ column, value, operator, timeRange }])
+        }
+        onClear={handleClearFilters}
+        isSearchActive={isSearchActive}
+      />
+
+      {/* Preset Filter Buttons */}
+      <div className="flex gap-2 my-4">
+        {searchPresets.orders.defaultFilters.map((filter) => (
+          <button
+            key={filter.label}
+            onClick={() =>
+              handleCombinedSearch([
+                {
+                  column: filter.column,
+                  value: filter.value,
+                  operator: filter.operator,
+                },
+              ])
+            }
+            className={`px-4 py-2 rounded ${
+              currentSearchParams?.column === filter.column &&
+              currentSearchParams?.value === filter.value
+                ? "bg-red-500"
+                : "bg-blue-500"
+            } text-white`}
+          >
+            {filter.label}
+          </button>
+        ))}
       </div>
+
       <TanStackTable
-        data={filteredData}
+        data={displayData}
         columns={ordersColumns}
         dateSortingId="appointmentDate"
       />
-    </>
+    </div>
   );
 };
 

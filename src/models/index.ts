@@ -141,28 +141,24 @@ export interface OrdersTableData {
   status: string;
   startTime: string;
 }
-
-export interface UsersApiResponse {
-  users: TausiUser;
-  userSessionData: SessionData;
+export interface SearchCriteriaType {
+  field: string;
+  operator: 'eq' | 'ne' | 'gt' | 'lt' | 'gte' | 'lte' | 'like' | 'in' | 'between' | 'ilike';
+  value: string | boolean | string[];
 }
 
-export interface SingleUserApiResponse {
+export interface OrdersSearchApiResponse {
   statusCode: string;
   code: number;
   message: string;
-  data: TausiUserDetails;
+  data: Appointment[] | [];
 }
 
-export interface CreateUserRequest {
-  id?: string;
-  name: string;
-  email: string;
-  phoneNumber: string;
-  userTypeSession: "professional" | "client" | "user";
-  bio: string;
-  profilePictureUrl?: string;
-  profilePicturePath?: string;
+export interface ProfSearchApiResponse {
+  statusCode: string;
+  code: number;
+  message: string;
+  data: Professional[] | [];
 }
 
 export interface AppointmentsApiResponse {
