@@ -72,6 +72,11 @@ interface UseSearchReturn<T> {
   isSearchActive: boolean;
 
   /**
+   * Whether a search is going on
+   */
+  isLoading: boolean;
+
+  /**
    * Trigger a search with specific criteria
    */
   triggerSearch: (
@@ -193,6 +198,7 @@ export function useSearch<T, MutationHook extends (...args: any[]) => any>({
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchData, setSearchData] = useState<T[]>(initialData);
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [searchMutationTrigger] = searchMutation();
 
@@ -241,6 +247,8 @@ export function useSearch<T, MutationHook extends (...args: any[]) => any>({
         return;
       }
 
+      setIsLoading(true);
+
       try {
         const newSearchParams = new URLSearchParams(searchParams);
         newSearchParams.set(columnParamName, column);
@@ -288,6 +296,8 @@ export function useSearch<T, MutationHook extends (...args: any[]) => any>({
           onSearchError(error);
         }
         console.error("Search failed:", error);
+      }finally {
+        setIsLoading(false);
       }
     },
     [
@@ -300,12 +310,11 @@ export function useSearch<T, MutationHook extends (...args: any[]) => any>({
       columnParamName,
       valueParamName,
       timeRangeParamName,
-      dateFilterColumn, // Include this dependency
+      dateFilterColumn,
     ]
   );
 
   useEffect(() => {
-    // Trigger initial search if value or time range exists
     if (currentValue || currentTimeRange) {
       triggerSearch(
         currentColumn,
@@ -319,6 +328,7 @@ export function useSearch<T, MutationHook extends (...args: any[]) => any>({
   return {
     data: searchData,
     isSearchActive,
+    isLoading,
     triggerSearch,
     clearSearch,
     searchableColumns,

@@ -24,6 +24,7 @@ const Orders: React.FC = () => {
   const {
     data: displayData,
     isSearchActive,
+    isLoading: isSearchLoading,
     triggerSearch,
     clearSearch,
     searchParams: currentSearchParams,
@@ -65,7 +66,11 @@ const Orders: React.FC = () => {
     }
   }, [error, toast, retryCount, refetch]);
 
-  const isDataEmpty = !displayData || displayData.length === 0;
+  const isDataEmpty =
+    (!isLoading &&
+      !isSearchActive &&
+      (!ordersData || ordersData.length === 0)) ||
+    (isSearchActive && (!displayData || displayData.length === 0));
 
   const handleClearFilters = () => {
     clearSearch(); // Clear all search and filter params
@@ -77,6 +82,9 @@ const Orders: React.FC = () => {
     });
   };
 
+  if (isSearchLoading) {
+    return <Loader />;
+  }
   if (isLoading && isDataEmpty) return <Loader />;
   if (error && retryCount >= maxRetries && isDataEmpty)
     return <div>Error: Unable to load order data after multiple attempts.</div>;
@@ -120,7 +128,9 @@ const Orders: React.FC = () => {
       </div>
 
       <TanStackTable
-        data={displayData}
+        data={
+          displayData && displayData.length > 0 ? displayData : ordersData || []
+        }
         columns={ordersColumns}
         dateSortingId="appointmentDate"
       />
