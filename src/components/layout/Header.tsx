@@ -21,7 +21,10 @@ const routeMappings: Record<string, RouteDetails> = {
   "/users": { title: "Users" },
   "/users/:id": { title: "User Details", backLink: "/users" },
   "/professionals": { title: "Beauticians List" },
-  "/professionals/:id": { title: "Professional Details", backLink: "/professionals" },
+  "/professionals/:id": {
+    title: "Professional Details",
+    backLink: "/professionals",
+  },
   "/dashboard/verifications": { title: "Applications" },
   "/messaging": { title: "Messaging" },
   "/settings": { title: "Settings" },
@@ -37,7 +40,10 @@ const routeMappings: Record<string, RouteDetails> = {
   "/ledgers/create-loan": { title: "Create Loan" },
   "/ledgers": { title: "Businesses" },
   "/ledgers/:ownerId": { title: "Business Details", backLink: "/ledgers" },
-  "/dashboard/verifications/:id": { title: "Applications Details", backLink: "/dashboard/verifications" },
+  "/dashboard/verifications/:id": {
+    title: "Applications Details",
+    backLink: "/dashboard/verifications",
+  },
 };
 
 const getDynamicRouteDetails = (pathname: string): RouteDetails => {
@@ -54,52 +60,9 @@ const getDynamicRouteDetails = (pathname: string): RouteDetails => {
 const Header = () => {
   const location = useLocation();
 
-  const titles: { [key: string]: string } = {
-    "/": "Dashboard",
-    "/orders": "Orders",
-    "/revenue": "Revenue",
-    "/users": "Users",
-    "/professionals": "Beauticians List",
-    "/dashboard/verifications": "Applications",
-    "/ledgers": "Businesses",
-    "/messaging": "Messaging",
-    "/settings": "Settings",
-    "/users/create-user": "Create User",
-    "/ledgers/create-loan":"Create Loan"
-  };
-
-  const getTitle = () => {
-    const path = location.pathname;
-
-    if (path.startsWith("/orders/") && path.split("/").length > 2) {
-      return "Order Details";
-    }
-
-    if (path.startsWith("/professionals/") && path.split("/").length > 2) {
-      return "Professional Details";
-    }
-
-    if (path.startsWith("/dashboard/verifications/") && path.split("/").length > 2) {
-      return "Applications Details";
-    }
-
-
-    if (path.startsWith("/users/") && path.split("/").length > 2) {
-      if (path === "/users/create-user") {
-        return "Create User";
-      }
-      return "User Details";
-    }
-
-    if (path.startsWith("/ledgers") && path.split("/").length > 2) {
-      return "Business Details";
-    }
-    
-
-    return titles[path] || "Dashboard";
-  };
-
-  const { title: dynamicTitle, backLink } = getDynamicRouteDetails(location.pathname);
+  const { title: dynamicTitle, backLink } = getDynamicRouteDetails(
+    location.pathname
+  );
 
   const navigate = useNavigate();
 
@@ -110,24 +73,39 @@ const Header = () => {
   return (
     <header className="sticky top-0 bg-white border-b border-slate-200 z-30 flex justify-between w-full shadow-sm px-4 py-6">
       <div className="w-full bg-white hadow-md flex items-center justify-between">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-4">
+          {/* Sidebar trigger */}
           <div className="relative">
             <SidebarTrigger />
           </div>
-          <div className="relative">
+
+          <div className="relative flex gap-6 items-center">
+            {/* Main title and optional back link */}
             {backLink ? (
               <Link
                 to={backLink}
-                className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
+                className="text-gray-800 font-semibold flex items-center space-x-2 hover:text-primary hover:underline transition-all duration-300 ease-in-out"
               >
-                <FaChevronLeft />
-                <span>{dynamicTitle}</span>
+                <FaChevronLeft className="text-lg" />
+                <span className="text-lg">{dynamicTitle}</span>
               </Link>
             ) : (
-              <div className="text-gray-600 font-bold">{dynamicTitle}</div>
+              <div className="text-gray-800 font-semibold text-lg">{dynamicTitle}</div>
+            )}
+
+            {/* Additional back link (for browser history) */}
+            {backLink && (
+              <button
+                onClick={() => window.history.back()}
+                className="text-blue-600 font-medium text-xs flex items-center space-x-2 hover:text-primary hover:underline"
+              >
+                <FaChevronLeft className="text-xs" />
+                <span>Back to previous</span>
+              </button>
             )}
           </div>
         </div>
+
         <div className="flex items-center space-x-4"></div>
         {/* Search Bar */}
         <div className="relative max-w-xs w-full mr-4">

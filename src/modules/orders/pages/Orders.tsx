@@ -88,7 +88,7 @@ const Orders: React.FC = () => {
   if (isDataEmpty) return <div>No orders found.</div>;
 
   return (
-    <div>
+    <div className="p-2">
       <Filters
         filters={searchPresets.orders.defaultFilters}
         onFilterSelect={(filter) =>
