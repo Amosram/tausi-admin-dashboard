@@ -5,8 +5,8 @@ import {
   Appointment,
   AppointmentsApiResponse,
   OrdersSearchApiResponse,
-  SearchCriteriaType,
 } from "@/models";
+import { SearchCriteriaType } from "@/hooks/useSearch";
 
 export const ordersApi = createApi({
   reducerPath: "ordersApi",
@@ -33,9 +33,9 @@ export const ordersApi = createApi({
       OrdersSearchApiResponse,
       { searchCriteria: SearchCriteriaType[]; limit?: number }
     >({
-      query: ({ searchCriteria, limit = 80 }) => {
+      query: ({ searchCriteria, limit = 8000 }) => {
         // Ensure the limit is validated and defaulted
-        const validatedLimit = limit > 0 ? limit : 80;
+        const validatedLimit = limit > 0 ? limit : 8000;
     
         return {
           url: `/appointments/search?limit=${validatedLimit}`,

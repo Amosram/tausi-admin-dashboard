@@ -1,6 +1,11 @@
 import { useState, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { SearchCriteriaType } from "@/models";
+
+export interface SearchCriteriaType {
+  field: string;
+  operator: 'eq' | 'ne' | 'gt' | 'lt' | 'gte' | 'lte' | 'like' | 'in' | 'between' | 'ilike' | "";
+  value: string | boolean | string[];
+}
 
 // Extend the existing interface to support multiple search criteria
 interface UseSearchOptions<T, MutationHook> {
@@ -83,7 +88,8 @@ interface UseSearchReturn<T> {
     column: string,
     value: string,
     operator?: SearchCriteriaType["operator"],
-    timeRange?: string
+    timeRange?: string,
+    updateSearchParams?: boolean
   ) => Promise<void>;
 
   /**
@@ -101,7 +107,7 @@ interface UseSearchReturn<T> {
    */
   searchParams: {
     column: string;
-    value: string;
+    value: string | boolean;
     operator: SearchCriteriaType["operator"];
     timeRange?: string;
   };
@@ -186,7 +192,7 @@ export function useSearch<T, MutationHook extends (...args: any[]) => any>({
   initialData,
   searchMutation,
   searchableColumns,
-  defaultLimit = 80,
+  defaultLimit = 8000,
   onSearchError,
   onClearSearch,
   columnParamName = "column",
@@ -206,7 +212,7 @@ export function useSearch<T, MutationHook extends (...args: any[]) => any>({
     searchParams.get(columnParamName) || searchableColumns[0];
   const currentValue = searchParams.get(valueParamName) || "";
   const currentOperator = (searchParams.get(operatorParamName) ||
-    "like") as SearchCriteriaType["operator"];
+    "eq") as SearchCriteriaType["operator"];
   const currentTimeRange = searchParams.get(timeRangeParamName) || "";
 
   const clearSearch = useCallback(() => {
@@ -239,54 +245,54 @@ export function useSearch<T, MutationHook extends (...args: any[]) => any>({
     async (
       column: string,
       value: string,
-      operator: SearchCriteriaType["operator"] = "like",
-      timeRange?: string
+      operator: SearchCriteriaType["operator"],
+      timeRange?: string,
+      updateSearchParams: boolean = true
     ) => {
+      // Ensure at least one valid filter is provided
       if (!value && !timeRange) {
         clearSearch();
         return;
       }
-
+  
       setIsLoading(true);
-
+  
       try {
         const newSearchParams = new URLSearchParams(searchParams);
-        newSearchParams.set(columnParamName, column);
-
-        // Prepare search criteria
-        const searchCriteria: SearchCriteriaType[] = [];
-
-        // Add value-based search criteria if value exists
-        if (value) {
-          newSearchParams.set(valueParamName, value);
-          searchCriteria.push({
-            field: column,
-            operator,
-            value,
-          });
+        if (updateSearchParams) {
+          if (column && value) {
+            newSearchParams.set(columnParamName, column);
+            newSearchParams.set(valueParamName, value);
+            newSearchParams.set(operatorParamName, operator || "eq");
+          }
+          if (timeRange) {
+            newSearchParams.set(timeRangeParamName, timeRange);
+          }
+          setSearchParams(newSearchParams);
         }
-
-        // Add time range criteria if time range is specified
+  
+        const searchCriteria: SearchCriteriaType[] = [];
+  
+        // Add search value criteria if provided
+        if (value && column) {
+          searchCriteria.push({ field: column, operator, value });
+        }
+  
+        // Add time range criteria if provided
         if (timeRange) {
-          newSearchParams.set(timeRangeParamName, timeRange);
           const { startDate, endDate } = calculateDateRange(timeRange);
-
-          // Use the provided date filter column or default to "appointmentDate"
-          const dateFilterField = dateFilterColumn || "appointmentDate";
           searchCriteria.push({
-            field: dateFilterField,
+            field: dateFilterColumn || "appointmentDate",
             operator: "between",
             value: [`${startDate}`, `${endDate}`],
           });
         }
-
-        setSearchParams(newSearchParams);
-
+  
         const response = await searchMutationTrigger({
           searchCriteria,
           limit: defaultLimit,
         }).unwrap();
-
+  
         if (response.data) {
           setSearchData(response.data);
           setIsSearchActive(true);
@@ -296,7 +302,7 @@ export function useSearch<T, MutationHook extends (...args: any[]) => any>({
           onSearchError(error);
         }
         console.error("Search failed:", error);
-      }finally {
+      } finally {
         setIsLoading(false);
       }
     },
@@ -309,10 +315,13 @@ export function useSearch<T, MutationHook extends (...args: any[]) => any>({
       setSearchParams,
       columnParamName,
       valueParamName,
+      operatorParamName,
       timeRangeParamName,
       dateFilterColumn,
     ]
   );
+  
+  
 
   useEffect(() => {
     if (currentValue || currentTimeRange) {
@@ -349,7 +358,6 @@ export const timeRangeOptions = [
   { value: "pastyear", label: "Past Year" },
   { value: "past10years", label: "Past 10 Years" },
   { value: "alltime", label: "All Time" },
-  { value: null, label: "Reset" },
 ];
 
 export type SearchOperator =
@@ -362,21 +370,64 @@ export type SearchOperator =
   | "lte"
   | "like"
   | "between"
-  | "ilike";
+  | "ilike"
+  | undefined;
 
 export const searchPresets = {
   orders: {
     defaultFilters: [
       {
-        label: "Upcoming Appointments",
-        column: "status",
-        value: "scheduled",
+        label: "Paid",
+        column: "isPaid",
+        value: true,
         operator: "eq" as SearchOperator,
       },
       {
-        label: "Today's Appointments",
+        label: "Paid Upfront",
+        column: "amountUpfront",
+        value: 1,
+        operator: "gt" as SearchOperator,
+      },
+      {
+        label: "Upcoming",
         column: "appointmentDate",
-        value: new Date().toISOString().split("T")[0],
+        value: new Date().toISOString(),
+        operator: "gte" as SearchOperator,
+      },
+      {
+        label: "Individual",
+        column: "numberOfClients",
+        value: 1,
+        operator: "eq" as SearchOperator,
+      },
+      {
+        label: "Group",
+        column: "numberOfClients",
+        value: 1,
+        operator: "gt" as SearchOperator,
+      },
+      {
+        label: "Pending",
+        column: "status",
+        value: "pending",
+        operator: "eq" as SearchOperator,
+      },
+      {
+        label: "Completed",
+        column: "status",
+        value: "completed",
+        operator: "eq" as SearchOperator,
+      },
+      {
+        label: "Cancelled",
+        column: "status",
+        value: "cancelled",
+        operator: "eq" as SearchOperator,
+      },
+      {
+        label: "Scheduled",
+        column: "status",
+        value: "scheduled",
         operator: "eq" as SearchOperator,
       },
     ],

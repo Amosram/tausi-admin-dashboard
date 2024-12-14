@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Input } from "../input";
 import {
   Select,
@@ -8,99 +9,101 @@ import {
   SelectValue,
 } from "../select";
 import { Button } from "../button";
-import { SearchCriteriaType } from "@/models";
-import { X } from "lucide-react";
 import { timeRangeOptions } from "@/hooks/useSearch";
-import { useSearchParams } from "react-router-dom";
 
 interface SearchBarProps {
   columns: string[];
-  triggerSearch: (
+  columnLabels: Record<string, string>;
+  onSearch: (
     column: string,
     value: string,
-    operator?: SearchCriteriaType["operator"],
+    operator: string,
     timeRange?: string
   ) => void;
-  clearSearch: () => void;
-  isSearchActive: boolean;
+  onClear?: () => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   columns,
-  triggerSearch,
-  clearSearch,
-  isSearchActive,
+  onSearch,
+  onClear,
+  columnLabels
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [searchValue, setSearchValue] = React.useState(
-    searchParams.get("value") || ""
+  const [selectedColumn, setSelectedColumn] = useState<string | undefined>(
+    searchParams.get("column") || undefined
   );
-  const [selectedColumn, setSelectedColumn] = React.useState("");
-  const [searchOperator, setSearchOperator] = React.useState<
-    SearchCriteriaType["operator"]
-  >("");
-  const [timeRange, setTimeRange] = React.useState("");
+  const [searchValue, setSearchValue] = useState<string>(
+    searchParams.get("q") || ""
+  );
+  const [searchOperator, setSearchOperator] = useState<string>(
+    searchParams.get("operator") || "eq"
+  );
+  const [timeRange, setTimeRange] = useState<string | undefined>(
+    searchParams.get("timeRange") || undefined
+  );
 
-  // Update URL and trigger search when values change
-  React.useEffect(() => {
-    const params = new URLSearchParams();
-    if (searchValue) params.set("value", searchValue);
-    if (selectedColumn) params.set("column", selectedColumn);
-    if (searchOperator) params.set("operator", searchOperator);
-    if (timeRange) params.set("timeRange", timeRange);
-    setSearchParams(params);
+  useEffect(() => {
+    const column = searchParams.get("column");
+    const q = searchParams.get("q");
+    const operator = searchParams.get("operator");
+    const range = searchParams.get("timeRange");
 
-    // Trigger search with updated values
-    if (searchValue || timeRange) {
-      triggerSearch(selectedColumn, searchValue, searchOperator, timeRange);
-    }
-  }, [searchValue, selectedColumn, searchOperator, timeRange, setSearchParams]);
+    if (column && columns.includes(column)) setSelectedColumn(column);
+    else setSelectedColumn(undefined);
+
+    setSearchValue(q || "");
+    setSearchOperator(operator || "eq");
+    setTimeRange(range || undefined);
+  }, [searchParams, columns]);
+
+  const handleSearch = () => {
+    const newParams: Record<string, string> = {};
+
+    if (selectedColumn) newParams.column = selectedColumn;
+    if (searchValue) newParams.q = searchValue;
+    if (searchOperator) newParams.operator = searchOperator;
+    if (timeRange) newParams.timeRange = timeRange;
+
+    setSearchParams(newParams);
+    onSearch(selectedColumn || "", searchValue, searchOperator, timeRange);
+  };
 
   const handleClearSearch = () => {
+    setSelectedColumn(undefined);
     setSearchValue("");
-    setSelectedColumn("");
     setSearchOperator("");
-    setTimeRange("");
-    setSearchParams(new URLSearchParams());
-    clearSearch();
+    setTimeRange(undefined);
+
+    setSearchParams({});
+    if (onClear) onClear();
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter")
-      triggerSearch(selectedColumn, searchValue, searchOperator, timeRange);
+    if (event.key === "Enter") handleSearch();
   };
 
   return (
-    <div className="flex flex-col gap-2 p-1">
-      <div className="flex items-center gap-2">
-        {/* Input Field */}
-        <div className="relative flex items-center flex-1">
-          <Input
-            type="text"
-            placeholder="Enter search value"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            onKeyPress={handleKeyPress}
-            className="border border-gray-400 bg-white text-black focus:ring ring-primary"
-          />
-          {isSearchActive && (
-            <X
-              onClick={handleClearSearch}
-              className="text-destructive cursor-pointer absolute right-3"
-            />
-          )}
-        </div>
-
+    <div className="flex flex-col gap-4 p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
+      <div className="w-full">
+        <Input
+          type="text"
+          placeholder="Enter search value"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          onKeyPress={handleKeyPress}
+          className="w-full border border-gray-400 rounded-md p-2 text-sm text-black"
+        />
+      </div>
+      <div className="flex w-full items-center gap-4">
         {/* Operator Selector */}
         <Select
-          value={searchOperator}
-          onValueChange={(value: SearchCriteriaType["operator"]) =>
-            setSearchOperator(value)
-          }
+          value={searchOperator || ""}
+          onValueChange={(value) => setSearchOperator(value || "eq")}
         >
-          <SelectTrigger className="w-36">
-            <SelectValue placeholder="Select Operator" />
+          <SelectTrigger>
+            <SelectValue placeholder="Operator" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="like">Contains</SelectItem>
@@ -116,16 +119,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
         {/* Column Selector */}
         <Select
-          value={selectedColumn}
-          onValueChange={setSelectedColumn}
+          value={selectedColumn || ""}
+          onValueChange={(value) => setSelectedColumn(value || undefined)}
         >
-          <SelectTrigger className="w-48">
+          <SelectTrigger>
             <SelectValue placeholder="Select Column" />
           </SelectTrigger>
           <SelectContent>
             {columns.map((col) => (
               <SelectItem key={col} value={col}>
-                {col}
+                {columnLabels[col] || col}
               </SelectItem>
             ))}
           </SelectContent>
@@ -133,10 +136,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
         {/* Time Range Selector */}
         <Select
-          value={timeRange}
-          onValueChange={setTimeRange}
+          value={timeRange || ""}
+          onValueChange={(value) => setTimeRange(value || undefined)}
         >
-          <SelectTrigger className="w-48">
+          <SelectTrigger>
             <SelectValue placeholder="Select Time Range" />
           </SelectTrigger>
           <SelectContent>
@@ -148,16 +151,23 @@ const SearchBar: React.FC<SearchBarProps> = ({
           </SelectContent>
         </Select>
 
-        {/* Search Button */}
-        <Button
-          onClick={() =>
-            triggerSearch(selectedColumn, searchValue, searchOperator, timeRange)
-          }
-          className="ml-2"
-          disabled={!selectedColumn || (!searchValue && !timeRange)}
-        >
-          Search
-        </Button>
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          <Button
+            onClick={handleSearch}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md"
+            disabled={!searchValue && !timeRange}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={handleClearSearch}
+            className="bg-red-500 text-white px-4 py-2 rounded-md"
+            variant="destructive"
+          >
+            Clear
+          </Button>
+        </div>
       </div>
     </div>
   );

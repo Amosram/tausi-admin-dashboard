@@ -141,11 +141,6 @@ export interface OrdersTableData {
   status: string;
   startTime: string;
 }
-export interface SearchCriteriaType {
-  field: string;
-  operator: 'eq' | 'ne' | 'gt' | 'lt' | 'gte' | 'lte' | 'like' | 'in' | 'between' | 'ilike' | '';
-  value: string | boolean | string[];
-}
 
 export interface OrdersSearchApiResponse {
   statusCode: string;

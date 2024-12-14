@@ -52,6 +52,7 @@ interface TableProps<T> {
   columnToBeFiltered?: string;
   dateSortingId?: string;
   button?: ButtonProps;
+  withSearch?: boolean;
 }
 
 const TanStackTable = <T,>({
@@ -66,6 +67,7 @@ const TanStackTable = <T,>({
   columnToBeFiltered,
   dateSortingId = "createdAt",
   button,
+  withSearch = true,
 }: TableProps<T>) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -331,48 +333,58 @@ const TanStackTable = <T,>({
                         </Button>
                       ))}
                   </div>
-                  <DebouncedInput
-                    value={globalFilter ?? ""}
-                    onChange={(value) => setGlobalFilter(String(value))}
-                    className="font-lg border-block border p-2 shadow bg-background rounded-full w-1/2 border-gray-400 flex-1 px-4"
-                    placeholder="Search all columns..."
-                  />
-                  {!button ? (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild className="outline-none">
-                        <Button variant="light" className="gap-1 rounded-full">
-                          <Clock className="h-4 w-4" />
-                          {sorting[0]?.desc ? "Newest First" : "Oldest First"}
-                          <ChevronDown className="h-4 w-4" />
+                  {withSearch && (
+                    <>
+                      <DebouncedInput
+                        value={globalFilter ?? ""}
+                        onChange={(value) => setGlobalFilter(String(value))}
+                        className="font-lg border p-2 shadow bg-background rounded-full w-1/2 border-gray-400 flex-1 px-4"
+                        placeholder="Search all columns..."
+                      />
+
+                      {!button ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild className="outline-none">
+                            <Button
+                              variant="light"
+                              className="gap-1 rounded-full"
+                            >
+                              <Clock className="h-4 w-4" />
+                              {sorting[0]?.desc
+                                ? "Newest First"
+                                : "Oldest First"}
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() =>
+                                setSorting([{ id: dateSortingId, desc: true }])
+                              }
+                              className={sorting[0]?.desc ? "bg-accent" : ""}
+                            >
+                              Newest First
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                setSorting([{ id: dateSortingId, desc: false }])
+                              }
+                              className={!sorting[0]?.desc ? "bg-accent" : ""}
+                            >
+                              Oldest First
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : (
+                        <Button
+                          onClick={button.onClick}
+                          className={`${button.className} flex items-center`}
+                        >
+                          {button.icon && <span>{button.icon}</span>}
+                          {button.label}
                         </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() =>
-                            setSorting([{ id: dateSortingId, desc: true }])
-                          }
-                          className={sorting[0]?.desc ? "bg-accent" : ""}
-                        >
-                          Newest First
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            setSorting([{ id: dateSortingId, desc: false }])
-                          }
-                          className={!sorting[0]?.desc ? "bg-accent" : ""}
-                        >
-                          Oldest First
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  ) : (
-                    <Button
-                      onClick={button.onClick}
-                      className={`${button.className} flex items-center`}
-                    >
-                      {button.icon && <span>{button.icon}</span>}
-                      {button.label}
-                    </Button>
+                      )}
+                    </>
                   )}
                 </>
               ) : null}
@@ -475,9 +487,8 @@ const TanStackTable = <T,>({
               ) : null}
             </table>
             <div className="bottom-0 flex items-baseline justify-end mt-3">
-              {table.getPageCount() > 1 && (
-                showNavigation ? PaginationButtons() : null
-              )}
+              {table.getPageCount() > 1 &&
+                (showNavigation ? PaginationButtons() : null)}
             </div>
           </div>
         </div>
