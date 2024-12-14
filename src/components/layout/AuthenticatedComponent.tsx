@@ -10,7 +10,7 @@ const AuthenticatedComponent = () => {
 
   const validateUserToken = () => {
     // if (!user.user) return navigate('/auth/login', { replace: true });
-     
+     // TODO: Validate user token
   };
 
   useEffect(() => {
