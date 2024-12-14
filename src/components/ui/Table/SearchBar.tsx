@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Input } from "../input";
 import {
   Select,
@@ -11,52 +11,64 @@ import { Button } from "../button";
 import { SearchCriteriaType } from "@/models";
 import { X } from "lucide-react";
 import { timeRangeOptions } from "@/hooks/useSearch";
+import { useSearchParams } from "react-router-dom";
 
 interface SearchBarProps {
   columns: string[];
-  onSearch: (
+  triggerSearch: (
     column: string,
     value: string,
     operator?: SearchCriteriaType["operator"],
     timeRange?: string
   ) => void;
-  onClear?: () => void;
-  isSearchActive?: boolean;
+  clearSearch: () => void;
+  isSearchActive: boolean;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   columns,
-  onSearch,
-  onClear,
-  isSearchActive = false,
+  triggerSearch,
+  clearSearch,
+  isSearchActive,
 }) => {
-  const [selectedColumn, setSelectedColumn] = useState(columns[0]);
-  const [searchValue, setSearchValue] = useState("");
-  const [searchOperator, setSearchOperator] =
-    useState<SearchCriteriaType["operator"]>("like");
-  const [timeRange, setTimeRange] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const handleSearch = () => {
-    if (!selectedColumn) {
-      return;
+  const [searchValue, setSearchValue] = React.useState(
+    searchParams.get("value") || ""
+  );
+  const [selectedColumn, setSelectedColumn] = React.useState("");
+  const [searchOperator, setSearchOperator] = React.useState<
+    SearchCriteriaType["operator"]
+  >("");
+  const [timeRange, setTimeRange] = React.useState("");
+
+  // Update URL and trigger search when values change
+  React.useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchValue) params.set("value", searchValue);
+    if (selectedColumn) params.set("column", selectedColumn);
+    if (searchOperator) params.set("operator", searchOperator);
+    if (timeRange) params.set("timeRange", timeRange);
+    setSearchParams(params);
+
+    // Trigger search with updated values
+    if (searchValue || timeRange) {
+      triggerSearch(selectedColumn, searchValue, searchOperator, timeRange);
     }
-    onSearch(selectedColumn, searchValue, searchOperator, timeRange);
-  };
+  }, [searchValue, selectedColumn, searchOperator, timeRange, setSearchParams]);
 
   const handleClearSearch = () => {
     setSearchValue("");
-    setSelectedColumn(columns[0]);
-    setSearchOperator("like");
+    setSelectedColumn("");
+    setSearchOperator("");
     setTimeRange("");
-    if (onClear) {
-      onClear();
-    }
+    setSearchParams(new URLSearchParams());
+    clearSearch();
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      handleSearch();
-    }
+    if (event.key === "Enter")
+      triggerSearch(selectedColumn, searchValue, searchOperator, timeRange);
   };
 
   return (
@@ -88,7 +100,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           }
         >
           <SelectTrigger className="w-36">
-            <SelectValue placeholder="Operator" />
+            <SelectValue placeholder="Select Operator" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="like">Contains</SelectItem>
@@ -103,8 +115,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
         </Select>
 
         {/* Column Selector */}
-        <Select value={selectedColumn} onValueChange={setSelectedColumn}>
-          <SelectTrigger className="w-48">{selectedColumn}</SelectTrigger>
+        <Select
+          value={selectedColumn}
+          onValueChange={setSelectedColumn}
+        >
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Select Column" />
+          </SelectTrigger>
           <SelectContent>
             {columns.map((col) => (
               <SelectItem key={col} value={col}>
@@ -115,7 +132,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
         </Select>
 
         {/* Time Range Selector */}
-        <Select value={timeRange} onValueChange={setTimeRange}>
+        <Select
+          value={timeRange}
+          onValueChange={setTimeRange}
+        >
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Select Time Range" />
           </SelectTrigger>
@@ -130,7 +150,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
         {/* Search Button */}
         <Button
-          onClick={handleSearch}
+          onClick={() =>
+            triggerSearch(selectedColumn, searchValue, searchOperator, timeRange)
+          }
           className="ml-2"
           disabled={!selectedColumn || (!searchValue && !timeRange)}
         >

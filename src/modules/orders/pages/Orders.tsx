@@ -11,6 +11,7 @@ const Orders: React.FC = () => {
   const { data, error, isLoading, refetch } = useGetOrdersQuery(50);
   const { toast } = useToast();
 
+  // Ensure initial data fallback
   const ordersData = data?.data || [];
 
   const searchableColumns = [
@@ -29,7 +30,7 @@ const Orders: React.FC = () => {
     clearSearch,
     searchParams: currentSearchParams,
   } = useSearch({
-    initialData: ordersData,
+    initialData: ordersData, // Use ordersData as initial state
     searchMutation: useSearchOrdersMutation,
     searchableColumns: searchableColumns,
     onSearchError: (error) => {
@@ -40,12 +41,12 @@ const Orders: React.FC = () => {
       });
       console.error("Search error:", error);
     },
-    // Custom clear handler to refetch original data
     onClearSearch: () => {
-      refetch();
+      refetch(); // Refetch original data on clear
     },
   });
 
+  // Retry logic for data fetching
   const [retryCount, setRetryCount] = React.useState(0);
   const maxRetries = 3;
 
@@ -66,6 +67,7 @@ const Orders: React.FC = () => {
     }
   }, [error, toast, retryCount, refetch]);
 
+  // Determine if data is empty
   const isDataEmpty =
     (!isLoading &&
       !isSearchActive &&
@@ -82,22 +84,20 @@ const Orders: React.FC = () => {
     });
   };
 
-  if (isSearchLoading) {
-    return <Loader />;
-  }
-  if (isLoading && isDataEmpty) return <Loader />;
-  if (error && retryCount >= maxRetries && isDataEmpty)
+  // Loading and error states
+  if (isSearchLoading) return <Loader />;
+  if (isLoading && !ordersData.length) return <Loader />;
+  if (error && retryCount >= maxRetries && !ordersData.length)
     return <div>Error: Unable to load order data after multiple attempts.</div>;
   if (isDataEmpty) return <div>No orders found.</div>;
 
   return (
     <div>
+      {/* SearchBar Component */}
       <SearchBar
         columns={searchableColumns}
-        onSearch={(column, value, operator, timeRange) =>
-          handleCombinedSearch([{ column, value, operator, timeRange }])
-        }
-        onClear={handleClearFilters}
+        triggerSearch={triggerSearch}
+        clearSearch={handleClearFilters}
         isSearchActive={isSearchActive}
       />
 
@@ -127,9 +127,10 @@ const Orders: React.FC = () => {
         ))}
       </div>
 
+      {/* Render Table with fallback data */}
       <TanStackTable
         data={
-          displayData && displayData.length > 0 ? displayData : ordersData || []
+          displayData?.length > 0 ? displayData : ordersData || []
         }
         columns={ordersColumns}
         dateSortingId="appointmentDate"

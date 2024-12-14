@@ -143,7 +143,7 @@ export interface OrdersTableData {
 }
 export interface SearchCriteriaType {
   field: string;
-  operator: 'eq' | 'ne' | 'gt' | 'lt' | 'gte' | 'lte' | 'like' | 'in' | 'between' | 'ilike';
+  operator: 'eq' | 'ne' | 'gt' | 'lt' | 'gte' | 'lte' | 'like' | 'in' | 'between' | 'ilike' | '';
   value: string | boolean | string[];
 }
 
