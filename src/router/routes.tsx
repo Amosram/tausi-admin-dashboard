@@ -20,6 +20,7 @@ const MessagingLazy = lazy(() => import("@/modules/messaging/pages/Messaging"));
 const SettingsLazy = lazy(() => import("@/modules/settings/pages/Settings"));
 const OrderDetailsLazy = lazy(() => import("@/modules/orders/pages/OrderDetails"));
 const UserDetailsLazy = lazy(() => import('@/modules/users/pages/UserDetails'));
+const UserListLazy = lazy(() => import('@/modules/users/pages/UsersList'));
 const ProfessionalsDetailsLazy = lazy(() => import('@/modules/applications/pages/ProfessionalDetails'));
 const CreateUserLazy = lazy(() => import("@/modules/users/pages/CreateUserPage"));
 const LedgerLazy = lazy(() => import('@/modules/ledger/pages/Ledger'));
@@ -88,6 +89,14 @@ export const routes: RouteObject[] = [
             element: (
               <Suspense fallback={<Loader />}>
                 <UsersLazy />
+              </Suspense>
+            )
+          },
+          {
+            path: "list",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <UserListLazy />
               </Suspense>
             )
           },

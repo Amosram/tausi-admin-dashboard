@@ -19,7 +19,9 @@ const routeMappings: Record<string, RouteDetails> = {
   "/orders": { title: "Orders" },
   "/revenue": { title: "Revenue" },
   "/users": { title: "Users" },
-  "/users/:id": { title: "User Details", backLink: "/users" },
+  "/users/list": { title: "Users List", backLink: "/users" },
+  "/users/:id": { title: "User Details", backLink: "/users/list" },
+  "/users/create-user": { title: "Create User", backLink: "/users/list" },
   "/professionals": { title: "Beauticians List" },
   "/professionals/:id": {
     title: "Professional Details",
@@ -28,7 +30,6 @@ const routeMappings: Record<string, RouteDetails> = {
   "/dashboard/verifications": { title: "Applications" },
   "/messaging": { title: "Messaging" },
   "/settings": { title: "Settings" },
-  "/users/create-user": { title: "Create User", backLink: "/users" },
   "/booths": { title: "Booths" },
   "/booths/list": { title: "Booth List", backLink: "/booths" },
   "/booths/create-booth": { title: "Create Booth", backLink: "/booths/list" },
@@ -79,7 +80,7 @@ const Header = () => {
             <SidebarTrigger />
           </div>
 
-          <div className="relative flex gap-6 items-center">
+          <div className="relative flex gap-2 flex-col items-center">
             {/* Main title and optional back link */}
             {backLink ? (
               <Link
@@ -94,15 +95,14 @@ const Header = () => {
             )}
 
             {/* Additional back link (for browser history) */}
-            {backLink && (
+            {/* {backLink && (
               <button
                 onClick={() => window.history.back()}
                 className="text-blue-600 font-medium text-xs flex items-center space-x-2 hover:text-primary hover:underline"
               >
-                <FaChevronLeft className="text-xs" />
                 <span>Back to previous</span>
               </button>
-            )}
+            )} */}
           </div>
         </div>
 

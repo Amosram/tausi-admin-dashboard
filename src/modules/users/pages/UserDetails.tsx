@@ -1,19 +1,15 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
-import {
-  Calendar,
-  MapPin,
-  Phone,
-  Mail,
-  Globe,
-  ShieldCheck,
-  Trash2,
-  Briefcase,
-  Star,
-} from "lucide-react";
-import { useParams } from "react-router-dom";
+import { ShieldCheck, Trash2 } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -41,189 +37,157 @@ import {
   AlertDialogHeader,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import DummyUserDetails from "../components/dummy-user-details";
 
-const UserProfileCard: React.FC<{
-  user: TausiUserDetails;
-}> = ({ user }) => (
+const ProfileOverviewCard: React.FC<{ user: TausiUserDetails }> = ({
+  user,
+}) => (
   <Card>
-    <CardHeader className="flex flex-row justify-between items-center">
-      <CardTitle>Profile</CardTitle>
+    <CardHeader>
+      <CardTitle className="text-center">User Profile</CardTitle>
     </CardHeader>
-    <CardContent className="flex flex-col items-center text-center">
-      <Avatar className="h-auto w-[50%]">
+    <CardContent className="flex flex-col items-center text-center space-y-2">
+      <Avatar className="h-24 w-24">
         <AvatarImage
           src={user.profilePictureUrl || "/default-avatar.png"}
           alt={user.name}
         />
-        <AvatarFallback>
-          {user.name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase()}
-        </AvatarFallback>
+        <AvatarFallback>{user.name[0]}</AvatarFallback>
       </Avatar>
-      <div className="space-y-2">
-        <p className="font-semibold md:text-4xl text-3xl">{user.name}</p>
-        <p className="text-muted-foreground text-md md:text-xl">{user.email}</p>
-        {user.bio && <p className="text-sm mt-1">{user.bio}</p>}
-      </div>
+      <p className="font-semibold text-xl">{user.name}</p>
+      <Badge variant={user.isActive ? "default" : "destructive"}>
+        {user.isActive ? "Active" : "Inactive"}
+      </Badge>
     </CardContent>
   </Card>
 );
 
-const ContactInformationCard: React.FC<{
-  user: TausiUserDetails;
-}> = ({ user }) => (
+// Contact Information Card
+const ContactInformationCard: React.FC<{ user: TausiUserDetails }> = ({
+  user,
+}) => (
   <Card>
     <CardHeader>
       <CardTitle>Contact Information</CardTitle>
     </CardHeader>
-    <CardContent className="space-y-3">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <Phone size={16} />
-          <span>{user.phoneNumber}</span>
-          <Badge variant={user.phoneVerified ? "secondary" : "outline"}>
-            {user.phoneVerified ? "Verified" : "Unverified"}
-          </Badge>
-        </div>
+    <CardContent className="space-y-2">
+      <div className="flex justify-between">
+        <span>Email: {user.email}</span>
+        <Badge variant={user.emailVerified ? "default" : "outline"}>
+          {user.emailVerified ? "Verified" : "Unverified"}
+        </Badge>
       </div>
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <Mail size={16} />
-          <span>{user.email}</span>
-          <Badge variant={user.emailVerified ? "secondary" : "outline"}>
-            {user.emailVerified ? "Verified" : "Unverified"}
-          </Badge>
-        </div>
+      <div className="flex justify-between">
+        <span>Phone: {user.phoneNumber}</span>
+        <Badge variant={user.phoneVerified ? "default" : "outline"}>
+          {user.phoneVerified ? "Verified" : "Unverified"}
+        </Badge>
       </div>
     </CardContent>
   </Card>
 );
 
+// Location Details Card
+const LocationDetailsCard: React.FC<{ user: TausiUserDetails }> = ({
+  user,
+}) => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Location</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p>Address: {user.locationAddress || "Not Provided"}</p>
+      <p>
+        Coordinates:{" "}
+        {user.latitude && user.longitude
+          ? `${user.latitude}, ${user.longitude}`
+          : "Not Available"}
+      </p>
+    </CardContent>
+  </Card>
+);
+
+// Professional Information Card
 const ProfessionalDetailsCard: React.FC<{
   professional: TausiProfessional;
 }> = ({ professional }) => (
   <Card>
     <CardHeader>
-      <CardTitle>Professional Information</CardTitle>
+      <CardTitle>Professional Details</CardTitle>
     </CardHeader>
-    <CardContent className="space-y-3">
-      <div className="flex items-center space-x-2">
-        <Briefcase size={16} />
-        <span>Business Type: {professional.businessType}</span>
-      </div>
+    <CardContent className="space-y-2">
+      <p>Business Type: {professional.businessType}</p>
       {professional.specialization && (
-        <div className="flex items-center space-x-2">
-          <Star size={16} />
-          <span>Specialization: {professional.specialization}</span>
-        </div>
+        <p>Specialization: {professional.specialization}</p>
       )}
       {professional.businessName && (
-        <div className="flex items-center space-x-2">
-          <Globe size={16} />
-          <span>Business Name: {professional.businessName}</span>
-        </div>
+        <p>Business Name: {professional.businessName}</p>
       )}
-      <div className="flex items-center space-x-2">
-        <ShieldCheck size={16} />
-        <span>Registration Progress: {professional.registrationProgress}</span>
+      <div>
+        <p>Registration Progress: {professional.registrationProgress} / 3</p>
         <Badge variant={professional.isVerified ? "default" : "outline"}>
-          {professional.isVerified ? "Verified" : "Pending"}
+          {professional.isVerified ? "Verified" : "Pending Verification"}
         </Badge>
       </div>
-      <div className="flex items-center space-x-2">
-        <Star size={16} />
-        <span>Rating: {professional.rating.toFixed(1)}</span>
-        <Badge variant={professional.topRated ? "secondary" : "outline"}>
-          {professional.topRated ? "Top Rated" : "Regular"}
-        </Badge>
-      </div>
+      <p>
+        Rating: {professional.rating.toFixed(1)}{" "}
+        {professional.topRated && <Badge>Top Rated</Badge>}
+      </p>
     </CardContent>
   </Card>
 );
 
-const VerificationDetailsCard: React.FC<{
-  verificationData: VerificationData;
-}> = ({ verificationData }) => (
+// Account Metadata Card
+const AccountMetadataCard: React.FC<{ user: TausiUserDetails }> = ({
+  user,
+}) => (
   <Card>
     <CardHeader>
-      <CardTitle>Verification Details</CardTitle>
+      <CardTitle>Account Information</CardTitle>
     </CardHeader>
-    <CardContent className="space-y-3">
+    <CardContent>
+      <p>Account Created: {format(new Date(user.createdAt), "PPP")}</p>
+      <p>Last Updated: {format(new Date(user.updatedAt), "PPP")}</p>
+    </CardContent>
+  </Card>
+);
+
+// Verification Details Card
+const VerificationDetailsCard: React.FC<{
+  verificationData: VerificationData;
+  professionalData: TausiProfessional;
+}> = ({ verificationData, professionalData }) => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Verification Status</CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-2">
       <div className="flex items-center space-x-2">
         <ShieldCheck size={16} />
-        <span>Status: {verificationData.verificationStatus}</span>
+        <span>Status: {verificationData?.verificationStatus}</span>
       </div>
       <div>
         <p className="font-semibold">
-          Title: {verificationData.verificationTitle}
+          Title: {verificationData?.verificationTitle}
         </p>
         <p className="text-sm text-muted-foreground">
-          {verificationData.verificationDescription}
+          {verificationData?.verificationDescription}
         </p>
       </div>
-      {verificationData.reviewedBy && (
-        <div className="flex items-center space-x-2">
-          <Calendar size={16} />
-          <span>Reviewed By: {verificationData.reviewedBy}</span>
-        </div>
-      )}
     </CardContent>
+    {verificationData?.verificationStatus === "pending" && (
+      <CardFooter>
+        <Button disabled variant="link">
+          {/* CHANGE TO "asChild" once data matches */}
+          <Link to={`/verifications/${professionalData?.id}`}>
+            Check status
+          </Link>
+        </Button>
+      </CardFooter>
+    )}
   </Card>
 );
 
-const AccountDetailsCard: React.FC<{ user: TausiUserDetails }> = ({ user }) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Account Details</CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-3">
-      <div className="flex items-center space-x-2">
-        <Calendar size={16} />
-        <span>Created: {format(new Date(user.createdAt), "PPP")}</span>
-      </div>
-      <div className="flex items-center space-x-2">
-        <Calendar size={16} />
-        <span>Last Updated: {format(new Date(user.updatedAt), "PPP")}</span>
-      </div>
-    </CardContent>
-  </Card>
-);
-
-const LocationDetailsCard: React.FC<{
-  user: TausiUserDetails;
-}> = ({ user }) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Location Details</CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-3">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <Globe size={16} />
-          <span>Latitude: {user.latitude || "N/A"}</span>
-        </div>
-      </div>
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <Globe size={16} />
-          <span>Longitude: {user.longitude || "N/A"}</span>
-        </div>
-      </div>
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <MapPin size={16} />
-          <span>Full Address: {user.locationAddress || "N/A"}</span>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-);
-
-// Main Component
+// User Details Page Component
 const UserDetails: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const { data: user, isLoading, isError } = useGetUserByIdQuery(userId || "");
@@ -243,30 +207,8 @@ const UserDetails: React.FC = () => {
     setAlertOpen(false);
   };
 
-  if (!userId) {
-    return <div>User ID is missing in the URL.</div>;
-  }
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Skeleton className="h-[600px] w-full" />
-          <div className="md:col-span-2 grid grid-cols-1 gap-4">
-            <Skeleton className="h-[400px] w-full" />
-            <div className="grid grid-cols-2 gap-4">
-              <Skeleton className="h-[300px] w-full" />
-              <Skeleton className="h-[300px] w-full" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError || !user) {
-    return <DummyUserDetails />;
-  }
+  if (isLoading) return <Skeleton />;
+  if (isError || !user) return <div>Error loading user data.</div>;
 
   return (
     <div className="container mx-auto p-4">
@@ -292,6 +234,7 @@ const UserDetails: React.FC = () => {
         </div>
       </div>
 
+      {/* Delete User Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -333,33 +276,30 @@ const UserDetails: React.FC = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled>
+            <AlertDialogAction onClick={handleDelete} disabled={!deleteReason}>
               Confirm Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="md:col-span-1 grid grid-cols-1 gap-4">
-          <UserProfileCard user={user} />
-          {user.sessionData.userTypeSession === "professional" && (
-            <ProfessionalDetailsCard professional={user.professional} />
-          )}
-        </div>
-
-        <div className="md:col-span-2 grid grid-cols-1 gap-4">
+      {/* Main Content */}
+      <div className="grid gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ProfileOverviewCard user={user} />
           <ContactInformationCard user={user} />
-          <LocationDetailsCard user={user} />
-          {user.sessionData.userTypeSession === "professional" && (
-            <VerificationDetailsCard
-              verificationData={user.professional.verificationData}
-            />
-          )}
         </div>
-        <div className="md:col-span-3 grid-cols-1">
-          <AccountDetailsCard user={user} />
-        </div>
+        <LocationDetailsCard user={user} />
+        {user.sessionData.userTypeSession === "professional" && (
+          <ProfessionalDetailsCard professional={user.professional} />
+        )}
+        <AccountMetadataCard user={user} />
+        {user.professional && user.professional.verificationData && (
+          <VerificationDetailsCard
+            verificationData={user.professional.verificationData}
+            professionalData={user.professional}
+          />
+        )}
       </div>
     </div>
   );

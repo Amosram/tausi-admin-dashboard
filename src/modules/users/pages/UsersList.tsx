@@ -2,14 +2,11 @@ import React from "react";
 import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/layout/Loader";
 import { useGetUsersQuery } from "../api/usersApi";
-import { UserStats } from "../components/user-stats";
-import { PartialUsersTable } from "../components/partial-users-table";
-import { useNavigate } from "react-router-dom";
+import { UsersTable } from "../components/users-table";
 
 const Users: React.FC = () => {
   const { toast } = useToast();
-  const { data, error, isLoading, refetch } = useGetUsersQuery(20000);
-  const navigate = useNavigate();
+  const { data, error, isLoading, refetch } = useGetUsersQuery(2000);
 
   const [retryCount, setRetryCount] = React.useState(0);
   const maxRetries = 3;
@@ -45,13 +42,8 @@ const Users: React.FC = () => {
   if (isDataEmpty) return <div>No users found.</div>;
 
   return (
-    <div className="p-3">
-      <UserStats users={usersData} />
-      <PartialUsersTable
-        users={usersData}
-        maxRows={2}
-        onViewMore={() => navigate("/users/list")}
-      />
+    <div>
+      <UsersTable users={usersData} />
     </div>
   );
 };

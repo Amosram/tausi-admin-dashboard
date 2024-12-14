@@ -34,12 +34,12 @@ export const TableFilters: React.FC<TableFiltersProps> = ({
   const activeFilter = new URLSearchParams(location.search).get(queryParam);
 
   return (
-    <div className="flex gap-3 flex-wrap justify-start">
+    <div className="flex gap-2 flex-wrap justify-start">
       {filters.map((filter) => (
         <button
           key={filter.value}
           onClick={() => handleFilterChange(filter.value)}
-          className={`px-4 py-2 rounded-md w-auto ${
+          className={`px-4 py-2 rounded-3xl w-auto text-sm ${
             activeFilter === filter.value ? activeClassName : inactiveClassName
           }`}
         >
