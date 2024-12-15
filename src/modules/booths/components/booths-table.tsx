@@ -91,7 +91,7 @@ export const BoothsTable = ({ booths }: BoothsTableProps) => {
   return (
     <div>
       <div className="md:px-4 px-1 my-4 flex gap-2 md:flex-row flex-col items-center">
-        <div className="flex-1">
+        <div className="flex">
           <TableFilters filters={boothFilters} queryParam="filter" />
         </div>
         <TimeFilter
