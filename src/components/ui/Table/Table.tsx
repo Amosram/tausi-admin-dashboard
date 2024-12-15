@@ -52,6 +52,7 @@ interface TableProps<T> {
   columnToBeFiltered?: string;
   dateSortingId?: string;
   button?: ButtonProps;
+  withSearch?: boolean;
 }
 
 const TanStackTable = <T,>({
@@ -66,6 +67,7 @@ const TanStackTable = <T,>({
   columnToBeFiltered,
   dateSortingId = "createdAt",
   button,
+  withSearch = true,
 }: TableProps<T>) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -311,67 +313,78 @@ const TanStackTable = <T,>({
               {showGlobalFilter ? (
                 <>
                   <div className="flex gap-2 md:flex-row flex-col md:w-auto w-full">
-                    {STATUS_OPTIONS.map((status) => (
-                      <Button
-                        key={status.label}
-                        variant={
-                          status.value ===
-                          (columnFilters.find(
-                            (f) =>
-                              f.id === (columnToBeFiltered || defaultColumn)
-                          )?.value ?? null)
-                            ? "default"
-                            : "outline"
-                        }
-                        onClick={() => handleStatusFilter(status.value)}
-                        className="px-4 py-2 md:rounded-3xl"
-                      >
-                        {status.label}
-                      </Button>
-                    ))}
-                  </div>
-                  <DebouncedInput
-                    value={globalFilter ?? ""}
-                    onChange={(value) => setGlobalFilter(String(value))}
-                    className="font-lg border-block border p-2 shadow bg-background rounded-full w-1/2 border-gray-400"
-                    placeholder="Search all columns..."
-                  />
-                  {!button ? (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild className="outline-none">
-                        <Button variant="light" className="gap-1 rounded-full">
-                          <Clock className="h-4 w-4" />
-                          {sorting[0]?.desc ? "Newest First" : "Oldest First"}
-                          <ChevronDown className="h-4 w-4" />
+                    {STATUS_OPTIONS?.length > 0 &&
+                      STATUS_OPTIONS.map((status) => (
+                        <Button
+                          key={status.label}
+                          variant={
+                            status.value ===
+                            (columnFilters.find(
+                              (f) =>
+                                f.id === (columnToBeFiltered || defaultColumn)
+                            )?.value ?? null)
+                              ? "default"
+                              : "outline"
+                          }
+                          onClick={() => handleStatusFilter(status.value)}
+                          className="px-4 py-2 md:rounded-3xl"
+                        >
+                          {status.label}
                         </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() =>
-                            setSorting([{ id: dateSortingId, desc: true }])
-                          }
-                          className={sorting[0]?.desc ? "bg-accent" : ""}
+                      ))}
+                  </div>
+                  {withSearch && (
+                    <>
+                      <DebouncedInput
+                        value={globalFilter ?? ""}
+                        onChange={(value) => setGlobalFilter(String(value))}
+                        className="font-lg border p-2 shadow bg-background rounded-full w-1/2 border-gray-400 flex-1 px-4"
+                        placeholder="Search all columns..."
+                      />
+
+                      {!button ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild className="outline-none">
+                            <Button
+                              variant="light"
+                              className="gap-1 rounded-full"
+                            >
+                              <Clock className="h-4 w-4" />
+                              {sorting[0]?.desc
+                                ? "Newest First"
+                                : "Oldest First"}
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() =>
+                                setSorting([{ id: dateSortingId, desc: true }])
+                              }
+                              className={sorting[0]?.desc ? "bg-accent" : ""}
+                            >
+                              Newest First
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                setSorting([{ id: dateSortingId, desc: false }])
+                              }
+                              className={!sorting[0]?.desc ? "bg-accent" : ""}
+                            >
+                              Oldest First
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : (
+                        <Button
+                          onClick={button.onClick}
+                          className={`${button.className} flex items-center`}
                         >
-                          Newest First
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            setSorting([{ id: dateSortingId, desc: false }])
-                          }
-                          className={!sorting[0]?.desc ? "bg-accent" : ""}
-                        >
-                          Oldest First
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  ) : (
-                    <Button
-                      onClick={button.onClick}
-                      className={`${button.className} flex items-center`}
-                    >
-                      {button.icon && <span>{button.icon}</span>}
-                      {button.label}
-                    </Button>
+                          {button.icon && <span>{button.icon}</span>}
+                          {button.label}
+                        </Button>
+                      )}
+                    </>
                   )}
                 </>
               ) : null}
@@ -400,9 +413,9 @@ const TanStackTable = <T,>({
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                         {header.column.getCanSort() && (
                           <span className="ml-2 inline-flex items-center">
                             {header.column.getIsSorted() === "asc" && (
@@ -419,27 +432,41 @@ const TanStackTable = <T,>({
                 ))}
               </thead>
 
-
               <tbody className="bg-white border-b hover:bg-gray-50">
-                {table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="bg-white border-b hover:bg-gray-50"
-                  >
-                    <td className="w-4 p-3">
-                      <RowCheckbox row={row} />
-                    </td>
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="py-3 px-2 whitespace-nowrap">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
+                {table.getRowModel().rows.length > 0 ? (
+                  table.getRowModel().rows.map((row) => (
+                    <tr
+                      key={row.id}
+                      className="bg-white border-b hover:bg-gray-50"
+                    >
+                      <td className="w-4 p-3">
+                        <RowCheckbox row={row} />
                       </td>
-                    ))}
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className="py-3 px-2 whitespace-nowrap"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={table.getAllColumns().length} // Span all columns
+                      className="py-4 px-3 text-center text-gray-500"
+                    >
+                      No data available
+                    </td>
                   </tr>
-                ))}
+                )}
               </tbody>
+
               {showFooter ? (
                 <tfoot className="border-t bg-gray-50">
                   {table.getFooterGroups().map((footerGroup) => (
@@ -449,9 +476,9 @@ const TanStackTable = <T,>({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                              header.column.columnDef.footer,
-                              header.getContext()
-                            )}
+                                header.column.columnDef.footer,
+                                header.getContext()
+                              )}
                         </th>
                       ))}
                     </tr>
@@ -460,7 +487,8 @@ const TanStackTable = <T,>({
               ) : null}
             </table>
             <div className="bottom-0 flex items-baseline justify-end mt-3">
-              {showNavigation ? PaginationButtons() : null}
+              {table.getPageCount() > 1 &&
+                (showNavigation ? PaginationButtons() : null)}
             </div>
           </div>
         </div>

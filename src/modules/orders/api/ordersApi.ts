@@ -1,6 +1,12 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "../../../Utils/axios";
-import { ApiResponse, Appointment, AppointmentsApiResponse } from "@/models";
+import {
+  ApiResponse,
+  Appointment,
+  AppointmentsApiResponse,
+  OrdersSearchApiResponse,
+} from "@/models";
+import { SearchCriteriaType } from "@/hooks/useSearch";
 
 export const ordersApi = createApi({
   reducerPath: "ordersApi",
@@ -23,7 +29,29 @@ export const ordersApi = createApi({
       }),
       providesTags: ["OrderDetails"],
     }),
+    searchOrders: builder.mutation<
+      OrdersSearchApiResponse,
+      { searchCriteria: SearchCriteriaType[]; limit?: number }
+    >({
+      query: ({ searchCriteria, limit = 8000 }) => {
+        // Ensure the limit is validated and defaulted
+        const validatedLimit = limit > 0 ? limit : 8000;
+    
+        return {
+          url: `/appointments/search?limit=${validatedLimit}`,
+          method: "POST",
+          data: {
+            searchCriteria,
+          },
+        };
+      },
+      invalidatesTags: ["Orders"],
+    }),
   }),
 });
 
-export const { useGetOrdersQuery, useGetOrderByIdQuery } = ordersApi;
+export const {
+  useGetOrdersQuery,
+  useGetOrderByIdQuery,
+  useSearchOrdersMutation,
+} = ordersApi;

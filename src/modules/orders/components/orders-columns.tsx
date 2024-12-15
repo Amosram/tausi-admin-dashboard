@@ -142,18 +142,6 @@ export const ordersColumns: ColumnDef<Appointment>[] = [
               View details
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => console.log("Edit:", row.original)}
-            className="cursor-pointer"
-          >
-            Edit order
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => console.log("Delete:", row.original)}
-            className="bg-destructive text-white cursor-pointer"
-          >
-            Delete order
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),

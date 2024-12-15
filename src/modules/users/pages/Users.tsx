@@ -1,39 +1,24 @@
 import React from "react";
-import { usersColumns } from "../components/users-columns";
 import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/layout/Loader";
 import { useGetUsersQuery } from "../api/usersApi";
-import TanStackTable from "@/components/ui/Table/Table";
-import { FaPlus } from "react-icons/fa";
+import { UserStats } from "../components/user-stats";
+import { PartialUsersTable } from "../components/partial-users-table";
 import { useNavigate } from "react-router-dom";
 
 const Users: React.FC = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const { data, error, isLoading, refetch } = useGetUsersQuery(20000);
+  const navigate = useNavigate();
 
   const [retryCount, setRetryCount] = React.useState(0);
   const maxRetries = 3;
 
   const usersData =
     data?.map((item) => ({
-      ...item.users,
-      role: item.userSessionData?.userTypeSession,
+      ...item,
+      role: item.sessionData?.userTypeSession,
     })) || [];
-
-  const ROLE_OPTIONS = [
-    { label: "All Roles", value: null },
-    { label: "Service Providers", value: "professional" },
-    { label: "Clients", value: "client" },
-    { label: "Internal Users", value: "user" },
-  ];
-
-  const AddUserButton = {
-    label: "Add User",
-    onClick: () => navigate("/users/create-user"),
-    className: "rounded-3xl",
-    icon: <FaPlus size={20} />,
-  };
 
   React.useEffect(() => {
     if (error) {
@@ -60,13 +45,14 @@ const Users: React.FC = () => {
   if (isDataEmpty) return <div>No users found.</div>;
 
   return (
-    <TanStackTable
-      data={usersData}
-      columns={usersColumns}
-      columnToBeFiltered="role"
-      STATUS_OPTIONS={ROLE_OPTIONS}
-      button={AddUserButton}
-    />
+    <div className="p-3">
+      <UserStats users={usersData} />
+      <PartialUsersTable
+        users={usersData}
+        maxRows={2}
+        onViewMore={() => navigate("/users/list")}
+      />
+    </div>
   );
 };
 

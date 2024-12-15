@@ -1,11 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "../../../Utils/axios";
-import { TausiUserDetails } from "@/models/user";
-import {
-  CreateUserRequest,
-  SingleUserApiResponse,
-  UsersApiResponse,
-} from "@/models";
+import { TausiUser, TausiUserDetails } from "@/models/user";
+import { CreateUserRequest, SingleUserApiResponse, UsersApiResponse } from "../types";
 
 export const usersApi = createApi({
   reducerPath: "usersApi",
@@ -13,7 +9,7 @@ export const usersApi = createApi({
   tagTypes: ["Users", "UserDetails"],
   refetchOnMountOrArgChange: false,
   endpoints: (builder) => ({
-    getUsers: builder.query<UsersApiResponse[], number>({
+    getUsers: builder.query<TausiUser[], number>({
       query: (limit) => ({
         url: `/users?limit=${limit}`,
         method: "GET",

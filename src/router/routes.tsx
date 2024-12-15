@@ -14,12 +14,13 @@ const OrdersLazy = lazy(() => import("@/modules/orders/pages/Orders"));
 const RevenueLazy = lazy(() => import("@/modules/revenue/pages/Revenue"));
 const UsersLazy = lazy(() => import("@/modules/users/pages/Users"));
 const BeauticiansListLazy = lazy(() => import("@/modules/applications/pages/BeauticiansList"));
-const VerfiedBeauticiansLazy = lazy(() => import("@/modules/applications/pages/VerifiedBeuticans"));
+const VerfiedBeauticiansLazy = lazy(() => import("@/modules/applications/pages/UnVerifiedBeuticans"));
 const VerificationDetailsLazy = lazy(() => import("@/modules/applications/pages/VerificationDetails"));
 const MessagingLazy = lazy(() => import("@/modules/messaging/pages/Messaging"));
 const SettingsLazy = lazy(() => import("@/modules/settings/pages/Settings"));
 const OrderDetailsLazy = lazy(() => import("@/modules/orders/pages/OrderDetails"));
 const UserDetailsLazy = lazy(() => import('@/modules/users/pages/UserDetails'));
+const UserListLazy = lazy(() => import('@/modules/users/pages/UsersList'));
 const ProfessionalsDetailsLazy = lazy(() => import('@/modules/applications/pages/ProfessionalDetails'));
 const CreateUserLazy = lazy(() => import("@/modules/users/pages/CreateUserPage"));
 const LedgerLazy = lazy(() => import('@/modules/ledger/pages/Ledger'));
@@ -28,6 +29,10 @@ const CreateLoanLazy = lazy(() => import('@/modules/ledger/pages/LoanCreatePage'
 const BoothsLazy = lazy(() => import("@/modules/booths/pages/Booths"));
 const BoothDetailsLazy = lazy(() => import("@/modules/booths/pages/BoothDetails"));
 const CreateBoothLazy = lazy(() => import("@/modules/booths/pages/CreateBoothPage"));
+const EditBoothLazy = lazy(() => import("@/modules/booths/pages/EditBoothPage"));
+const BoothsListLazy = lazy(() => import('@/modules/booths/pages/BoothsList'));
+const BoothAssignmentsLazy = lazy(() => import('@/modules/booths/pages/BoothAssignments'));
+const BoothLogsLazy = lazy(() => import('@/modules/booths/pages/BoothLogs'));
 
 export const routes: RouteObject[] = [
   {
@@ -88,6 +93,14 @@ export const routes: RouteObject[] = [
             )
           },
           {
+            path: "list",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <UserListLazy />
+              </Suspense>
+            )
+          },
+          {
             path: ":userId",
             element: (
               <Suspense fallback={<Loader />}>
@@ -138,7 +151,7 @@ export const routes: RouteObject[] = [
             )
           },
           {
-            path: ":beauticianId",
+            path: ":professionalId",
             element: (
               <Suspense fallback={<Loader />}>
                 <VerificationDetailsLazy />
@@ -164,7 +177,7 @@ export const routes: RouteObject[] = [
         )
       },
       {
-        path: "/ledgers/books",
+        path: "/ledgers",
         children:[
           {
             index: true,
@@ -175,7 +188,7 @@ export const routes: RouteObject[] = [
             )
           },
           {
-            path: ":bookId",
+            path: ":ownerId",
             element: (
               <Suspense fallback={<Loader />}>
                 <LedgerLazyDetail />
@@ -204,12 +217,49 @@ export const routes: RouteObject[] = [
             )
           },
           {
-            path: ":boothId",
+            path: "list",
             element: (
               <Suspense fallback={<Loader />}>
-                <BoothDetailsLazy />
+                <BoothsListLazy />
               </Suspense>
             )
+          },
+          {
+            path: ":boothId",
+            children: [
+              {
+                index: true,
+                element: (
+                  <Suspense fallback={<Loader />}>
+                    <BoothDetailsLazy />
+                  </Suspense>
+                ),
+              },
+              {
+                path: "edit",
+                element: (
+                  <Suspense fallback={<Loader />}>
+                    <EditBoothLazy />
+                  </Suspense>
+                ),
+              },
+              {
+                path: "assignments",
+                element: (
+                  <Suspense fallback={<Loader />}>
+                    <BoothAssignmentsLazy />
+                  </Suspense>
+                ),
+              },
+              {
+                path: "logs",
+                element: (
+                  <Suspense fallback={<Loader />}>
+                    <BoothLogsLazy />
+                  </Suspense>
+                ),
+              },
+            ],
           },
           {
             path: "create-booth",

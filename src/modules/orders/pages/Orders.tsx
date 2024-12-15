@@ -2,22 +2,53 @@ import React from "react";
 import { ordersColumns } from "../components/orders-columns";
 import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/layout/Loader";
-import { useGetOrdersQuery } from "../api/ordersApi";
+import { useGetOrdersQuery, useSearchOrdersMutation } from "../api/ordersApi";
 import TanStackTable from "@/components/ui/Table/Table";
+import SearchBar from "@/components/ui/Table/SearchBar";
+import { searchPresets, useSearch } from "@/hooks/useSearch";
+import Filters from "@/components/ui/Table/Filters";
 
 const Orders: React.FC = () => {
-  const { toast } = useToast();
   const { data, error, isLoading, refetch } = useGetOrdersQuery(50);
+  const { toast } = useToast();
+
+  const ordersData = data?.data || [];
+
+  const columnLabels: Record<string, string> = {
+    "professionalId": "Professional ID",
+    "clientId": "Client ID",
+    "locationAddress": "Location Address",
+    "serviceId": "Service ID",
+    "id": "Order ID",
+  };
+
+  const searchableColumns = Object.keys(columnLabels);
+
+  const {
+    data: displayData,
+    isSearchActive,
+    isLoading: isSearchLoading,
+    triggerSearch,
+    clearSearch,
+  } = useSearch({
+    initialData: ordersData,
+    searchMutation: useSearchOrdersMutation,
+    searchableColumns: searchableColumns,
+    onSearchError: (error) => {
+      toast({
+        title: "Search Failed",
+        description: "No results found. Consider trying other filters.",
+        variant: "destructive",
+      });
+      console.error("Search error:", error);
+    },
+    onClearSearch: () => {
+      refetch();
+    },
+  });
 
   const [retryCount, setRetryCount] = React.useState(0);
   const maxRetries = 3;
-
-  const STATUS_OPTIONS = [
-    { label: "All Statuses", value: null },
-    { label: "Completed", value: "completed" },
-    { label: "Pending", value: "pending" },
-    { label: "Cancelled", value: "cancelled" },
-  ];
 
   React.useEffect(() => {
     if (error) {
@@ -36,22 +67,57 @@ const Orders: React.FC = () => {
     }
   }, [error, toast, retryCount, refetch]);
 
-  const ordersData = data?.data;
+  const isDataEmpty = !ordersData || ordersData.length === 0;
 
-  const isDataEmpty = !ordersData || !ordersData.length;
+  const handleClearFilters = () => {
+    clearSearch(); // Clear all search and filter params
+  };
 
+  const handleCombinedSearch = (criteria, updateSearchParams = true) => {
+    criteria.forEach(({ column, value, operator, timeRange }) => {
+      triggerSearch(column, value, operator, timeRange, updateSearchParams);
+    });
+  };
+
+  if (isSearchLoading) {
+    return <Loader />;
+  }
   if (isLoading && isDataEmpty) return <Loader />;
   if (error && retryCount >= maxRetries && isDataEmpty)
     return <div>Error: Unable to load order data after multiple attempts.</div>;
   if (isDataEmpty) return <div>No orders found.</div>;
 
   return (
-    <TanStackTable
-      data={ordersData}
-      columns={ordersColumns}
-      STATUS_OPTIONS={STATUS_OPTIONS}
-      dateSortingId="appointmentDate"
-    />
+    <div className="p-2">
+      <Filters
+        filters={searchPresets.orders.defaultFilters}
+        onFilterSelect={(filter) =>
+          handleCombinedSearch([
+            {
+              column: filter.column,
+              value: filter.value,
+              operator: filter.operator,
+            },
+          ])
+        }
+      />
+
+      <SearchBar
+        columns={searchableColumns}
+        onSearch={(column, value, operator, timeRange) =>
+          handleCombinedSearch([{ column, value, operator, timeRange }])
+        }
+        onClear={handleClearFilters}
+        columnLabels={columnLabels}
+      />
+
+      <TanStackTable
+        data={isSearchActive ? displayData : ordersData}
+        columns={ordersColumns}
+        dateSortingId="appointmentDate"
+        withSearch={false}
+      />
+    </div>
   );
 };
 

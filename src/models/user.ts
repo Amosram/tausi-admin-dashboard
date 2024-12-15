@@ -1,8 +1,3 @@
-export interface Coordinates {
-  x: number;
-  y: number;
-}
-
 // export interface Service {
 //   id:               string;
 //   name:             string;
@@ -72,6 +67,7 @@ export interface TausiUser {
   profilePictureUrl: string | null;
   updatedAt: Date;
   sessionData: SessionData;
+  professional: TausiProfessional | null;
 }
 
 export interface TausiProfessional {

@@ -110,11 +110,11 @@ const menuItems = [
     icon: <MdSpa />,
     type: "accordion",
     children: [
-      { title: "Verified Beauticians", icon: <RiFile4Fill />, link: "/dashboard/verifications" },
+      { title: "Applications", icon: <RiFile4Fill />, link: "/dashboard/verifications" },
       { title: "Beautician List", icon: <FaUserCheck />, link: "/professionals" },
     ],
   },
-  { title: "Ledger", icon: <RiBookletFill />, link: "/ledgers/books" },
+  { title: "Businesses", icon: <RiBookletFill />, link: "/ledgers" },
   { title: "Booths", icon: <MdStore />, link: "/booths" },
   { title: "Messaging", icon: <IoLogoWechat />, link: "/messaging" },
   { title: "Settings", icon: <IoMdSettings />, link: "/settings" },

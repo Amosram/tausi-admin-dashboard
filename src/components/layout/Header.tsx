@@ -19,24 +19,31 @@ const routeMappings: Record<string, RouteDetails> = {
   "/orders": { title: "Orders" },
   "/revenue": { title: "Revenue" },
   "/users": { title: "Users" },
-  "/users/:id": { title: "User Details", backLink: "/users" },
+  "/users/list": { title: "Users List", backLink: "/users" },
+  "/users/:id": { title: "User Details", backLink: "/users/list" },
+  "/users/create-user": { title: "Create User", backLink: "/users/list" },
   "/professionals": { title: "Beauticians List" },
-  "/professionals/:id": { title: "Professional Details", backLink: "/professionals" },
-  "/dashboard/verifications": { title: "Verified Beauticians" },
-  "/messaging": { title: "Messaging" },
-  "/settings": { title: "Settings" },
-  "/users/create-user": { title: "Create User", backLink: "/users" },
-  "/booths": { title: "Booths" },
-  "/booths/create-booth": { title: "Create Booth", backLink: "/booths" },
-  "/booths/:id": { title: "Booth Details", backLink: "/booths" },
-  "/orders/:id": { title: "Order Details", backLink: "/orders" },
-  "/ledgers/create-loan": { title: "Create Loan" },
-  "/ledgers/books": { title: "Books" },
-  "/ledgers/books/:id": { title: "Books Details", backLink: "/ledgers/books" },
-  "/dashboard/verifications/:id": { title: "Verified Beauticians Details", backLink: "/dashboard/verifications" },
   "/professionals/:id": {
     title: "Professional Details",
     backLink: "/professionals",
+  },
+  "/dashboard/verifications": { title: "Applications" },
+  "/messaging": { title: "Messaging" },
+  "/settings": { title: "Settings" },
+  "/booths": { title: "Booths" },
+  "/booths/list": { title: "Booth List", backLink: "/booths" },
+  "/booths/create-booth": { title: "Create Booth", backLink: "/booths/list" },
+  "/booths/:id": { title: "Booth Details", backLink: "/booths/list" },
+  "/booths/:id/logs": { title: "Booth Logs" },
+  "/booths/:id/assignments": { title: "Booth Assignments" },
+  "/booths/:id/edit": { title: "Edit Booth" },
+  "/orders/:id": { title: "Order Details", backLink: "/orders" },
+  "/ledgers/create-loan": { title: "Create Loan" },
+  "/ledgers": { title: "Businesses" },
+  "/ledgers/:ownerId": { title: "Business Details", backLink: "/ledgers" },
+  "/dashboard/verifications/:id": {
+    title: "Applications Details",
+    backLink: "/dashboard/verifications",
   },
 };
 
@@ -52,10 +59,13 @@ const getDynamicRouteDetails = (pathname: string): RouteDetails => {
 };
 
 const Header = () => {
-  const navigate = useNavigate();
   const location = useLocation();
 
-  const { title, backLink } = getDynamicRouteDetails(location.pathname);
+  const { title: dynamicTitle, backLink } = getDynamicRouteDetails(
+    location.pathname
+  );
+
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     navigate("/auth/login");
@@ -64,24 +74,38 @@ const Header = () => {
   return (
     <header className="sticky top-0 bg-white border-b border-slate-200 z-30 flex justify-between w-full shadow-sm px-4 py-6">
       <div className="w-full bg-white hadow-md flex items-center justify-between">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-4">
+          {/* Sidebar trigger */}
           <div className="relative">
             <SidebarTrigger />
           </div>
-          <div className="relative">
+
+          <div className="relative flex gap-2 flex-col items-center">
+            {/* Main title and optional back link */}
             {backLink ? (
               <Link
                 to={backLink}
-                className="text-gray-600 font-bold flex items-center space-x-2 hover:underline"
+                className="text-gray-800 font-semibold flex items-center space-x-2 hover:text-primary hover:underline transition-all duration-300 ease-in-out"
               >
-                <FaChevronLeft />
-                <span>{title}</span>
+                <FaChevronLeft className="text-lg" />
+                <span className="text-lg">{dynamicTitle}</span>
               </Link>
             ) : (
-              <div className="text-gray-600 font-bold">{title}</div>
+              <div className="text-gray-800 font-semibold text-lg">{dynamicTitle}</div>
             )}
+
+            {/* Additional back link (for browser history) */}
+            {/* {backLink && (
+              <button
+                onClick={() => window.history.back()}
+                className="text-blue-600 font-medium text-xs flex items-center space-x-2 hover:text-primary hover:underline"
+              >
+                <span>Back to previous</span>
+              </button>
+            )} */}
           </div>
         </div>
+
         <div className="flex items-center space-x-4"></div>
         {/* Search Bar */}
         <div className="relative max-w-xs w-full mr-4">

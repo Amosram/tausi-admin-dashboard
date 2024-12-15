@@ -237,8 +237,11 @@ const OrderDetails: React.FC = () => {
                       <Button
                         size="icon"
                         className="p-4 rounded-full bg-primary"
+                        asChild
                       >
-                        <IoChatboxEllipsesSharp className="text-white" />
+                        <Link to={`/users/${currentOrder.client.id}`}>
+                          <IoChatboxEllipsesSharp className="text-white" />
+                        </Link>
                       </Button>
                     </div>
                   </div>
@@ -301,8 +304,11 @@ const OrderDetails: React.FC = () => {
                       <Button
                         size="icon"
                         className="p-4 rounded-full bg-blue-500"
+                        asChild
                       >
-                        <IoChatboxEllipsesSharp className="text-white" />
+                        <Link to={`/professionals/${currentOrder.professionalId}`}>
+                          <IoChatboxEllipsesSharp className="text-white" />
+                        </Link>
                       </Button>
                     </div>
                   </div>

@@ -22,23 +22,30 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import CoordinateSelectorMap from "../components/coordinate-selector";
+import Maps from "@/components/ui/maps";
+import { AutocompleteAddress } from "../components/location-autocomplete";
+
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 const boothFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   locationAddress: z.string().min(5, "Location must be at least 5 characters"),
   numberOfBeauticians: z
-    .number()
-    .int()
-    .min(1, "Must have at least 1 beautician")
-    .max(100, "Too many beauticians")
-    .optional(),
+    .string()
+    .transform((value) => parseInt(value, 10))
+    .refine(
+      (value) => Number.isInteger(value) && value > 0,
+      "Must be a positive integer"
+    )
+    .refine((value) => value <= 100, "Too many beauticians"),
   numberOfStations: z
-    .number()
-    .int()
-    .min(1, "Must have at least 1 station")
-    .max(50, "Too many stations")
-    .optional(),
+    .string()
+    .transform((value) => parseInt(value, 10))
+    .refine(
+      (value) => Number.isInteger(value) && value > 0,
+      "Must be a positive integer"
+    )
+    .refine((value) => value <= 50, "Too many stations"),
   occupancyStatus: z.enum(["empty", "occupied"], {
     required_error: "Please select the occupancy status",
   }),
@@ -62,9 +69,6 @@ const CreateBoothPage: React.FC = () => {
     resolver: zodResolver(boothFormSchema),
     defaultValues: {
       name: "",
-      locationAddress: "",
-      numberOfBeauticians: 0,
-      numberOfStations: 0,
       occupancyStatus: "empty",
       imagePath: "",
       imageUrl: "",
@@ -114,11 +118,41 @@ const CreateBoothPage: React.FC = () => {
     }
   };
 
-  const handleCoordinatesSelect = (coordinates: Coordinates) => {
-    form.setValue("coordinates.x", coordinates.x);
-    form.setValue("coordinates.y", coordinates.y);
+  const handleCoordinatesSelect = async (coordinates: Coordinates) => {
+    form.setValue("coordinates.x", coordinates.x); // Set x
+    form.setValue("coordinates.y", coordinates.y); // Set y
+
+    try {
+      // Reverse geocode to get the address
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.y},${coordinates.x}&key=${API_KEY}`
+      );
+      const data = await response.json();
+
+      if (data.status === "OK" && data.results.length > 0) {
+        const address = data.results[0].formatted_address;
+        form.setValue("locationAddress", address);
+      } else {
+        console.error("Geocoding failed:", data.status, data.error_message);
+      }
+    } catch (error) {
+      console.error("Failed to fetch address:", error);
+    }
+
     setIsCoordinateModalOpen(false);
   };
+
+  const handleAddressSelect = (
+    address: string,
+    coordinates: { lat: number; lng: number }
+  ) => {
+    console.log("Address in handleAddressSelect:", address);
+    form.setValue("locationAddress", address);
+    form.setValue("coordinates.x", coordinates.lng); // Set longitude as x
+    form.setValue("coordinates.y", coordinates.lat); // Set latitude as y
+  };
+
+  console.log(form.getValues("locationAddress"));
 
   return (
     <div className="container mx-auto py-10">
@@ -138,16 +172,10 @@ const CreateBoothPage: React.FC = () => {
 
               <FormInputField
                 form={form}
-                name="locationAddress"
-                label="Location Address"
-                placeholder="Enter booth location"
-              />
-
-              <FormInputField
-                form={form}
                 name="numberOfBeauticians"
                 label="Number of Beauticians"
                 placeholder="e.g 1"
+                type="number"
                 description="Number of beauticians in this booth"
               />
 
@@ -156,26 +184,8 @@ const CreateBoothPage: React.FC = () => {
                 name="numberOfStations"
                 label="Number of Stations"
                 placeholder="e.g 1"
+                type="number"
                 description="Number of stations in this booth"
-              />
-
-              <FormInputField
-                form={form}
-                name="occupancyStatus"
-                label="Occupancy Status"
-                type="select"
-                options={[
-                  { label: "Empty", value: "empty" },
-                  { label: "Occupied", value: "occupied" },
-                ]}
-              />
-
-              <FormInputField
-                form={form}
-                name="imagePath"
-                label="Image Path"
-                placeholder="/path/to/image.jpg"
-                description="Optional: Path to the booth's image on the server"
               />
 
               <FormInputField
@@ -184,6 +194,12 @@ const CreateBoothPage: React.FC = () => {
                 label="Image URL"
                 placeholder="https://example.com/booth.jpg"
                 description="Optional: URL to the booth's image"
+              />
+
+              <AutocompleteAddress
+                value={form.watch("locationAddress")}
+                onChange={(value) => form.setValue("locationAddress", value)}
+                onAddressSelect={handleAddressSelect}
               />
 
               <div className="grid grid-cols-2 gap-4">
@@ -238,13 +254,18 @@ const CreateBoothPage: React.FC = () => {
           <DialogHeader>
             <DialogTitle>Select Booth Coordinates</DialogTitle>
           </DialogHeader>
-          <CoordinateSelectorMap
-            initialCoordinates={{
-              x: form.getValues("coordinates.x") || -1.286389,
-              y: form.getValues("coordinates.y") || 36.817223,
+          <Maps
+            coordinates={{
+              lat: form.getValues("coordinates.y") || -1.286389, // Map y to lat
+              lng: form.getValues("coordinates.x") || 36.817223, // Map x to lng
             }}
-            onCoordinatesSelect={handleCoordinatesSelect}
-            onClose={() => setIsCoordinateModalOpen(false)}
+            setCoordinates={(coords) => {
+              // Map lat/lng back to x/y for the form
+              handleCoordinatesSelect({
+                x: coords.lng,
+                y: coords.lat,
+              });
+            }}
           />
         </DialogContent>
       </Dialog>

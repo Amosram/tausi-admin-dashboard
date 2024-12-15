@@ -60,6 +60,7 @@ export interface Professional {
   topRated: boolean;
   rating: number;
   services: Service[];
+  assignments: BoothAssignmentDetails[] | [];
 }
 
 export interface Service {
@@ -71,7 +72,7 @@ export interface Service {
   updatedAt: string;
   professionalId: string;
   serviceId: string;
-  brands: string[];
+  brands: string[] | null;
   duration: number;
   description: string | null;
   imagePath: string | null;
@@ -141,27 +142,18 @@ export interface OrdersTableData {
   startTime: string;
 }
 
-export interface UsersApiResponse {
-  users: TausiUser;
-  userSessionData: SessionData;
-}
-
-export interface SingleUserApiResponse {
+export interface OrdersSearchApiResponse {
   statusCode: string;
   code: number;
   message: string;
-  data: TausiUserDetails;
+  data: Appointment[] | [];
 }
 
-export interface CreateUserRequest {
-  id?: string;
-  name: string;
-  email: string;
-  phoneNumber: string;
-  userTypeSession: "professional" | "client" | "user";
-  bio: string;
-  profilePictureUrl?: string;
-  profilePicturePath?: string;
+export interface ProfSearchApiResponse {
+  statusCode: string;
+  code: number;
+  message: string;
+  data: Professional[] | [];
 }
 
 export interface AppointmentsApiResponse {
@@ -270,7 +262,9 @@ export interface VerifiedBeauticians extends UpdateVerifiedBeautician {
 }
 
 export interface UpdateVerifiedBeautician {
+    isActive:               boolean;
     verificationStatus:      string;
+    verificationTitle:      string;
     verificationDescription: string;
     reviewedBy:              string;
 }
@@ -330,12 +324,39 @@ export interface Ledgers {
   deletedAt:   Date | null;
   description: null;
   ownerId:     string;
+  owner:       Owner;
+  books:       Books[];
+}
+
+export interface LedgerDetails {
+    id:           string;
+    name:         string;
+    createdAt:    Date;
+    updatedAt:    Date;
+    isDeleted:    boolean;
+    deletedAt:    null;
+    description?: null;
+    ownerId:      string;
+    books?:       Books[];
+    ledgerId?:    string;
+    bookEntries?: BookEntries[];
+}
+
+export interface LedgerDetailsApiResponse {
+  statusCode: string;
+  code:       number;
+  message:    string;
+  data:       LedgerDetails;
+}
+
+export interface Owner {
+  businessName: null | string;
 }
 export interface LedgersApiResponse {
   statusCode: string;
   code:       number;
   message:    string;
-  data:       Ledgers[];
+  data:       Ledgers;
 }
 
 export interface BooksApiResponse {
@@ -345,7 +366,7 @@ export interface BooksApiResponse {
   data:       Books;
 }
 
-export interface Books {
+export interface Books extends BookDetails {
   id:        string;
   name:      string;
   createdAt: Date;
@@ -353,29 +374,127 @@ export interface Books {
   isDeleted: boolean;
   deletedAt: null;
   ledgerId:  string;
+  ownerId:  string;
 }
 
 export interface BookDetails {
+  id:              string;
+  name:            string;
+  createdAt:       Date;
+  updatedAt:       Date;
+  isDeleted:       boolean;
+  deletedAt:       null;
+  ownerId:         string;
+  ledgerId:        string;
+  bookEntries:     BookEntries[];
+  entryCategories: BookCategories[];
+  paymentModes:    PaymentModes[];
+}
+
+export interface BookEntriesApiResponse {
+  statusCode: string;
+  code:       number;
+  message:    string;
+  data:       BookEntries[];
+}
+export interface BookCategoriesApiResponse {
+  statusCode: string;
+  code:       number;
+  message:    string;
+  data:       BookCategories[];
+}
+
+export interface PaymentModesApiResponse {
+  statusCode: string;
+  code:       number;
+  message:    string;
+  data:       PaymentModes[];
+}
+
+export interface BookEntries {
+  id:            string;
+  title:         string;
+  remark:        null;
+  amount:        string;
+  type:          "Expense" | "Revenue";
+  createdAt:     Date;
+  updatedAt:     Date;
+  isDeleted:     boolean;
+  deletedAt:     null;
+  metadata:      null;
+  categoryId:    string;
+  paymentModeId: string;
+  bookId:        string;
+  ownerId:       string;
+}
+
+export interface BookCategories {
   id:        string;
   name:      string;
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
   deletedAt: null;
+  bookId:    string;
   ledgerId:  string;
-  entries:   null;
+}
+
+export interface PaymentModes {
+  id:        string;
+  mode:      string;
+  createdAt: Date;
+  updatedAt: Date;
+  isDeleted: boolean;
+  deletedAt: null;
+  bookId:    string;
+  ledgerId:  string;
 }
 
 export interface CreateUpdateLoanBook {
     name: string;
-    ledgerId: string
+    ledgerId: string;
+    ownerId: string;
 }
+
+export interface CreateUpdateBookEntry {
+  title:         string;
+  type:          string;
+  amount:        number;
+  categoryId:    string;
+  paymentModeId: string;
+  bookId:        string;
+  ownerId:       string;
+}
+
 export interface BoothsApiResponse<T> {
   statusCode: string;
   code: number;
   message: string;
   data: T;
 };
+
+
+export interface Assignment {
+  id:                string;
+  createdAt:         Date;
+  updatedAt:         Date;
+  isActive:          boolean;
+  isDeleted:         boolean;
+  deletedAt:         null;
+  deletedReason:     null;
+  boothId:           string;
+  beauticianId:      string;
+  startDate:         Date;
+  endDate:           Date;
+  isLapsed:          boolean;
+  lapsedAt:          null;
+  isTerminated:      boolean;
+  terminatedBy:      null;
+  terminatedAt:      null;
+  terminationReason: null;
+  booth:             Booth;
+}
+
 
 export interface Booth {
   id: string;
@@ -395,6 +514,8 @@ export interface Booth {
   imageUrl: string | null;
   underMaintenance: boolean;
   occupancyStatus: "empty" | "occupied" | string;
+  assignments: BoothAssignmentDetails[] | [];
+  logs: BoothLog[] | [];
 };
 
 export interface CreateBoothPayload {
@@ -412,3 +533,53 @@ export interface CreateBoothPayload {
   boundaries?: unknown | null;
   underMaintenance?: boolean;
 };
+
+export interface BoothAssignmentResponse {
+  statusCode: string;
+  code: number;
+  message: string;
+  data: BoothAssignmentDetails[];
+}
+
+export interface BoothAssignmentDetails {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
+  isDeleted: boolean;
+  deletedAt: string | null;
+  deletedReason: string | null;
+  boothId: string;
+  beauticianId: string;
+  startDate: string;
+  endDate: string;
+  isLapsed: boolean;
+  lapsedAt: string | null;
+  isTerminated: boolean;
+  terminatedBy: string | null;
+  terminatedAt: string | null;
+  terminationReason: string | null;
+}
+
+export interface BoothLog {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
+  isDeleted: boolean;
+  deletedAt: string | null;
+  deletedReason: string | null;
+  boothId: string;
+  action: string;
+  description: string;
+  performedBy: string;
+  oldValues: Booth;
+  newValues: Booth;
+};
+
+export interface CreateBoothAssignmentRequest {
+  boothId: string;
+  beauticianId: string;
+  startDate: string;
+  endDate: string;
+}
