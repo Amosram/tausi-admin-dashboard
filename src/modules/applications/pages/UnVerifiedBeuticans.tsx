@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useMemo, useState } from "react";
 import Loader from "@/components/layout/Loader";
 import { toast, useToast } from "@/hooks/use-toast";
+import UnVerifiedBeauticianStats from "../components/UnVerifiedStats";
 
 
 const VerifiedBeuticans: React.FC = () => {
@@ -165,41 +166,41 @@ const VerifiedBeuticans: React.FC = () => {
       header: "Verification Status",
       cell: ({ row }) => getStatusBadge(row.getValue("verificationStatus") ? row.getValue("verificationStatus") : "approved")
     },
-    {
-      header: 'Actions',
-      enableSorting: false,
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreVertical className="h-4 w-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <Link
-                to={`/dashboard/verifications/${row.original.id}`}
-                state={{ professional: row.original }}
-                className="hover:text-primary"
-              >
-                        View Beauticians Details
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => console.log("Edit:", row.original)}
-              className="cursor-pointer"
-            >
-                      Edit Beauticians
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => console.log("Delete:", row.original)}
-              className="bg-destructive text-white cursor-pointer"
-            >
-                      Delete Beauticians
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    }
+    // {
+    //   header: 'Actions',
+    //   enableSorting: false,
+    //   cell: ({ row }) => (
+    //     <DropdownMenu>
+    //       <DropdownMenuTrigger className="h-8 w-8 p-0">
+    //         <span className="sr-only">Open menu</span>
+    //         <MoreVertical className="h-4 w-4" />
+    //       </DropdownMenuTrigger>
+    //       <DropdownMenuContent align="end">
+    //         <DropdownMenuItem>
+    //           <Link
+    //             to={`/dashboard/verifications/${row.original.id}`}
+    //             state={{ professional: row.original }}
+    //             className="hover:text-primary"
+    //           >
+    //                     View Beauticians Details
+    //           </Link>
+    //         </DropdownMenuItem>
+    //         <DropdownMenuItem
+    //           onClick={() => console.log("Edit:", row.original)}
+    //           className="cursor-pointer"
+    //         >
+    //                   Edit Beauticians
+    //         </DropdownMenuItem>
+    //         <DropdownMenuItem
+    //           onClick={() => console.log("Delete:", row.original)}
+    //           className="bg-destructive text-white cursor-pointer"
+    //         >
+    //                   Delete Beauticians
+    //         </DropdownMenuItem>
+    //       </DropdownMenuContent>
+    //     </DropdownMenu>
+    //   ),
+    // }
   ];
 
   if (isLoading) {
@@ -212,6 +213,7 @@ const VerifiedBeuticans: React.FC = () => {
 
   return (
     <div className="pr-6 pl-6">
+      <UnVerifiedBeauticianStats beauticians={data.data} />
       <TanStackTable
         data={data.data}
         columns={columns}

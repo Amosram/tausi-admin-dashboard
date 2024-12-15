@@ -8,6 +8,7 @@ import { FaChevronDown, FaChevronLeft } from "react-icons/fa";
 import { IoExitOutline } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "../ui/sidebar";
+import { auth } from "@/app/firebase";
 
 interface RouteDetails {
   title: string;
@@ -61,9 +62,52 @@ const getDynamicRouteDetails = (pathname: string): RouteDetails => {
 const Header = () => {
   const location = useLocation();
 
-  const { title: dynamicTitle, backLink } = getDynamicRouteDetails(
-    location.pathname
-  );
+  const titles: { [key: string]: string } = {
+    "/": "Dashboard",
+    "/orders": "Orders",
+    "/revenue": "Revenue",
+    "/users": "Users",
+    "/professionals": "Beauticians List",
+    "/dashboard/verifications": "Applications",
+    "/ledgers": "Businesses",
+    "/messaging": "Messaging",
+    "/settings": "Settings",
+    "/users/create-user": "Create User",
+    "/ledgers/create-loan":"Create Loan"
+  };
+
+  const getTitle = () => {
+    const path = location.pathname;
+
+    if (path.startsWith("/orders/") && path.split("/").length > 2) {
+      return "Order Details";
+    }
+
+    if (path.startsWith("/professionals/") && path.split("/").length > 2) {
+      return "Verified Beautician Details";
+    }
+
+    if (path.startsWith("/dashboard/verifications/") && path.split("/").length > 2) {
+      return "Applications Details";
+    }
+
+
+    if (path.startsWith("/users/") && path.split("/").length > 2) {
+      if (path === "/users/create-user") {
+        return "Create User";
+      }
+      return "User Details";
+    }
+
+    if (path.startsWith("/ledgers") && path.split("/").length > 2) {
+      return "Business Details";
+    }
+    
+
+    return titles[path] || "Dashboard";
+  };
+
+  const { title: dynamicTitle, backLink } = getDynamicRouteDetails(location.pathname);
 
   const navigate = useNavigate();
 
@@ -141,9 +185,13 @@ const Header = () => {
           </div>
           {/* Avatar */}
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gray-300 rounded-md cursor-pointer"></div>
+            <div className="w-8 h-8 bg-gray-300 rounded-md cursor-pointer">
+              <img
+                src="/placeholder.png"
+              />
+            </div>
             <div className="flex flex-col">
-              <span className="text-gray-700">Franklin</span>
+              <span className="text-gray-700">{auth.currentUser?.displayName}</span>
               <span className="text-gray-500 text-sm">Admin</span>
             </div>
             <DropdownMenu>
