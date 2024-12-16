@@ -15,11 +15,11 @@ const Orders: React.FC = () => {
   const ordersData = data?.data || [];
 
   const columnLabels: Record<string, string> = {
-    "professionalId": "Professional ID",
-    "clientId": "Client ID",
-    "locationAddress": "Location Address",
-    "serviceId": "Service ID",
-    "id": "Order ID",
+    professionalId: "Professional ID",
+    clientId: "Client ID",
+    locationAddress: "Location Address",
+    serviceId: "Service ID",
+    id: "Order ID",
   };
 
   const searchableColumns = Object.keys(columnLabels);
@@ -88,7 +88,7 @@ const Orders: React.FC = () => {
   if (isDataEmpty) return <div>No orders found.</div>;
 
   return (
-    <div className="p-2">
+    <div className="">
       <Filters
         filters={searchPresets.orders.defaultFilters}
         onFilterSelect={(filter) =>
@@ -111,12 +111,14 @@ const Orders: React.FC = () => {
         columnLabels={columnLabels}
       />
 
-      <TanStackTable
-        data={isSearchActive ? displayData : ordersData}
-        columns={ordersColumns}
-        dateSortingId="appointmentDate"
-        withSearch={false}
-      />
+      <div className="pl-6 pr-1">
+        <TanStackTable
+          data={isSearchActive ? displayData : ordersData}
+          columns={ordersColumns}
+          dateSortingId="appointmentDate"
+          withSearch={false}
+        />
+      </div>
     </div>
   );
 };

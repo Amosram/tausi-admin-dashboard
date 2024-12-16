@@ -42,7 +42,7 @@ export const TimeFilter = <T,>({
 
   return (
     <Select value={activeFilter || ""} onValueChange={handleFilterChange}>
-      <SelectTrigger className="w-full border-gray-400 bg-white">
+      <SelectTrigger className="w-48 border-gray-400 bg-white">
         <SelectValue placeholder="Select Time Filter" />
       </SelectTrigger>
       <SelectContent>

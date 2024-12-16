@@ -99,7 +99,7 @@ export const BoothStats = ({ booths }: BoothsStatsProps) => {
   ];
 
   return (
-    <div className="w-full p-4 mx-auto">
+    <div className="w-full py-4 mx-auto">
       <p className="text-lg uppercase text-center font-semibold mb-3">STATS</p>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {statsItems.map((item, index) => (
