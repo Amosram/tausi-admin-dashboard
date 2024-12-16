@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 interface InfoComponentProps {
   imageSrc: string;
   name: string;
-  occupancy: string;
+  moreInfo?: string;
   link?: string;
   className?: string;
 }
@@ -11,7 +11,7 @@ interface InfoComponentProps {
 const InfoComponent = ({
   imageSrc,
   name,
-  occupancy,
+  moreInfo,
   link,
 }: InfoComponentProps) => {
   return (
@@ -22,8 +22,8 @@ const InfoComponent = ({
         className="object-cover w-full h-16 md:h-20"
       />
       <div>
-        <h1>{name}</h1>
-        <p>{occupancy}</p>
+        <h1 className="">Name: <span className="font-bold">{name}</span></h1>
+        <p>{moreInfo}</p>
       </div>
       <Link to={link} className="text-xs text-primary hover:underline">
         View More

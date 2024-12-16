@@ -1,4 +1,3 @@
-"use client";
 import React, { useState } from "react";
 import Maps from "@/components/ui/maps";
 import { MapCoordinate } from "@/components/ui/maps/types";
@@ -24,7 +23,7 @@ const BoothsMap: React.FC<BoothsMapProps> = ({ coordinates, booths }) => {
               <InfoComponent
                 imageSrc={selectedBooth.imageUrl || "/placeholder.jpg"}
                 name={selectedBooth.name}
-                occupancy={`${selectedBooth.occupancyStatus}`}
+                moreInfo={`Occupancy Status: ${selectedBooth.occupancyStatus}`}
                 link={`${selectedBooth.id}`}
               />
             )
