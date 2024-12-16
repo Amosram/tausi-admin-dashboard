@@ -269,7 +269,8 @@ const VerifiedBeuticans: React.FC = () => {
   return (
     <>
     < UnVerifiedBeauticianStats beauticians = { data.data } />
-    <Filters
+    {/* TODO: ENSURE CORRECT IMPLEMENTATION AFTER BACKEND FIX */}
+    {/* <Filters
         filters={searchPresets.applications.defaultFilters}
         onFilterSelect={(filter) =>
           handleCombinedSearch([
@@ -280,7 +281,7 @@ const VerifiedBeuticans: React.FC = () => {
             },
           ])
         }
-      />
+      /> */}
       <SearchBar
         columns={searchableColumns}
         onSearch={(column, value, operator, timeRange) =>
