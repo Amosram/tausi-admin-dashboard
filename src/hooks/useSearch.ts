@@ -432,4 +432,38 @@ export const searchPresets = {
       },
     ],
   },
+  professionals:{
+    defaultFilters: [
+      {
+        label: "Active",
+        column: "status",
+        value: "Active",
+        operator: "eq" as SearchOperator,
+      },
+      {
+        label: "Inactive",
+        column: "status",
+        value: "Inactive",
+        operator: "eq" as SearchOperator,
+      },
+      {
+        label: "Pending",
+        column: "status",
+        value: "Pending",
+        operator: "eq" as SearchOperator,
+      },
+      {
+        label: "Verified",
+        column: "isVerified",
+        value: true,
+        operator: "eq" as SearchOperator,
+      },
+      {
+        label: "Not Verified",
+        column: "isVerified",
+        value: false,
+        operator: "eq" as SearchOperator,
+      },
+    ]
+  }
 };

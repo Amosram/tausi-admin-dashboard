@@ -1,6 +1,6 @@
 import { Professional } from "@/models";
 import { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
-import { useGetProfessionalsQuery } from "../api/professionalApi";
+import { useGetProfessionalsQuery, useSearchProfessionalsMutation } from "../api/professionalApi";
 import TanStackTable from "@/components/ui/Table/Table";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -10,10 +10,47 @@ import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
 import Loader from "@/components/layout/Loader";
 import BeauticianListStats from "../components/BeauticianListStats";
+import { searchPresets, useSearch } from "@/hooks/useSearch";
+import { toast } from "@/hooks/use-toast";
+import Filters from "@/components/ui/Table/Filters";
+import SearchBar from "@/components/ui/Table/SearchBar";
 
 const ProfessionalDashboard = () => {
-  const {data, isLoading, isError} = useGetProfessionalsQuery(10000);
+  const {data, isLoading, isError, refetch} = useGetProfessionalsQuery(10000);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  const professionalData = data?.data || [];
+
+  const columnLabels: Record<string, string> = {
+    businessName: "Business",
+   locationAddress: "Location",
+  };
+
+  const searchableColumns = Object.keys(columnLabels);
+
+  const {
+    data: displayData,
+    isSearchActive,
+    isLoading: isSearchLoading,
+    triggerSearch,
+    clearSearch,
+  } = useSearch({
+    initialData: professionalData,
+    searchMutation: useSearchProfessionalsMutation,
+    searchableColumns: searchableColumns,
+    onSearchError: (error) => {
+      toast({
+        title: "Search Error",
+        description: "Failed to perform search. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Search error:", error);
+    },
+    // Custom clear handler to refetch original data
+    onClearSearch: () => {
+      refetch();
+    },
+  });
 
 
   const handleStatusFilter = (status: string | null) => {
@@ -65,6 +102,10 @@ const ProfessionalDashboard = () => {
     }
   };
 
+  const handleClearFilters = () => {
+    clearSearch();
+  };
+
   const columns: ColumnDef<Professional>[] = [
     {
       accessorKey: 'id',
@@ -89,7 +130,7 @@ const ProfessionalDashboard = () => {
     },
     {
       accessorKey: "businessName",
-      header: "Beutician",
+      header: "Business",
       cell: ({row}) => <span>{row.original.businessName}</span>
     },
     {
@@ -150,7 +191,13 @@ const ProfessionalDashboard = () => {
     // Handle selected rows as needed
   };
 
-  if (isLoading) {
+  const handleCombinedSearch = (criteria, updateSearchParams = true) => {
+    criteria.forEach(({ column, value, operator, timeRange }) => {
+      triggerSearch(column, value, operator, timeRange, updateSearchParams);
+    });
+  };
+
+  if (isLoading && isSearchLoading) {
     return <Loader />;
   }
 
@@ -159,7 +206,40 @@ const ProfessionalDashboard = () => {
   }
 
   return (
-    <div className="pr-6 pl-6">
+    <>
+      {/* <Filters
+        filters={searchPresets.professionals.defaultFilters}
+        onFilterSelect={(filter) =>
+          handleCombinedSearch([
+            {
+              column: filter.column,
+              value: filter.value,
+              operator: filter.operator,
+            },
+          ])
+        }
+      /> */}
+      <BeauticianListStats beauticians={professionalData} />
+      <SearchBar
+        columns={searchableColumns}
+        onSearch={(column, value, operator, timeRange) =>
+          handleCombinedSearch([{ column, value, operator, timeRange }])
+        }
+        onClear={handleClearFilters}
+        columnLabels={columnLabels}
+      />
+
+      <div className="pr-6 pl-6">
+        {/**
+         * Ensure you maintain how data is being passed to the table
+         */}
+        <TanStackTable
+          data={isSearchActive ? displayData : professionalData}
+          columns={columns}
+          withSearch={false}
+        />
+      </div>
+    {/* <div className="pr-6 pl-6">
       <BeauticianListStats beauticians={data.data} />
       <TanStackTable
         data={data.data}
@@ -169,7 +249,8 @@ const ProfessionalDashboard = () => {
         // STATUS_OPTIONS={STATUS_OPTIONS}
         onRowSelection={handleRowSelection}
       />
-    </div>
+    </div> */}
+    </>
   );
 };
 

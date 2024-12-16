@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "../../../Utils/axios";
-import { ApiResponse, PortfolioApiResponse, Professional, ProfessionalApiResponse, VerifiedBeauticians, VerifiedBeauticiansResponse } from "@/models";
+import { ApiResponse, PortfolioApiResponse, Professional, ProfessionalApiResponse, ProfSearchApiResponse, VerifiedBeauticians, VerifiedBeauticiansResponse } from "@/models";
+import { SearchCriteriaType } from "@/hooks/useSearch";
 
 export const professionalApi = createApi({
   reducerPath: 'professionalApi',
@@ -65,7 +66,21 @@ export const professionalApi = createApi({
       }),
       invalidatesTags: ['VerifiedBeauticiansDetails'],
     }),
-
+    searchProfessionals: builder.mutation<
+      ProfSearchApiResponse,
+      { searchCriteria: SearchCriteriaType[] }
+    >({
+      query: ({ searchCriteria }) => {
+        return {
+          url: `/professionals/search?limit=2000`,
+          method: "POST",
+          data: {
+            searchCriteria,
+          },
+        };
+      },
+      invalidatesTags: ["Professionals"],
+    }),
   }),
 });
 
@@ -76,5 +91,6 @@ export const {
   useGetVerifiedBeauticiansQuery,
   useUseGetVerifiedBeauticianByIdQuery,
   useUpdateverifiedBeauticiansMutation,
-  useUpdateProfessionalMutation
+  useUpdateProfessionalMutation,
+  useSearchProfessionalsMutation
 } = professionalApi;
