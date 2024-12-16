@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Star,
   GalleryThumbnails,
+  StarIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -340,6 +341,20 @@ const ProfessionalDetails = () => {
     }
   };
 
+  const handleTopRatedBeautician = async () => {
+    try {
+      await updateProfessional({
+        id: professional.id,
+        topRated: true
+      }).unwrap;
+      toast({ title: "Success", description: "Successfully Top rated the beautician", variant: "success" });
+    }
+    catch (error) {
+      console.error("Failed to Top rate a beautician", error);
+      toast({ title: "Error", description: "An error occurred while top rating a beautician.", variant: "destructive" });
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       {/* Professional Management */}
@@ -358,13 +373,23 @@ const ProfessionalDetails = () => {
               <CheckCircle size={16} />
               <span>Activate</span>
             </Button>
+            
           )}
           {
             professional.isActive && (
-              <DeactivateDialog professionalId={professionalId} />
+              <>
+                <DeactivateDialog professionalId={professionalId} />
+                <Button
+                  className="bg-yellow-500"
+                  onClick={handleTopRatedBeautician}
+                  disabled={professional.topRated}
+                >
+                  <StarIcon size={16} />
+                  <span>Mark as Top Rated</span>
+                </Button>
+              </>
             )
           }
-          
         </div>
       </div>
       {/* professional Profile */}

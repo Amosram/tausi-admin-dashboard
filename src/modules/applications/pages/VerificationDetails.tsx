@@ -299,8 +299,7 @@ const VerificationDetails: React.FC = () => {
     }
   };
 
-  const isActionCompleted =
-    beautician.isVerified || beautician.verificationData?.verificationStatus === "rejected";
+  const isActionCompleted = beautician.isVerified || beautician.verificationData?.verificationStatus === "rejected";
 
   return (
     <div className="container mx-auto p-4">
