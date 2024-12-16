@@ -23,6 +23,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils";
 import DeactivateDialog from "../components/DeactivateDialog";
 import { toast } from "@/hooks/use-toast";
+import BoothAssignmentCard from "../components/BoothAssignmentCard";
 
 const Maps = lazy(() => import("@/components/ui/maps"));
 
@@ -308,7 +309,7 @@ const ProfessionalDetails = () => {
     return (
       <div className="container mx-auto p-4">
         <div className="bg-destructive text-destructive-foreground p-4 rounded-lg">
-          Unable to load professional details. Please try again later.
+          Unable to load Verified Beautician details. Please try again later.
         </div>
       </div>
     );
@@ -326,13 +327,13 @@ const ProfessionalDetails = () => {
 
       toast({
         title: "Success",
-        description: "Professional has been activated successfully.",
+        description: "Beautician has been activated successfully.",
         variant: "success",
       });
     }  catch(error) {
       toast({
         title: "Error",
-        description: "An error occurred while activating the Professional.",
+        description: "An error occurred while activating the Beautician.",
         variant: "destructive",
       });
     }
@@ -344,7 +345,7 @@ const ProfessionalDetails = () => {
       <div className="w-full bg-muted p-4 rounded-lg flex flex-col sm:flex-row justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
           <h2 className="text-xl font-bold">
-                 Professional Management
+                 Beautician Management
           </h2>
           <Badge variant={professional.isActive ? "default" : "destructive"}>
             {professional.isActive ? "Active" : "Inactive"}
@@ -374,10 +375,6 @@ const ProfessionalDetails = () => {
         {/* Contact information */}
         <div className="md:col-span-2 grid grid-cols-1 gap-4">
           <ContactInformationCard professional={professional} />
-          {/* Verification Details */}
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-            {/* <VerificationDetailsCard verificationData={professional}/> */}
-          </div>
           {/* Business Card */}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
             <BusinessCard professional={professional} />
@@ -385,7 +382,7 @@ const ProfessionalDetails = () => {
         </div>
       </div>
       {/* Service and Product Card */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 items-start">
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
           <ServiceProvidedCard professional={professional} />
         </div>
@@ -393,6 +390,10 @@ const ProfessionalDetails = () => {
           <ProductCard professional={professional} />
         </div>
       </div>
+
+      {/* Booth Assignemts */}
+      <BoothAssignmentCard assignment={professional} />
+
       {/* Tab Layout for Portfolio and Location */}
       <Tabs className="w-full mt-8" defaultValue="location">
         {/* Tab List */}

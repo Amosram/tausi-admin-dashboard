@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetLedgersByIdQuery } from "../api/ledgersApi";
 import Loader from "@/components/layout/Loader";
 import { Books } from "@/models";
@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ChevronDown, UserPlus } from "lucide-react";
+import { BadgeDollarSign, ChevronDown, User } from "lucide-react";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 
 
 const LedgerBookDetails = () => {
+  const navigate = useNavigate();
 
   const { ownerId } = useParams<{ ownerId: string }>();
   const {data, isLoading, isError} = useGetLedgersByIdQuery(ownerId);
@@ -124,7 +125,10 @@ const LedgerBookDetails = () => {
           <h1 className="text-2xl font-bold mb-6">Business Book for <span style={{ color: 'red' }}>{business.name}</span></h1>
         </div>
         <div className="flex gap-3">
-          <UserPlus />
+          <User
+            onClick={() => navigate(`/professionals/${ownerId}`)}
+            className="cursor-pointer"
+            size={30}/>
         </div>
       </div>
       {/* Business Details */}
@@ -296,10 +300,42 @@ const LedgerBookDetails = () => {
       {/* List of all entries in a book */}
       <div className="mb-4">
         <h2 className="text-xl font-semibold mb-2">Book Entries</h2>
-        <div className="flex justify-between mb-2">
-          <p>Total Expense: KES {totalExpense.toFixed(2)}</p>
-          <p>Total Revenue: KES {totalRevenue.toFixed(2)}</p>
+        <div className="flex justify-between items-stretch gap-4 mb-4">
+          {/* Total Expense Card */}
+          <Card className="flex flex-col justify-between border-2 border-transparent hover:shadow-xl hover:border-opacity-50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 rounded-xl overflow-hidden bg-white flex-grow">
+            <CardHeader className="flex flex-row items-center justify-center p-4 pb-2">
+              <div className="p-3 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+                <BadgeDollarSign className="h-8 w-8 text-red-600" />
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 pt-2 text-center flex-grow flex flex-col justify-center">
+              <div className="text-2xl font-bold mb-1 text-red-600">
+                Total Expense: KES {totalExpense.toFixed(2)}
+              </div>
+              <p className="text-xs opacity-70 uppercase tracking-wider truncate">
+                Expenses
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Total Revenue Card */}
+          <Card className="flex flex-col justify-between border-2 border-transparent hover:shadow-xl hover:border-opacity-50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 rounded-xl overflow-hidden bg-white flex-grow">
+            <CardHeader className="flex flex-row items-center justify-center p-4 pb-2">
+              <div className="p-3 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+                <BadgeDollarSign className="h-8 w-8 text-green-600" />
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 pt-2 text-center flex-grow flex flex-col justify-center">
+              <div className="text-2xl font-bold mb-1 text-green-600">
+                Total Revenue: KES {totalRevenue.toFixed(2)}
+              </div>
+              <p className="text-xs opacity-70 uppercase tracking-wider truncate">
+               Revenue
+              </p>
+            </CardContent>
+          </Card>
         </div>
+
         <Tabs defaultValue={selectedBooks[0]?.id || 'all'}>
           <TabsList className="flex border-b border-muted space-x-4 pb-2">
             <TabsTrigger

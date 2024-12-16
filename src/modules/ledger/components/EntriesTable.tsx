@@ -93,14 +93,14 @@ const EntriesTable = (props: EntriesTableProps) => {
           <Label htmlFor="select-all">Select All</Label>
         </div>
         <div className="space-x-2">
-          <Button
+          {/* <Button
             variant="destructive"
             size="sm"
             onClick={handleDelete}
             disabled={selectedEntries.length === 0 || isDeleting}
           >
             {isDeleting ? "Deleting..." : "Delete Selected"}
-          </Button>
+          </Button> */}
           <Button
             variant="outline"
             size="sm"
