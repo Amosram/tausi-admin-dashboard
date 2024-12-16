@@ -11,6 +11,7 @@ import {
   Globe,
   ShieldCheck,
   Star,
+  GalleryThumbnails,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -439,7 +440,7 @@ const ProfessionalDetails = () => {
                 )}
               />
             ) : (
-              <p>No images available in the portfolio.</p>
+              <GalleryThumbnails size={30} />
             )}
           </div>
         </TabsContent>

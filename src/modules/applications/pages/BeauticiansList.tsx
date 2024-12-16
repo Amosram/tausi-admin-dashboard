@@ -197,7 +197,7 @@ const ProfessionalDashboard = () => {
     });
   };
 
-  if (isLoading && isSearchLoading) {
+  if (isLoading || isSearchLoading) {
     return <Loader />;
   }
 
