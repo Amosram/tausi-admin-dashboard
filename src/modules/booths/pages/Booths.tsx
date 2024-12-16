@@ -86,7 +86,7 @@ const Booths = () => {
     }
 
     return (
-      <Tabs defaultValue="table" className="w-full">
+      <Tabs defaultValue="table" className="w-full px-6">
         <TabsList className="grid w-full grid-cols-2 mb-4">
           <TabsTrigger value="table" className="flex items-center gap-2">
             <Table className="h-4 w-4" /> Table View
@@ -96,7 +96,7 @@ const Booths = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="map">
-          <BoothsMap coordinates={boothCoordinates} />
+          <BoothsMap coordinates={boothCoordinates} booths={booths} />
         </TabsContent>
         <TabsContent value="table">
           <BoothStats booths={booths} />

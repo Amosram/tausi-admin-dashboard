@@ -10,9 +10,11 @@ const API_KEY =
 interface MapsProps {
   coordinates: MapCoordinates;
   setCoordinates?: (coordinates: MapCoordinate) => void;
+  infoBody?: React.ReactNode | JSX.Element;
+  onMarkerClick?: (index: number) => void;
 }
 
-const Maps: React.FC<MapsProps> = ({ coordinates, setCoordinates }) => {
+const Maps: React.FC<MapsProps> = ({ coordinates, setCoordinates, infoBody, onMarkerClick }) => {
   const markerCoordinates = Array.isArray(coordinates)
     ? coordinates
     : [coordinates];
@@ -28,16 +30,14 @@ const Maps: React.FC<MapsProps> = ({ coordinates, setCoordinates }) => {
             lng: markerCoordinates[0]?.lng ?? 36.817223,
           }}
           defaultZoom={14}
-          center={{
-            lat: markerCoordinates[0]?.lat ?? -1.286389,
-            lng: markerCoordinates[0]?.lng ?? 36.817223,
-          }}
           reuseMaps
           gestureHandling={"greedy"}
         >
           <Marker
             coordinates={markerCoordinates}
             setCoordinates={setCoordinates}
+            infoBody={infoBody}
+            onMarkerClick={onMarkerClick}
           />
         </Map>
       </div>

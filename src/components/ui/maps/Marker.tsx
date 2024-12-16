@@ -5,9 +5,11 @@ import { MapCoordinate } from "./types";
 interface MarkerProps {
   coordinates: MapCoordinate[];
   setCoordinates?: (coordinates: MapCoordinate) => void;
+  infoBody?: React.ReactNode | JSX.Element;
+  onMarkerClick?: (index: number) => void;
 }
 
-const Marker: React.FC<MarkerProps> = ({ coordinates, setCoordinates }) => {
+const Marker: React.FC<MarkerProps> = ({ coordinates, setCoordinates, infoBody, onMarkerClick }) => {
   const [infoIndex, setInfoIndex] = useState<number | null>(null);
   const markerRefs = useRef<(google.maps.marker.AdvancedMarkerElement | null)[]>(
     []
@@ -20,7 +22,10 @@ const Marker: React.FC<MarkerProps> = ({ coordinates, setCoordinates }) => {
           <AdvancedMarker
             ref={(el) => (markerRefs.current[index] = el)}
             position={coord}
-            onClick={() => setInfoIndex(index)}
+            onClick={() => {
+              setInfoIndex(index);
+              if (onMarkerClick) onMarkerClick(index);
+            }}
             title={`Marker ${index + 1}`}
             draggable={!!setCoordinates}
             clickable
@@ -40,7 +45,7 @@ const Marker: React.FC<MarkerProps> = ({ coordinates, setCoordinates }) => {
               maxWidth={200}
               onCloseClick={() => setInfoIndex(null)}
             >
-              <div>Info Window {index + 1}</div>
+              {infoBody? infoBody : <div>Info Window</div> }
             </InfoWindow>
           )}
         </React.Fragment>
