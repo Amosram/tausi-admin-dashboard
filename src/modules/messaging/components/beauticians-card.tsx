@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export const BeauticiansCard = () => {
+export const MessagingBeauticiansCard = () => {
   return (
     <Card>
       <CardHeader>

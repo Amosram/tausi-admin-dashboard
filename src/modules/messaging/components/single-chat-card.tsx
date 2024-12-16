@@ -6,12 +6,30 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
+import React from "react";
 import { FiPaperclip, FiSend } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
-export const MessagingChatCard = () => {
+interface SingleChatCardProps {
+  name: string;
+  description: string;
+  link: string;
+}
+
+export const SingleChatCard: React.FC<SingleChatCardProps> = ({
+  name,
+  description,
+  link,
+}) => {
   return (
-    <Card className="h-full w-full">
+    <Card className="h-full w-full flex flex-col justify-between">
       <CardHeader className="flex w-full flex-row items-center py-6 border-b border-gray-400 justify-between">
         <div className="flex gap-4 items-center">
           <div className="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center">
@@ -22,11 +40,23 @@ export const MessagingChatCard = () => {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <CardTitle>Card Title</CardTitle>
-            <CardDescription>Card Description</CardDescription>
+            <CardTitle>{name}</CardTitle>
+            <CardDescription>{description}</CardDescription>
           </div>
         </div>
-        <MoreVertical className="h-4 w-4" />
+        <DropdownMenu>
+          <DropdownMenuTrigger className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreVertical className="h-4 w-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>
+              <Link to={link} className="hover:text-primary">
+                View details
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardHeader>
       <CardContent>
         <p>Card Content</p>

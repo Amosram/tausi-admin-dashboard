@@ -7,7 +7,7 @@ export const usersApi = createApi({
   reducerPath: "usersApi",
   baseQuery: axiosBaseQuery({ isAuthorizedApi: true }),
   tagTypes: ["Users", "UserDetails"],
-  refetchOnMountOrArgChange: false,
+  refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
     getUsers: builder.query<TausiUser[], number>({
       query: (limit) => ({
@@ -15,7 +15,7 @@ export const usersApi = createApi({
         method: "GET",
       }),
       providesTags: ["Users"],
-      keepUnusedDataFor: 60,
+      keepUnusedDataFor: 0,
     }),
     getUserById: builder.query<TausiUserDetails, string>({
       query: (userId) => ({

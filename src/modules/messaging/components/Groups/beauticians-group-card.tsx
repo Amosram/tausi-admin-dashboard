@@ -8,12 +8,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { TausiUser } from "@/models/user";
 import { FiMessageSquare, FiSearch } from "react-icons/fi";
 import { debounce } from "lodash";
+import { useActiveComponentContext } from "../../context";
+import { SingleChatCard } from "../single-chat-card";
+import { Professional } from "@/models";
 
 interface BeauticiansGroupCardProps {
-  data: TausiUser[];
+  data: Professional[];
   isLoading: boolean;
   error: any;
 }
@@ -24,6 +26,7 @@ export const BeauticiansGroupCard: React.FC<BeauticiansGroupCardProps> = ({
   error,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { changeActiveComponent } = useActiveComponentContext();
 
   const debouncedSearch = useCallback(
     debounce((term: string) => {
@@ -34,14 +37,23 @@ export const BeauticiansGroupCard: React.FC<BeauticiansGroupCardProps> = ({
 
   const filteredBeauticians = useMemo(() => {
     if (!searchTerm) return beauticians;
-
+  
     return beauticians.filter((beautician) =>
-      beautician.name.toLowerCase().includes(searchTerm.toLowerCase())
+      beautician.businessName && beautician.businessName.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [beauticians, searchTerm]);
+  
 
-  const handleSingleMessage = () => {
+  const handleSingleMessage = (beautician: Professional) => {
     console.log("Action");
+
+    changeActiveComponent(
+      <SingleChatCard
+        name={beautician.businessName}
+        description={beautician.user?.name}
+        link={`/professionals/${beautician.id}`}
+      />
+    );
   };
 
   if (isLoading)
@@ -95,14 +107,14 @@ export const BeauticiansGroupCard: React.FC<BeauticiansGroupCardProps> = ({
                 </div>
               </div>
               <div className="flex flex-col gap-1 text-sm">
-                <h1>{beautician.name}</h1>
+                <h1>{beautician.user?.name}</h1>
                 <p>________ completed orders</p>
               </div>
             </div>
             <div className="flex flex-col gap-2">
               <button
                 className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm"
-                onClick={() => handleSingleMessage()}
+                onClick={() => handleSingleMessage(beautician)}
               >
                 <FiMessageSquare size={18} />
                 <span className="font-semibold">Text</span>

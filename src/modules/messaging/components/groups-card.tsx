@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,25 +9,28 @@ import {
 } from "@/components/ui/card";
 import { FiEye, FiMessageSquare } from "react-icons/fi";
 import { useActiveComponentContext } from "../context";
-import { ChatCard } from "../components/chat-card";
+import { MessagingChatCard as ChatCard } from "../components/chat-card";
 import { BeauticiansGroupCard } from "./Groups/beauticians-group-card";
 import { useGetUsersQuery } from "@/modules/users/api/usersApi";
 import { useUserMetrics } from "@/modules/users/hooks/useUserMetrics";
 import { ClientsGroupCard } from "./Groups/clients-group-card";
 import { TausiUser } from "@/models/user";
+import { useGetProfessionalsQuery } from "@/modules/applications/api/professionalApi";
 
-export const GroupsCard = () => {
-  const { data: users, isLoading, error } = useGetUsersQuery(100000);
+export const MessagingGroupsCard = () => {
+  const { data: users, isLoading, error } = useGetUsersQuery(10000);
+  const {data, } = useGetProfessionalsQuery(10000);
   const userMetrics = useUserMetrics(users);
   const { changeActiveComponent } = useActiveComponentContext();
   const [activeGroupType, setActiveGroupType] = useState<
     "professionals" | "clients"
   >("professionals");
 
-  const beauticians =
-    users?.filter(
-      (user: TausiUser) => user.sessionData?.userTypeSession === "professional"
-    ) || [];
+  const beauticians = data?.data || [];
+  // const beauticians =
+  //   users?.filter(
+  //     (user: TausiUser) => user.sessionData?.userTypeSession === "professional"
+  //   ) || [];
   const clients =
     users?.filter(
       (user: TausiUser) => user.sessionData?.userTypeSession === "client"
@@ -82,7 +85,8 @@ export const GroupsCard = () => {
   const groupTypes = [
     {
       name: "Professionals",
-      memberNumber: userMetrics.professionalMetrics?.totalProfessionals || 0,
+      memberNumber: beauticians.length || 0,
+      // memberNumber: userMetrics.professionalMetrics?.totalProfessionals || 0,
       type: "professionals" as const,
     },
     {
