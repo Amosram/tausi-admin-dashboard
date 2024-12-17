@@ -1,6 +1,4 @@
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreVertical } from "lucide-react";
-import { useGetVerifiedBeauticiansQuery, useUpdateverifiedBeauticiansMutation } from "../api/professionalApi";
+import { useGetVerifiedBeauticiansQuery, useSearchProfessionalsMutation, useUpdateverifiedBeauticiansMutation } from "../api/professionalApi";
 import { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
 import { VerifiedBeauticians } from "@/models";
 import { Link } from "react-router-dom";
@@ -9,15 +7,61 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { useMemo, useState } from "react";
 import Loader from "@/components/layout/Loader";
-import { toast, useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import UnVerifiedBeauticianStats from "../components/UnVerifiedStats";
+import { useSearch } from "@/hooks/useSearch";
+import SearchBar from "@/components/ui/Table/SearchBar";
 
 
 const VerifiedBeuticans: React.FC = () => {
 
-  const {data, isLoading, isError} = useGetVerifiedBeauticiansQuery(10000);
+  const {data, isLoading, isError, refetch} = useGetVerifiedBeauticiansQuery(10000);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
+  const applicationData = data?.data || [];
+
+  const columnLabels: Record<string, string> = {
+    businessName: "Business",
+    locationAddress: "Location",
+  };
+
+  const searchableColumns = Object.keys(columnLabels);
+  
   const toast = useToast();
+  
+  const {
+    data: displayData,
+    isSearchActive,
+    isLoading: isSearchLoading,
+    triggerSearch,
+    clearSearch,
+  } = useSearch({
+    initialData: applicationData,
+    searchMutation: useSearchProfessionalsMutation,
+    searchableColumns: searchableColumns,
+    onSearchError: (error) => {
+      toast.toast({
+        title: "Search Error",
+        description: "Failed to perform search. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Search error:", error);
+    },
+    // Custom clear handler to refetch original data
+    onClearSearch: () => {
+      refetch();
+    },
+  });
+
+  const handleStatusFilter = (status: string | null) => {
+    setColumnFilters((prevFilters) => {
+      const newFilters = prevFilters.filter((filter) => filter.id !== "isActive");
+      if (status !== null) {
+        newFilters.push({ id: "isActive", value: status === "Active" });
+      }
+      return newFilters;
+    });
+  };
 
   const STATUS_OPTIONS = useMemo(() => {
     if (!data?.data) return [];
@@ -42,7 +86,6 @@ const VerifiedBeuticans: React.FC = () => {
   }, [data]);
 
   const getStatusBadge = (verificationStatus: string) => {
-    console.log("verificationStatus===========>", verificationStatus);
     switch (verificationStatus) {
     case "pending":
       return (
@@ -94,7 +137,7 @@ const VerifiedBeuticans: React.FC = () => {
             "title": "Error",
             "description": "Failed to update verification status",
             "variant": "destructive",
-          })
+          });
           return;
         }
       }
@@ -115,6 +158,10 @@ const VerifiedBeuticans: React.FC = () => {
     );
   };
 
+  const handleClearFilters = () => {
+    clearSearch();
+  };
+
   const columns: ColumnDef<VerifiedBeauticians>[] = [
     {
       accessorKey: "id",
@@ -122,7 +169,7 @@ const VerifiedBeuticans: React.FC = () => {
       cell: ({ row }) => (
         <BeauticianIdCell
           id={row.original.id}
-          verificationStatus={row.original.verificationData.verificationStatus}
+          verificationStatus={row.original.verificationData?.verificationStatus || "unknown"}
           originalData={row.original}
         />
       ),
@@ -203,7 +250,13 @@ const VerifiedBeuticans: React.FC = () => {
     // }
   ];
 
-  if (isLoading) {
+  const handleCombinedSearch = (criteria, updateSearchParams = true) => {
+    criteria.forEach(({ column, value, operator, timeRange }) => {
+      triggerSearch(column, value, operator, timeRange, updateSearchParams);
+    });
+  };
+
+  if (isLoading || isSearchLoading) {
     return <Loader />;
   }
     
@@ -211,16 +264,55 @@ const VerifiedBeuticans: React.FC = () => {
     return <div>Error loading Verified Beauticians</div>;
   }
 
+
   return (
-    <div className="pr-6 pl-6">
-      <UnVerifiedBeauticianStats beauticians={data.data} />
-      <TanStackTable
-        data={data.data}
-        columns={columns}
-        columnToBeFiltered="verificationStatus"
-        STATUS_OPTIONS={STATUS_OPTIONS}
-      />
-    </div>
+    <>
+      <div className="pr-6 pl-6">
+        < UnVerifiedBeauticianStats beauticians = { data.data } />
+        {/* TODO: ENSURE CORRECT IMPLEMENTATION AFTER BACKEND FIX */}
+        {/* <Filters
+        filters={searchPresets.applications.defaultFilters}
+        onFilterSelect={(filter) =>
+          handleCombinedSearch([
+            {
+              column: filter.column,
+              value: filter.value,
+              operator: filter.operator,
+            },
+          ])
+        }
+      /> */}
+        <SearchBar
+          columns={searchableColumns}
+          onSearch={(column, value, operator, timeRange) =>
+            handleCombinedSearch([{ column, value, operator, timeRange }])
+          }
+          onClear={handleClearFilters}
+          columnLabels={columnLabels}
+        />
+
+     
+        {/**
+         * Ensure you maintain how data is being passed to the table
+         */}
+        <TanStackTable
+          data={isSearchActive ? displayData : applicationData}
+          columns={columns}
+          withSearch={false}
+          columnFilters={columnFilters}
+        />
+      </div>
+      {/* <div className="pr-6 pl-6">
+       <UnVerifiedBeauticianStats beauticians={data.data} />
+       <TanStackTable
+         data={data.data}
+         columns={columns}
+         columnToBeFiltered="verificationStatus"
+         STATUS_OPTIONS={STATUS_OPTIONS}
+       />
+     </div> */}
+
+    </>
   );
 };
 

@@ -432,4 +432,26 @@ export const searchPresets = {
       },
     ],
   },
+  applications:{
+    defaultFilters: [
+      {
+        label: "Pending",
+        column: "verificationStatus",
+        value: "pending",
+        operator: "eq" as SearchOperator,
+      },
+      {
+        label: "Review",
+        column: "verificationStatus",
+        value: "review",
+        operator: "eq" as SearchOperator,
+      },
+      {
+        label: "Rejected",
+        column: "verificationStatus",
+        value: "rejected",
+        operator: "eq" as SearchOperator,
+      }
+    ]
+  }
 };

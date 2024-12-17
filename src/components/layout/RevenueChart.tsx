@@ -72,11 +72,11 @@ const RevenueChart: React.FC = () => {
           <span className="font-semibold">$122,239</span>
           <span className="text-green-600">+0.4%</span>
         </div>
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <span className="text-gray-500">■</span>
           <span>Expense</span>
           <span className="font-semibold">$8,345</span>
-        </div>
+        </div> */}
       </div>
 
       {/* Chart Section */}
@@ -88,7 +88,7 @@ const RevenueChart: React.FC = () => {
           <Tooltip content={<CustomTooltip />} />
           <Legend verticalAlign="top" align="left" height={36} />
           <Bar dataKey="income" fill="#ff4500" barSize={20} />
-          <Bar dataKey="expense" fill="#888888" barSize={20} />
+          {/* <Bar dataKey="expense" fill="#888888" barSize={20} /> */}
         </BarChart>
       </ResponsiveContainer>
     </div>
