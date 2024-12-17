@@ -28,41 +28,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import VerificationDocuments from "../components/VerificationDocuments";
+import ProfileCard from "../components/UnverifiedProfileCard";
 
 const Maps = lazy(() => import("@/components/ui/maps"));
 
-// verified beautician personal profile
-
-const ProfileCard: React.FC<{
-  beautician: VerifiedBeauticians;
-}> = ({ beautician }) => (
-  <Card>
-    <CardHeader className="flex flex-row justify-between items-center">
-      <CardTitle>Personal Profile</CardTitle>
-    </CardHeader>
-    <CardContent className="flex flex-col items-center text-center">
-      <Avatar className="h-auto w-[50%] rounded-full object-contain">
-        <AvatarImage
-          src={beautician.user?.profilePictureUrl || "/default-avatar.png"}
-          alt={beautician.user?.name}
-        />
-        <AvatarFallback>
-          {beautician.user?.name
-            .split(" ")
-            .map((name) => name[0])
-            .join("")
-            .toUpperCase()
-          }
-        </AvatarFallback>
-      </Avatar>
-      <div className="space-y-2">
-        <p className="font-semibold md:text-4xl text-3xl">{beautician.user?.name}</p>
-        <p className="text-muted-foreground text-md md:text-xl">{beautician.user?.email}</p>
-        {beautician.user?.bio && <p className="text-sm mt-1">{beautician.user?.bio}</p>}
-      </div>
-    </CardContent>
-  </Card>
-);
 
 // Contact information
 

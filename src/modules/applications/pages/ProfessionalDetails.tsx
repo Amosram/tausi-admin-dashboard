@@ -26,41 +26,9 @@ import { cn } from "@/lib/utils";
 import DeactivateDialog from "../components/DeactivateDialog";
 import { toast } from "@/hooks/use-toast";
 import BoothAssignmentCard from "../components/BoothAssignmentCard";
+import ProfessionalProfileCard from "../components/ProfessionalProfileCard";
 
 const Maps = lazy(() => import("@/components/ui/maps"));
-
-//  personal profile
-
-const ProfileCard: React.FC<{
-  professional: Professional;
-}> = ({ professional }) => (
-  <Card>
-    <CardHeader className="flex flex-row justify-between items-center">
-      <CardTitle>Personal Profile</CardTitle>
-    </CardHeader>
-    <CardContent className="flex flex-col items-center text-center">
-      <Avatar className="h-auto w-[50%] rounded-full object-contain">
-        <AvatarImage
-          src={professional.user?.profilePictureUrl || "/default-avatar.png"}
-          alt={professional.user?.name}
-        />
-        <AvatarFallback>
-          {professional.user?.name
-            .split(" ")
-            .map((name) => name[0])
-            .join("")
-            .toUpperCase()
-          }
-        </AvatarFallback>
-      </Avatar>
-      <div className="space-y-2">
-        <p className="font-semibold md:text-4xl text-3xl capitalize">{professional.user?.name}</p>
-        <p className="text-muted-foreground text-md md:text-xl">{professional.user?.email}</p>
-        {professional.user?.bio && <p className="text-sm mt-1">{professional.user?.bio}</p>}
-      </div>
-    </CardContent>
-  </Card>
-);
 
 // Contact information
 
@@ -395,7 +363,7 @@ const ProfessionalDetails = () => {
       {/* professional Profile */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-1 grid grid-cols-1 gap-4">
-          <ProfileCard professional={professional} />
+          <ProfessionalProfileCard professional={professional} />
           <ProfessionalDetailsCard professional={professional} />
         </div>
         {/* Contact information */}
