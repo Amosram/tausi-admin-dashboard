@@ -4,15 +4,12 @@ import { useGetProfessionalsQuery, useSearchProfessionalsMutation } from "../api
 import TanStackTable from "@/components/ui/Table/Table";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreVertical } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
 import Loader from "@/components/layout/Loader";
 import BeauticianListStats from "../components/BeauticianListStats";
-import { searchPresets, useSearch } from "@/hooks/useSearch";
+import { useSearch } from "@/hooks/useSearch";
 import { toast } from "@/hooks/use-toast";
-import Filters from "@/components/ui/Table/Filters";
 import SearchBar from "@/components/ui/Table/SearchBar";
 
 const ProfessionalDashboard = () => {
@@ -23,7 +20,7 @@ const ProfessionalDashboard = () => {
 
   const columnLabels: Record<string, string> = {
     businessName: "Business",
-   locationAddress: "Location",
+    locationAddress: "Location",
   };
 
   const searchableColumns = Object.keys(columnLabels);
@@ -207,7 +204,8 @@ const ProfessionalDashboard = () => {
 
   return (
     <>
-      {/* <Filters
+      <div className="pr-6 pl-6">
+        {/* <Filters
         filters={searchPresets.professionals.defaultFilters}
         onFilterSelect={(filter) =>
           handleCombinedSearch([
@@ -219,17 +217,17 @@ const ProfessionalDashboard = () => {
           ])
         }
       /> */}
-      <BeauticianListStats beauticians={professionalData} />
-      <SearchBar
-        columns={searchableColumns}
-        onSearch={(column, value, operator, timeRange) =>
-          handleCombinedSearch([{ column, value, operator, timeRange }])
-        }
-        onClear={handleClearFilters}
-        columnLabels={columnLabels}
-      />
+        <BeauticianListStats beauticians={professionalData} />
+        <SearchBar
+          columns={searchableColumns}
+          onSearch={(column, value, operator, timeRange) =>
+            handleCombinedSearch([{ column, value, operator, timeRange }])
+          }
+          onClear={handleClearFilters}
+          columnLabels={columnLabels}
+        />
 
-      <div className="pr-6 pl-6">
+      
         {/**
          * Ensure you maintain how data is being passed to the table
          */}
@@ -239,7 +237,7 @@ const ProfessionalDashboard = () => {
           withSearch={false}
         />
       </div>
-    {/* <div className="pr-6 pl-6">
+      {/* <div className="pr-6 pl-6">
       <BeauticianListStats beauticians={data.data} />
       <TanStackTable
         data={data.data}

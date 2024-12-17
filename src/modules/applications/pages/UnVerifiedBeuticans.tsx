@@ -9,9 +9,8 @@ import { useMemo, useState } from "react";
 import Loader from "@/components/layout/Loader";
 import { useToast } from "@/hooks/use-toast";
 import UnVerifiedBeauticianStats from "../components/UnVerifiedStats";
-import { searchPresets, useSearch } from "@/hooks/useSearch";
+import { useSearch } from "@/hooks/useSearch";
 import SearchBar from "@/components/ui/Table/SearchBar";
-import Filters from "@/components/ui/Table/Filters";
 
 
 const VerifiedBeuticans: React.FC = () => {
@@ -268,9 +267,10 @@ const VerifiedBeuticans: React.FC = () => {
 
   return (
     <>
-    < UnVerifiedBeauticianStats beauticians = { data.data } />
-    {/* TODO: ENSURE CORRECT IMPLEMENTATION AFTER BACKEND FIX */}
-    {/* <Filters
+      <div className="pr-6 pl-6">
+        < UnVerifiedBeauticianStats beauticians = { data.data } />
+        {/* TODO: ENSURE CORRECT IMPLEMENTATION AFTER BACKEND FIX */}
+        {/* <Filters
         filters={searchPresets.applications.defaultFilters}
         onFilterSelect={(filter) =>
           handleCombinedSearch([
@@ -282,16 +282,16 @@ const VerifiedBeuticans: React.FC = () => {
           ])
         }
       /> */}
-      <SearchBar
-        columns={searchableColumns}
-        onSearch={(column, value, operator, timeRange) =>
-          handleCombinedSearch([{ column, value, operator, timeRange }])
-        }
-        onClear={handleClearFilters}
-        columnLabels={columnLabels}
-      />
+        <SearchBar
+          columns={searchableColumns}
+          onSearch={(column, value, operator, timeRange) =>
+            handleCombinedSearch([{ column, value, operator, timeRange }])
+          }
+          onClear={handleClearFilters}
+          columnLabels={columnLabels}
+        />
 
-      <div className="pr-6 pl-6">
+     
         {/**
          * Ensure you maintain how data is being passed to the table
          */}
@@ -302,7 +302,7 @@ const VerifiedBeuticans: React.FC = () => {
           columnFilters={columnFilters}
         />
       </div>
-     {/* <div className="pr-6 pl-6">
+      {/* <div className="pr-6 pl-6">
        <UnVerifiedBeauticianStats beauticians={data.data} />
        <TanStackTable
          data={data.data}
