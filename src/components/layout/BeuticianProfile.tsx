@@ -4,6 +4,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { FaChevronDown } from 'react-icons/fa';
 import { useGetProfessionalsQuery } from '@/modules/applications/api/professionalApi';
 import Loader from './Loader';
+import { useNavigate } from 'react-router-dom';
 
 const sortOptions = ['Newest', 'Highest Rated', 'Most Reviews'];
 
@@ -11,6 +12,7 @@ export default function BeauticianProfiles() {
   // State to track the selected sort option
   const [selectedSort, setSelectedSort] = useState<string>('Newest');
   const {data, isLoading, isError} = useGetProfessionalsQuery(15);
+  const navigate = useNavigate();
   
   const topRatedData = data?.data || [];
 
@@ -58,6 +60,7 @@ export default function BeauticianProfiles() {
               <div
                 key={index}
                 className="min-w-[250px] border border-gray-300 rounded-lg overflow-hidden flex flex-col items-center p-4 cursor-pointer hover:shadow-md hover:bg-gray-100"
+                onClick={() => navigate(`/professionals/${beautician.id}`)}
               >
                 <div className="w-20 h-20 rounded-lg flex items-center justify-center mb-4">
                   <img
