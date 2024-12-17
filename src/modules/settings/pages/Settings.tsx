@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import GeneralSettings from './components/GeneralSettings'
-import AppearanceSettings from './components/AppearanceSettings'
-import AboutSettings from './components/AboutSettings'
-import { Settings, Key, Database, Palette, Info } from 'lucide-react'
-import ApiIntegrations from './components/ApiIntergration'
-import FirebaseConfiguration from './components/FirebaseConfigurations'
+import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import GeneralSettings from './components/GeneralSettings';
+import AppearanceSettings from './components/AppearanceSettings';
+import AboutSettings from './components/AboutSettings';
+import { Settings, Key, Database, Palette, Info } from 'lucide-react';
+import ApiIntegrations from './components/ApiIntergration';
+import FirebaseConfiguration from './components/FirebaseConfigurations';
 
 export default function SettingsPage() {
-  const [primaryColor, setPrimaryColor] = useState('#1264A3')
-  const [secondaryColor, setSecondaryColor] = useState('#2EB67D')
-  const [font, setFont] = useState('Lato')
+  const [primaryColor, setPrimaryColor] = useState('#1264A3');
+  const [secondaryColor, setSecondaryColor] = useState('#2EB67D');
+  const [font, setFont] = useState('Lato');
 
   return (
     <div className="container mx-auto p-6">

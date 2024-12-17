@@ -49,7 +49,7 @@ export default function GeneralSettings() {
               onChange={handleLogoUpload}
               className="hidden"
             />
-            <Button asChild>
+            <Button asChild className='bg-black'>
               <label htmlFor="logo" className="cursor-pointer">
                 <Upload className="mr-2 h-4 w-4" /> Upload Logo
               </label>
@@ -60,7 +60,9 @@ export default function GeneralSettings() {
             )}
           </div>
         </div>
-        <Button onClick={handleSave} className="w-full">Save Changes</Button>
+        <div className="flex justify-center">
+          <Button onClick={handleSave} className="w-[50%] bg-green-600">Save Changes</Button>
+        </div>
       </CardContent>
     </Card>
   );
