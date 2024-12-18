@@ -70,6 +70,7 @@ const SidebarAccordion = ({ title, icon, children, isOpen, onLinkClick  }) => {
       type="single"
       collapsible
       defaultValue={isActive ? "accordion" : undefined}
+      className="bg-card"
     >
       <AccordionItem value="accordion">
         <AccordionTrigger
@@ -126,7 +127,7 @@ const SideBar = () => {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
+      <SidebarHeader className="bg-card">
         <img
           src="/tausi_logo-2.png"
           alt="Logo"
@@ -138,7 +139,7 @@ const SideBar = () => {
           className="w-32 mx-auto py-2 dark:block hidden"
         />
       </SidebarHeader>
-      <SidebarContent className="mt-2 overflow-y-auto custom-scrollbar">
+      <SidebarContent className="mt-2 overflow-y-auto custom-scrollbar bg-card">
         <SidebarGroupContent>
           <SidebarMenu>
             {menuItems.map((item) => {

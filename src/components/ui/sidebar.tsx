@@ -279,7 +279,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <GiHamburgerMenu className="dark:text-black"/>
+      <GiHamburgerMenu className="dark:text-gray-300"/>
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
