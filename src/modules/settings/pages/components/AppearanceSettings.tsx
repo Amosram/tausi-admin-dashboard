@@ -5,9 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from '@radix-ui/react-radio-group';
-import {Switch} from "@radix-ui/react-switch";
-import {Slider} from "@radix-ui/react-slider";
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radioGroup';
+import { Switch } from '@/components/ui/switch';
+import { Slider } from '@/components/ui/slider';
+
 
 interface AppearanceSettingsProps {
     primaryColor: string
@@ -174,7 +175,9 @@ export default function AppearanceSettings({
           </div>
         </div>
 
-        <Button onClick={handleSave} className="w-full">Save Changes</Button>
+        <div className="flex justify-center">
+          <Button onClick={handleSave} className="w-[50%] bg-green-600">Save Changes</Button>
+        </div>
       </CardContent>
     </Card>
   );
