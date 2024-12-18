@@ -111,6 +111,7 @@ const TanStackTable = <T,>({
       checked={table.getIsAllPageRowsSelected()}
       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
       aria-label="Select all"
+      className="dark:bg-gray-300"
     />
   );
 
@@ -119,6 +120,7 @@ const TanStackTable = <T,>({
       checked={row.getIsSelected()}
       onCheckedChange={(value) => row.toggleSelected(!!value)}
       aria-label="Select row"
+      className="dark:bg-gray-300"
     />
   );
 
@@ -146,32 +148,32 @@ const TanStackTable = <T,>({
         aria-label="Pagination"
       >
         <div className="hidden sm:flex space-x-5 items-center">
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 dark:text-gray-300">
             Showing page{" "}
-            <span className="font-medium text-gray-900">
+            <span className="font-bold text-gray-900 dark:text-gray-300">
               {table.getState().pagination.pageIndex + 1}{" "}
             </span>{" "}
             of{" "}
-            <span className="font-medium text-gray-900">
+            <span className="font-bold text-gray-900 dark:text-gray-300">
               {table.getPageCount()}
             </span>
           </p>
-          <select
-            className="block w-26 bg-background rounded-md border-0 py-2 pl-3 pr-10 text-gray-900 ring-1 ring-inset focus:ring-2 focus:ring-orange-600 sm:text-sm sm:leading-6"
+            <select
+            className="block w-26 bg-gray-800 text-white rounded-md border-0 py-2 pl-3 pr-10 ring-1 ring-inset ring-gray-700 focus:ring-2 focus:ring-orange-600 sm:text-sm sm:leading-6"
             value={table.getState().pagination.pageSize}
             onChange={(e) => table.setPageSize(Number(e.target.value))}
-          >
+            >
             {[10, 20, 30, 50].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
-                Show {pageSize}
+              Show {pageSize}
               </option>
             ))}
-          </select>
+            </select>
         </div>
 
         <div className="flex-1 flex justify-between sm:justify-end ml-3">
           <button
-            className="relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+            className="relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-card hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-orange-600 cursor-pointer"
             onClick={() =>
               table.setPageIndex(
                 Math.max(0, table.getState().pagination.pageIndex - 5)
@@ -196,7 +198,7 @@ const TanStackTable = <T,>({
           </button>
 
           <button
-            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light hover:text-gray-700"
+            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light hover:text-gray-700 dark:bg-card dark:text-gray-300 dark:hover:bg-orange-600 cursor-pointer"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -204,7 +206,7 @@ const TanStackTable = <T,>({
           </button>
 
           <button
-            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light hover:text-gray-700"
+            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light hover:text-gray-700 dark:bg-card dark:text-gray-300 dark:hover:bg-orange-600 cursor-pointer"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
@@ -212,7 +214,7 @@ const TanStackTable = <T,>({
           </button>
 
           <button
-            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+            className="ml-3 relative inline-flex items-center px-4 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-card hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-orange-600 cursor-pointer"
             onClick={() =>
               table.setPageIndex(table.getState().pagination.pageIndex + 5)
             }
@@ -255,7 +257,7 @@ const TanStackTable = <T,>({
                 size="sm"
                 variant="secondary"
                 onClick={() => setRowSelection({})}
-                className="bg-primary text-white"
+                className="bg-primary text-white dark:bg-card dark:text-gray-300 dark:hover:bg-orange-600"
               >
                 Clear Selection
               </Button>
@@ -338,7 +340,7 @@ const TanStackTable = <T,>({
                       <DebouncedInput
                         value={globalFilter ?? ""}
                         onChange={(value) => setGlobalFilter(String(value))}
-                        className="font-lg border p-2 shadow bg-background rounded-full w-1/2 border-gray-400 flex-1 px-4"
+                        className="font-lg border p-2 shadow bg-card rounded-full w-1/2 border-gray-400 flex-1 px-4"
                         placeholder="Search all columns..."
                       />
 
@@ -347,7 +349,7 @@ const TanStackTable = <T,>({
                           <DropdownMenuTrigger asChild className="outline-none">
                             <Button
                               variant="light"
-                              className="gap-1 rounded-full"
+                              className="gap-1 rounded-full dark:bg-card dark:text-gray-300 dark:hover:bg-orange-600"
                             >
                               <Clock className="h-4 w-4" />
                               {sorting[0]?.desc
@@ -378,7 +380,7 @@ const TanStackTable = <T,>({
                       ) : (
                         <Button
                           onClick={button.onClick}
-                          className={`${button.className} flex items-center`}
+                          className={`${button.className} flex items-center dark:bg-card dark:text-gray-300 dark:hover:bg-orange-600`}
                         >
                           {button.icon && <span>{button.icon}</span>}
                           {button.label}
@@ -389,7 +391,7 @@ const TanStackTable = <T,>({
                 </>
               ) : null}
             </div>
-            <table className="w-full mt-2 text-sm text-left text-gray-600 shadow-md border round-xl">
+            <table className="w-full mt-2 text-sm text-left text-gray-600 dark:text-gray-300 shadow-md border round-xl">
               {/* <TableHeader table={table} /> */}
               {/* NOTE: IF YOU FIND ERRORS JUST UNCOMMENT THE ABOVE COMPONENT AND COMMENT OUT THE BELOW TABLE HEAD */}
               <thead>
@@ -413,9 +415,9 @@ const TanStackTable = <T,>({
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                         {header.column.getCanSort() && (
                           <span className="ml-2 inline-flex items-center">
                             {header.column.getIsSorted() === "asc" && (
@@ -432,12 +434,12 @@ const TanStackTable = <T,>({
                 ))}
               </thead>
 
-              <tbody className="bg-white border-b hover:bg-gray-50">
+              <tbody className="bg-white dark:bg-card border-b hover:bg-gray-50">
                 {table.getRowModel().rows.length > 0 ? (
                   table.getRowModel().rows.map((row) => (
                     <tr
                       key={row.id}
-                      className="bg-white border-b hover:bg-gray-50"
+                      className="bg-white dark:bg-card border-b hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
                       <td className="w-4 p-3">
                         <RowCheckbox row={row} />
@@ -476,9 +478,9 @@ const TanStackTable = <T,>({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.footer,
-                                header.getContext()
-                              )}
+                              header.column.columnDef.footer,
+                              header.getContext()
+                            )}
                         </th>
                       ))}
                     </tr>

@@ -36,15 +36,17 @@ export const TableFilters: React.FC<TableFiltersProps> = ({
   return (
     <div className="flex gap-2 flex-wrap justify-start">
       {filters.map((filter) => (
-        <button
-          key={filter.value}
-          onClick={() => handleFilterChange(filter.value)}
-          className={`px-4 py-2 rounded-3xl w-auto text-sm ${
-            activeFilter === filter.value ? activeClassName : inactiveClassName
-          }`}
-        >
-          {filter.label}
-        </button>
+      <button
+        key={filter.value}
+        onClick={() => handleFilterChange(filter.value)}
+          className={`px-4 py-2 rounded-3xl w-auto text-sm transition-colors duration-300 dark:hover:bg-orange-600 ${
+        activeFilter === filter.value
+          ? `${activeClassName} dark:bg-orange-600 dark:text-gray-300`
+          : `${inactiveClassName} dark:bg-gray-700 dark:text-gray-300`
+        }`}
+      >
+        {filter.label}
+      </button>
       ))}
     </div>
   );

@@ -112,7 +112,7 @@ export const UsersTable = ({ users }: UsersTableProps) => {
   };
 
   return (
-    <div>
+    <div className="p-6">
       <div className="md:px-4 px-1 my-4 flex gap-3 md:flex-row md:justify-between flex-col items-center">
         <div className="flex">
           <TableFilters filters={usersFilters} queryParam="filter" />
