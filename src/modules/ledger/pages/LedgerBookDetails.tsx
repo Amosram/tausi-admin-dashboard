@@ -57,7 +57,7 @@ const LedgerBookDetails = () => {
       entries = entries.filter(
         (entry) =>
           entry.title.toLowerCase().includes(searchTerm) ||
-          (entry.remark && typeof entry.remark === "string" && entry.remark.toLowerCase().includes(searchTerm))
+          (entry.remark && typeof entry.remark === "string" && (entry.remark as string).toLowerCase().includes(searchTerm))
       );
     }
   
