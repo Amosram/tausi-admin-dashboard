@@ -8,20 +8,20 @@ export default function AboutSettings() {
         <div className="space-y-4">
           <h3 className="text-lg font-medium">About This Application</h3>
           <p>
-                        This dashboard application is designed to help you manage your projects, track analytics, and streamline your workflow. Built with the latest technologies, it offers a robust and user-friendly interface for all your management needs.
+                        This dashboard application is designed to help Tausi improve their functionality which includes:- track analytics, and streamline your workflow. Built with the latest technologies, it offers a robust and user-friendly interface for all your management needs.
           </p>
         </div>
 
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Version Information</h3>
           <p>Current Version: 1.0.0</p>
-          <Button variant="outline">Check for Updates</Button>
+          <Button variant="default">Check for Updates</Button>
         </div>
 
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Credits</h3>
           <ul className="list-disc list-inside space-y-2">
-            <li>Developed by: Your Company Name</li>
+            <li>Developed by: Tausi</li>
             <li>UI Components: shadcn/ui</li>
             <li>Icons: Lucide Icons</li>
           </ul>

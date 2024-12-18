@@ -52,7 +52,7 @@ export default function FirebaseConfiguration() {
             className="flex-1">
                         Test Connection
           </Button>
-          <Button onClick={handleSave} className="flex-1">Save Configuration</Button>
+          <Button onClick={handleSave} className="flex-1 bg-green-600">Save Configuration</Button>
         </div>
       </CardContent>
     </Card>

@@ -61,7 +61,9 @@ export default function ApiIntegrations() {
             type="password"
           />
         </div>
-        <Button onClick={handleSave} className="w-full">Save API Settings</Button>
+        <div className="flex justify-center">
+          <Button onClick={handleSave} className="w-[50%] bg-green-600">Save Changes</Button>
+        </div>
       </CardContent>
     </Card>
   );
