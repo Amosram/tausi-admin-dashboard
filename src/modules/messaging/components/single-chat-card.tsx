@@ -1,82 +1,217 @@
+import { auth, firestore, storage } from "@/app/firebase";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreVertical } from "lucide-react";
-import React from "react";
-import { FiPaperclip, FiSend } from "react-icons/fi";
-import { Link } from "react-router-dom";
+  collection,
+  query,
+  where,
+  addDoc,
+  serverTimestamp,
+  onSnapshot,
+} from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useEffect, useState, useRef } from "react";
+import { FiSend, FiPaperclip } from "react-icons/fi";
+import { ChatMessage } from "./chat-message";
+import { FaChevronLeft } from "react-icons/fa";
+import { useActiveComponentContext } from "../context";
 
 interface SingleChatCardProps {
-  name: string;
-  description: string;
-  link: string;
+  recipientId: string;
+  component: React.ReactNode;
 }
 
 export const SingleChatCard: React.FC<SingleChatCardProps> = ({
-  name,
-  description,
-  link,
+  recipientId,
+  component,
 }) => {
+  const messagesRef = collection(firestore, "chats");
+  const [messages, setMessages] = useState([]);
+  const [messageInputValue, setMessageInputValue] = useState("");
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const { changeActiveComponent } = useActiveComponentContext();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const chatQuery = query(messagesRef, where("recipient", "==", recipientId));
+
+    const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
+      const chatMessages = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setMessages(chatMessages);
+    });
+
+    return () => unsubscribe();
+  }, [recipientId]);
+
+  const uploadAttachment = async (file: File) => {
+    if (!file) return null;
+
+    try {
+      const { uid } = auth.currentUser!;
+      const storageRef = ref(
+        storage,
+        `chats/${uid}/${Date.now()}_${file.name}`
+      );
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      return {
+        url: downloadURL,
+        name: file.name,
+        type: file.type,
+        size: file.size,
+      };
+    } catch (error) {
+      console.error("Error uploading attachment: ", error);
+      return null;
+    }
+  };
+
+  const sendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!messageInputValue.trim() && attachments.length === 0) return;
+
+    const { uid, displayName, photoURL } = auth.currentUser!;
+
+    // Upload attachments first
+    const attachmentURLs = await Promise.all(attachments.map(uploadAttachment));
+
+    const newMessage = {
+      text: messageInputValue,
+      createdAt: serverTimestamp(),
+      sender: uid,
+      senderName: displayName || "Unknown",
+      senderAvatar: photoURL || "",
+      recipient: recipientId,
+      read: false,
+      messageType:
+        attachments.length > 0
+          ? attachments[0].type.startsWith("image/")
+            ? "image"
+            : attachments[0].type.startsWith("video/")
+            ? "video"
+            : attachments[0].type.startsWith("audio/")
+            ? "audio"
+            : "text"
+          : "text",
+      attachments: attachmentURLs.filter(Boolean),
+      reactions: {},
+    };
+
+    try {
+      await addDoc(messagesRef, newMessage);
+      setMessageInputValue("");
+      setAttachments([]); // Clear attachments after sending
+      if (fileInputRef.current) fileInputRef.current.value = ""; // Reset file input
+    } catch (error) {
+      console.error("Error sending message: ", error);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const fileList = Array.from(e.target.files);
+      // Limit to 5 attachments
+      setAttachments(fileList.slice(0, 5));
+    }
+  };
+
+  const removeAttachment = (index: number) => {
+    const newAttachments = [...attachments];
+    newAttachments.splice(index, 1);
+    setAttachments(newAttachments);
+
+    // Reset file input if no files left
+    if (newAttachments.length === 0 && fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   return (
-    <Card className="h-full w-full flex flex-col justify-between">
+    <Card className="h-full w-full flex flex-col">
       <CardHeader className="flex w-full flex-row items-center py-6 border-b border-gray-400 justify-between">
-        <div className="flex gap-4 items-center">
-          <div className="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center">
-            <div className="w-8 h-8 relative">
-              <div className="absolute inset-0 bg-white rounded-full" />
-              <div className="absolute bottom-0 right-0 w-4 h-4 bg-yellow-300 rounded-full" />
-              <div className="absolute top-0 right-0 w-4 h-4 bg-green-500 rounded-full" />
-            </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <CardTitle>{name}</CardTitle>
-            <CardDescription>{description}</CardDescription>
-          </div>
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreVertical className="h-4 w-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <Link to={link} className="hover:text-primary">
-                View details
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <CardTitle>
+          <button
+            onClick={() => changeActiveComponent(component)}
+            className="hover:underline flex items-center gap-2"
+          >
+            <FaChevronLeft size={16} />
+            Chat with User {recipientId}
+          </button>
+        </CardTitle>
       </CardHeader>
-      <CardContent>
-        <p>Card Content</p>
+
+      <CardContent className="flex-1 px-4 py-4 overflow-y-auto">
+        {messages.map((msg) => (
+          <ChatMessage key={msg.id} message={msg} />
+        ))}
       </CardContent>
-      <CardFooter className="w-full">
-        <div className="flex items-center gap-2 p-2 w-full">
-          <div className="relative w-full">
-            <input
-              type="text"
-              placeholder="Type a message..."
-              className="w-full p-3 pl-10 pr-10 text-sm bg-sidebar border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary focus:outline-none cursor-pointer">
-              <FiPaperclip size={18} />
+
+      {attachments.length > 0 && (
+        <div className="px-4 pb-2 flex flex-wrap gap-2">
+          {attachments.map((file, index) => (
+            <div
+              key={index}
+              className="relative bg-gray-100 rounded-md p-2 flex items-center"
+            >
+              <span className="mr-2 text-sm truncate max-w-[150px]">
+                {file.name}
+              </span>
+              <button
+                onClick={() => removeAttachment(index)}
+                className="text-red-500 hover:text-red-700"
+              >
+                ×
+              </button>
             </div>
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary hover:text-gray-700 cursor-pointer">
-              <FiSend size={18} />
-            </div>
-          </div>
+          ))}
         </div>
+      )}
+
+      <CardFooter className="w-full">
+        <form
+          onSubmit={sendMessage}
+          className="relative w-full flex items-center"
+        >
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            multiple
+            accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
+            className="hidden"
+            max-size="10485760" // 10MB max file size
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="mr-2 text-primary hover:text-gray-700"
+          >
+            <FiPaperclip size={18} />
+          </button>
+
+          <input
+            type="text"
+            value={messageInputValue}
+            onChange={(e) => setMessageInputValue(e.target.value)}
+            placeholder="Type a message..."
+            className="flex-1 p-3 pl-10 pr-10 text-sm bg-sidebar border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+
+          <FiSend
+            onClick={sendMessage}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary hover:text-gray-700 cursor-pointer"
+            size={18}
+          />
+        </form>
       </CardFooter>
     </Card>
   );

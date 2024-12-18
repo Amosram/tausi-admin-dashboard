@@ -11,6 +11,9 @@ import { Input } from "@/components/ui/input";
 import { TausiUser } from "@/models/user";
 import { FiMessageSquare, FiSearch } from "react-icons/fi";
 import { debounce } from "lodash";
+import { FaChevronLeft } from "react-icons/fa";
+import { useActiveComponentContext } from "../../context";
+import { SingleChatCard } from "../single-chat-card";
 
 interface ClientsGroupCardProps {
   data: TausiUser[];
@@ -24,6 +27,7 @@ export const ClientsGroupCard: React.FC<ClientsGroupCardProps> = ({
   error,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { changeActiveComponent } = useActiveComponentContext();
 
   const debouncedSearch = useCallback(
     debounce((term: string) => {
@@ -35,13 +39,25 @@ export const ClientsGroupCard: React.FC<ClientsGroupCardProps> = ({
   const filteredClients = useMemo(() => {
     if (!searchTerm) return clients;
 
-    return clients.filter((beautician) =>
-      beautician.name.toLowerCase().includes(searchTerm.toLowerCase())
+    return clients.filter((client) =>
+      client.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [clients, searchTerm]);
 
-  const handleSingleMessage = () => {
-    console.log("Action");
+  const handleSingleMessage = (client: TausiUser) => {
+    // Pass ClientsGroupCard as the component prop to render it back
+    changeActiveComponent(
+      <SingleChatCard
+        recipientId={client.id}
+        component={
+          <ClientsGroupCard
+            data={clients}
+            isLoading={isLoading}
+            error={error}
+          />
+        }
+      />
+    );
   };
 
   if (isLoading)
@@ -59,7 +75,15 @@ export const ClientsGroupCard: React.FC<ClientsGroupCardProps> = ({
   return (
     <Card className="overflow-y-scroll">
       <CardHeader>
-        <CardTitle>Clients Group</CardTitle>
+        <CardTitle>
+          <button
+            onClick={() => changeActiveComponent(null)}
+            className="hover:underline flex items-center gap-2"
+          >
+            <FaChevronLeft size={16} />
+            Clients Group
+          </button>
+        </CardTitle>
         <CardDescription>
           <div className="px-4 py-2">
             <div className="relative">
@@ -101,7 +125,7 @@ export const ClientsGroupCard: React.FC<ClientsGroupCardProps> = ({
             <div className="flex flex-col gap-2">
               <button
                 className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm"
-                onClick={() => handleSingleMessage()}
+                onClick={() => handleSingleMessage(client)}
               >
                 <FiMessageSquare size={18} />
                 <span className="font-semibold">Text</span>

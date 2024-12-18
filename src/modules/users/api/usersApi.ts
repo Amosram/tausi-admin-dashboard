@@ -38,13 +38,22 @@ export const usersApi = createApi({
       TausiUserDetails,
       Partial<TausiUserDetails> & { id: string }
     >({
-      query: ({ id, ...updates }) => ({
-        url: `/users/${id}`,
-        method: "PATCH",
-        data: updates,
-      }),
+      query: ({ id, ...updates }) => {
+        // Ensure the id is explicitly passed
+        if (!id || typeof id !== "string") {
+          throw new Error("Invalid or missing ID in updateUser mutation.");
+        }
+
+        // Return the manual query configuration
+        return {
+          url: `/users/${id}`, // Pass the id explicitly in the URL
+          method: "PATCH",
+          data: { id, ...updates }, // Optionally include id in the payload if the backend requires it
+        };
+      },
       invalidatesTags: ["UserDetails", "Users"],
     }),
+
   }),
 });
 

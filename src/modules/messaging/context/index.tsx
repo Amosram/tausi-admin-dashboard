@@ -3,7 +3,7 @@ import { useActiveComponent } from "../hooks/useActiveComponent";
 
 type ActiveComponentContextType = {
   activeComponent: React.ReactNode;
-  changeActiveComponent: (component: React.ReactNode) => void;
+  changeActiveComponent: (component: React.ReactNode, id?: string) => void;
 };
 
 const ActiveComponentContext = createContext<ActiveComponentContextType | undefined>(undefined);

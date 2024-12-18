@@ -12,10 +12,11 @@ import { FiMessageSquare, FiSearch } from "react-icons/fi";
 import { debounce } from "lodash";
 import { useActiveComponentContext } from "../../context";
 import { SingleChatCard } from "../single-chat-card";
-import { Professional } from "@/models";
+import { TausiUser } from "@/models/user";
+import { FaChevronLeft } from "react-icons/fa";
 
 interface BeauticiansGroupCardProps {
-  data: Professional[];
+  data: TausiUser[];
   isLoading: boolean;
   error: any;
 }
@@ -37,21 +38,28 @@ export const BeauticiansGroupCard: React.FC<BeauticiansGroupCardProps> = ({
 
   const filteredBeauticians = useMemo(() => {
     if (!searchTerm) return beauticians;
-  
-    return beauticians.filter((beautician) =>
-      beautician.businessName && beautician.businessName.toLowerCase().includes(searchTerm.toLowerCase())
+
+    return beauticians.filter(
+      (beautician) =>
+        beautician.professional?.businessName &&
+        beautician.professional?.businessName
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
     );
   }, [beauticians, searchTerm]);
-  
 
-  const handleSingleMessage = (beautician: Professional) => {
-    console.log("Action");
-
+  const handleSingleMessage = (client: TausiUser) => {
+    // Pass ClientsGroupCard as the component prop to render it back
     changeActiveComponent(
       <SingleChatCard
-        name={beautician.businessName}
-        description={beautician.user?.name}
-        link={`/professionals/${beautician.id}`}
+        recipientId={client.id}
+        component={
+          <BeauticiansGroupCard
+            data={beauticians}
+            isLoading={isLoading}
+            error={error}
+          />
+        }
       />
     );
   };
@@ -72,7 +80,15 @@ export const BeauticiansGroupCard: React.FC<BeauticiansGroupCardProps> = ({
   return (
     <Card className="overflow-y-scroll">
       <CardHeader>
-        <CardTitle>Professionals Group</CardTitle>
+        <CardTitle>
+          <button
+            onClick={() => changeActiveComponent(null)}
+            className="hover:underline flex items-center gap-2"
+          >
+            <FaChevronLeft size={16} />
+            Professionals Group
+          </button>
+        </CardTitle>
         <CardDescription>
           <div className="px-4 py-2">
             <div className="relative">
@@ -107,7 +123,7 @@ export const BeauticiansGroupCard: React.FC<BeauticiansGroupCardProps> = ({
                 </div>
               </div>
               <div className="flex flex-col gap-1 text-sm">
-                <h1>{beautician.user?.name}</h1>
+                <h1>{beautician.name}</h1>
                 <p>________ completed orders</p>
               </div>
             </div>

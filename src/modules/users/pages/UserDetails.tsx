@@ -198,11 +198,41 @@ const UserDetails: React.FC = () => {
   const [deleteReason, setDeleteReason] = useState("");
 
   const handleDelete = async () => {
-    await updateUser({
-      id: userId,
+    if (!user?.id) {
+      console.error("User ID is missing or invalid.");
+      return;
+    }
+
+    console.log("ID being passed to updateUser:", user?.id, typeof user?.id);
+
+    const beauticianDetails = {
+      id: user.id,
+      name: user?.name,
+      email: user?.email,
+      phoneNumber: user?.phoneNumber,
+      profilePictureUrl: user?.profilePictureUrl,
+      profilePicturePath: user?.profilePicturePath,
+      bio: user?.bio,
+      locationAddress: user?.locationAddress,
+      isActive: user?.isActive,
+      deactivatedAt: user?.deactivatedAt,
+      deactivatedBy: user?.deactivatedBy,
+      deactivatedReason: user?.deactivatedReason,
+      phoneVerified: user?.phoneVerified,
+      emailVerified: user?.emailVerified,
       isDeleted: true,
+      deletedAt: user?.deletedAt,
       deletedReason: deleteReason,
-    });
+      createdAt: user?.createdAt,
+      updatedAt: user?.updatedAt,
+      latitude: user?.latitude,
+      longitude: user?.longitude,
+      coordinates: user?.coordinates,
+      fcmToken: user?.fcmToken,
+      userTypeSession: user?.sessionData?.userTypeSession
+    };
+
+    await updateUser(beauticianDetails);
     setDialogOpen(false);
     setAlertOpen(false);
   };

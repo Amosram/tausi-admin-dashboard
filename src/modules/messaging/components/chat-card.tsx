@@ -1,52 +1,139 @@
+import { auth, firestore } from "@/app/firebase";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { MoreVertical } from "lucide-react";
-import { FiPaperclip, FiSend } from "react-icons/fi";
+import {
+  collection,
+  query,
+  limit,
+  orderBy,
+  addDoc,
+  serverTimestamp,
+  deleteDoc,
+  getDocs,
+} from "firebase/firestore";
+import { useCollection } from "react-firebase-hooks/firestore";
+import React, { useState } from "react";
+import { FiSend } from "react-icons/fi";
+import { ChatMessage } from "./chat-message";
+import { TausiUser } from "@/models/user";
+import { useGetUsersQuery } from "@/modules/users/api/usersApi";
 
 export const MessagingChatCard = () => {
+  const { data: users, isLoading, error } = useGetUsersQuery(10000);
+  const messagesRef = collection(firestore, "chats");
+  const messagesQuery = query(messagesRef, orderBy("createdAt"), limit(25));
+  const [messageInputValue, setMessageInputValue] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const [messagesSnapshot] = useCollection(messagesQuery);
+
+  const beauticians =
+    users?.filter(
+      (user: TausiUser) => user.sessionData?.userTypeSession === "professional"
+    ) || [];
+  const clients =
+    users?.filter(
+      (user: TausiUser) => user.sessionData?.userTypeSession === "client"
+    ) || [];
+
+  const recipientIds = [
+    ...beauticians.map((user) => user.id),
+    ...clients.map((user) => user.id),
+  ];
+
+  const messages = messagesSnapshot?.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
+  const sendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!messageInputValue.trim()) return;
+
+    const { uid, displayName, photoURL } = auth.currentUser!;
+
+    const newMessage = {
+      text: messageInputValue,
+      createdAt: serverTimestamp(),
+      sender: uid,
+      senderName: displayName || "Unknown",
+      senderAvatar: photoURL || "",
+      recipients: recipientIds, // Array of recipient IDs
+      read: false,
+      messageType: "text",
+      attachments: [],
+      reactions: {},
+    };
+
+    try {
+      await addDoc(messagesRef, newMessage);
+      setMessageInputValue(""); // Clear the input
+    } catch (error) {
+      console.error("Error sending message: ", error);
+    }
+  };
+
+  const deleteAllMessages = async () => {
+    if (confirm("Are you sure you want to delete all messages?")) {
+      setIsDeleting(true); // Set loading state to true
+      try {
+        const querySnapshot = await getDocs(messagesRef);
+        console.log("Documents to delete:", querySnapshot.docs);
+
+        const deletePromises = querySnapshot.docs.map((doc) =>
+          deleteDoc(doc.ref)
+        );
+        await Promise.all(deletePromises);
+        alert("All messages have been deleted.");
+      } catch (error) {
+        console.error("Error deleting messages: ", error);
+      } finally {
+        setIsDeleting(false); // Reset loading state
+      }
+    }
+  };
+
   return (
-    <Card className="h-full w-full">
+    <Card className="h-full w-full overflow-y-scroll">
       <CardHeader className="flex w-full flex-row items-center py-6 border-b border-gray-400 justify-between">
         <div className="flex gap-4 items-center">
-          <div className="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center">
-            <div className="w-8 h-8 relative">
-              <div className="absolute inset-0 bg-white rounded-full" />
-              <div className="absolute bottom-0 right-0 w-4 h-4 bg-yellow-300 rounded-full" />
-              <div className="absolute top-0 right-0 w-4 h-4 bg-green-500 rounded-full" />
-            </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <CardTitle>Card Title</CardTitle>
-            <CardDescription>Card Description</CardDescription>
-          </div>
+          <CardTitle>Broadcast Chat</CardTitle>
         </div>
-        <MoreVertical className="h-4 w-4" />
+        <button
+          onClick={deleteAllMessages}
+          disabled={isDeleting}
+          className={`text-sm ${
+            isDeleting ? "text-gray-400 cursor-not-allowed" : "text-red-600 hover:underline"
+          }`}
+        >
+          {isDeleting ? "Deleting..." : "Delete All"}
+        </button>
       </CardHeader>
       <CardContent>
-        <p>Card Content</p>
+        {messages &&
+          messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
       </CardContent>
       <CardFooter className="w-full">
-        <div className="flex items-center gap-2 p-2 w-full">
-          <div className="relative w-full">
-            <input
-              type="text"
-              placeholder="Type a message..."
-              className="w-full p-3 pl-10 pr-10 text-sm bg-sidebar border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary focus:outline-none cursor-pointer">
-              <FiPaperclip size={18} />
-            </div>
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary hover:text-gray-700 cursor-pointer">
-              <FiSend size={18} />
-            </div>
-          </div>
-        </div>
+        <form onSubmit={sendMessage} className="relative w-full">
+          <input
+            type="text"
+            value={messageInputValue}
+            onChange={(e) => setMessageInputValue(e.target.value)}
+            placeholder="Type a message..."
+            className="w-full p-3 pl-10 pr-10 text-sm bg-sidebar border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          <FiSend
+            onClick={sendMessage}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary hover:text-gray-700 cursor-pointer"
+            size={18}
+          />
+        </form>
       </CardFooter>
     </Card>
   );
