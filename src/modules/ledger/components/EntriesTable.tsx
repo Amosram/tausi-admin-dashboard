@@ -30,7 +30,6 @@ const EntriesTable = (props: EntriesTableProps) => {
         description: "Entries deleted successfully",
         variant: "success",
       });
-      console.log("Entries deleted successfully=============>", selectedEntries);
       setSelectedEntries([]);
     } catch (error) {
       toast.toast({
@@ -38,7 +37,6 @@ const EntriesTable = (props: EntriesTableProps) => {
         description: "Error deleting entries",
         variant: "destructive",
       });
-      console.error("Error deleting entries======>", error);
     }
   };
 
@@ -89,6 +87,7 @@ const EntriesTable = (props: EntriesTableProps) => {
             id="select-all"
             checked={currentEntries.length > 0 && currentEntries.every((entry) => selectedEntries.includes(entry.id))}
             onCheckedChange={toggleSelectAll}
+            className="dark:bg-gray-300"
           />
           <Label htmlFor="select-all">Select All</Label>
         </div>
@@ -106,13 +105,14 @@ const EntriesTable = (props: EntriesTableProps) => {
             size="sm"
             onClick={clearSelections}
             disabled={selectedEntries.length === 0}
+            className="dark:bg-card dark:hover:bg-orange-600 mt-2 hover:bg-primary hover:text-white"
           >
             Clear Selections
           </Button>
         </div>
       </div>
-      <Table>
-        <TableHeader>
+      <Table className="dark:bg-card">
+        <TableHeader className="dark:bg-gray-800">
           <TableRow>
             <TableHead className="w-[50px]">Select</TableHead>
             <TableHead>Title</TableHead>
@@ -126,11 +126,12 @@ const EntriesTable = (props: EntriesTableProps) => {
         </TableHeader>
         <TableBody>
           {currentEntries.map((entry) => (
-            <TableRow key={entry.id}>
+            <TableRow className="dark:hover:bg-gray-700" key={entry.id}>
               <TableCell>
                 <Checkbox
                   checked={selectedEntries.includes(entry.id)}
                   onCheckedChange={() => toggleSelectEntry(entry.id)}
+                  className="dark:bg-gray-300"
                 />
               </TableCell>
               <TableCell>{entry.title}</TableCell>
@@ -145,7 +146,7 @@ const EntriesTable = (props: EntriesTableProps) => {
                 {entry.isDeleted ? (
                   <Badge variant="destructive">Deleted</Badge>
                 ) : (
-                  <Badge className="bg-gray-600">Active</Badge>
+                  <Badge className="bg-gray-600 dark:bg-gray-300">Active</Badge>
                 )}
               </TableCell>
             </TableRow>
@@ -153,7 +154,7 @@ const EntriesTable = (props: EntriesTableProps) => {
         </TableBody>
       </Table>
       <div className="mt-4 flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-gray-700 dark:text-gray-300">
           Showing {startIndex + 1} to {Math.min(endIndex, allEntries.length)} of {allEntries.length} entries
         </div>
         <div className="flex items-center space-x-2">
@@ -162,6 +163,7 @@ const EntriesTable = (props: EntriesTableProps) => {
             size="sm"
             onClick={() => goToPage(1)}
             disabled={currentPage === 1}
+            className="dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600"
           >
             <ChevronsLeft className="h-4 w-4" />
           </Button>
@@ -170,17 +172,19 @@ const EntriesTable = (props: EntriesTableProps) => {
             size="sm"
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 1}
+            className="dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="text-sm">
-            Page {currentPage} of {totalPages}
+          <span className="text-sm dark:text-gray-300">
+        Page {currentPage} of {totalPages}
           </span>
           <Button
             variant="outline"
             size="sm"
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage === totalPages}
+            className="dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -189,6 +193,7 @@ const EntriesTable = (props: EntriesTableProps) => {
             size="sm"
             onClick={() => goToPage(totalPages)}
             disabled={currentPage === totalPages}
+            className="dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600"
           >
             <ChevronsRight className="h-4 w-4" />
           </Button>

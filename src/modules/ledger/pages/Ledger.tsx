@@ -100,49 +100,49 @@ const Ledger = () => {
         return <span>{format(date, 'MMM dd, yyyy')}</span>;
       }
     },
-    {
-      header: 'Actions',
-      enableSorting: false,
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreVertical className="h-4 w-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <Link
-                to={`/ledgers/${row.original.ownerId}`}
-                state={{ ledger: row.original }}
-                className="hover:text-primary"
-              >
-                    View details
-              </Link>
-            </DropdownMenuItem>
-            {/* <DropdownMenuItem
-              onClick={() => {
-                setEditData({
-                  id: row.original.id,
-                  name: row.original.name,
-                  ledgerId: row.original.id,
-                  ownerId: row.original.ownerId,
-                });
-                setModalOpen(true);
-              }}
-              className="cursor-pointer"
-            >
-              Edit Loan Book
-            </DropdownMenuItem> */}
-            <DropdownMenuItem
-              onClick={() => handleDelete(row.original)}
-              className="bg-destructive text-white cursor-pointer"
-            >
-                  Delete Book
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    }
+    // {
+    //   header: 'Actions',
+    //   enableSorting: false,
+    //   cell: ({ row }) => (
+    //     <DropdownMenu>
+    //       <DropdownMenuTrigger className="h-8 w-8 p-0">
+    //         <span className="sr-only">Open menu</span>
+    //         <MoreVertical className="h-4 w-4" />
+    //       </DropdownMenuTrigger>
+    //       <DropdownMenuContent align="end">
+    //         <DropdownMenuItem>
+    //           <Link
+    //             to={`/ledgers/${row.original.ownerId}`}
+    //             state={{ ledger: row.original }}
+    //             className="hover:text-primary"
+    //           >
+    //                 View details
+    //           </Link>
+    //         </DropdownMenuItem>
+    //         <DropdownMenuItem
+    //           onClick={() => {
+    //             setEditData({
+    //               id: row.original.id,
+    //               name: row.original.name,
+    //               ledgerId: row.original.id,
+    //               ownerId: row.original.ownerId,
+    //             });
+    //             setModalOpen(true);
+    //           }}
+    //           className="cursor-pointer"
+    //         >
+    //           Edit Loan Book
+    //         </DropdownMenuItem>
+    //         <DropdownMenuItem
+    //           onClick={() => handleDelete(row.original)}
+    //           className="bg-destructive text-white cursor-pointer"
+    //         >
+    //               Delete Book
+    //         </DropdownMenuItem>
+    //       </DropdownMenuContent>
+    //     </DropdownMenu>
+    //   ),
+    // }
   ];
 
   const AddLoanButton = {
@@ -164,7 +164,7 @@ const Ledger = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 dark:bg-gray-900">
       <TanStackTable
         data={data.data}
         columns={columns}
@@ -185,7 +185,7 @@ const Ledger = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="bg-black text-white">Cancel</AlertDialogCancel>
-            <AlertDialogAction className="bg-red-500 hover:bg-red-600" onClick={() => handleDeleteConfirm()}>Continue</AlertDialogAction>
+            <AlertDialogAction className="bg-red-500 hover:bg-red-600 dark:text-gray-300" onClick={() => handleDeleteConfirm()}>Continue</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
