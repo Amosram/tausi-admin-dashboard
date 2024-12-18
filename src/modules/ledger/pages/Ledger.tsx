@@ -164,7 +164,7 @@ const Ledger = () => {
   }
 
   return (
-    <div className="p-6 dark:bg-gray-900">
+    <div className="p-6">
       <TanStackTable
         data={data.data}
         columns={columns}
