@@ -44,13 +44,13 @@ const OngoingOrders = () => {
   ];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-full">
+    <div className="bg-white dark:bg-card p-6 rounded-lg shadow-md w-full">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-bold">Ongoing Orders</h3>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className="flex items-center space-x-1 cursor-pointer bg-gray-200 text-gray-600 rounded-full px-3 py-2">
+            <div className="flex items-center space-x-1 cursor-pointer bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full px-3 py-2">
               <span>{selectedOption}</span>
               <FaChevronDown size={12} />
             </div>
@@ -60,7 +60,7 @@ const OngoingOrders = () => {
                 min-w-[200px]
                 mt-2
                 rounded-md
-                bg-white
+                bg-card
                 p-[5px]
                 shadow-lg
                 border
@@ -68,13 +68,13 @@ const OngoingOrders = () => {
             sideOffset={5}
           >
             <DropdownMenuItem
-              className="p-2 cursor-pointer hover:bg-gray-100 text-gray-800"
+              className="p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-300"
               onClick={() => setSelectedOption("Newest")}
             >
               Newest
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="p-2 cursor-pointer hover:bg-gray-100 text-gray-800"
+              className="p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-300"
               onClick={() => setSelectedOption("Oldest")}
             >
               Oldest
@@ -99,13 +99,13 @@ const OngoingOrders = () => {
               </div>
               {/* Order Info */}
               <div>
-                <p className="text-gray-800 font-semibold">{order.title}</p>
+                <p className="text-gray-800 font-semibold dark:text-gray-300">{order.title}</p>
                 <p className="text-gray-500 text-sm">{order.time}</p>
               </div>
             </div>
 
             {/* Right Section: Location */}
-            <p className="text-gray-500 text-sm text-right w-1/3">
+            <p className="text-gray-500 text-sm text-right w-1/3 dark:text-gray-400">
               {order.location}
             </p>
           </div>
@@ -114,7 +114,7 @@ const OngoingOrders = () => {
 
       {/* View More Button */}
       <div className="mt-6 flex justify-center">
-        <button className="text-red-600 border border-red-600 rounded-full px-6 py-2 hover:bg-red-50">
+        <button className="text-red-600 border border-red-600 rounded-full px-6 py-2 hover:bg-red-50 dark:hover:bg-orange-600 dark:hover:text-gray-100">
           View more
         </button>
       </div>

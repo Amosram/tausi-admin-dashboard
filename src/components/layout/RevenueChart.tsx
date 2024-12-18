@@ -45,17 +45,17 @@ const RevenueChart: React.FC = () => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
+    <div className="p-6 bg-white dark:bg-card rounded-lg shadow-lg">
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">Revenue</h2>
-        <div className="flex items-center gap-2 bg-gray-100 rounded-full">
+        <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-full">
           {['daily', 'weekly', 'monthly'].map((frame) => (
             <button
               key={frame}
               onClick={() => handleTimeFrameChange(frame as 'daily' | 'weekly' | 'monthly')}
               className={`px-4 py-2 rounded-full ${
-                timeFrame === frame ? 'bg-red-500 text-white' : 'text-gray-700'
+                timeFrame === frame ? 'bg-red-500 text-white dark:text-gray-300' : 'text-gray-700 dark:text-gray-300'
               }`}
             >
               {frame.charAt(0).toUpperCase() + frame.slice(1)}

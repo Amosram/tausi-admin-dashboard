@@ -23,7 +23,7 @@ const OrdersChart = () => {
   ];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-card p-6 rounded-lg shadow-md">
       <div style={{ height: "400px", width: "100%" }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart

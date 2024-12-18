@@ -59,7 +59,7 @@ export default function BeauticianProfiles() {
             .map((beautician, index) => (
               <div
                 key={index}
-                className="min-w-[250px] border border-gray-300 rounded-lg overflow-hidden flex flex-col items-center p-4 cursor-pointer hover:shadow-md hover:bg-gray-100"
+                className="min-w-[250px] border border-gray-300 rounded-lg overflow-hidden flex flex-col items-center p-4 cursor-pointer hover:shadow-md hover:bg-gray-100 dark:hover:bg-black"
                 onClick={() => navigate(`/professionals/${beautician.id}`)}
               >
                 <div className="w-20 h-20 rounded-lg flex items-center justify-center mb-4">
