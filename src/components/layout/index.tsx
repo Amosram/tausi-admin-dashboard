@@ -5,7 +5,7 @@ import { SidebarProvider } from "../ui/sidebar";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="bg-background">
+    <div className="bg-background dark:bg-blend-darken">
       <SidebarProvider className="flex">
         <SideBar />
 
