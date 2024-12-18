@@ -77,7 +77,7 @@ export const BoothsMaintenanceCard: React.FC<BoothsMaintenanceCardProps> = ({
 
   return (
     <Card className="flex-1 flex justify-between flex-col border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
-      <CardHeader className="bg-gray-50 p-4 border-b">
+      <CardHeader className="bg-gray-50 dark:bg-gray-800 p-4 border-b">
         <CardTitle className="flex justify-between">
           <div className="flex items-center gap-3">
             <ShieldAlert className="h-5 w-5" />
@@ -86,7 +86,7 @@ export const BoothsMaintenanceCard: React.FC<BoothsMaintenanceCardProps> = ({
           <button
             onClick={handleRefresh}
             disabled={isFetching}
-            className="hover:bg-gray-100 p-1 rounded-full transition-colors"
+            className="hover:bg-gray-100 dark:hover:bg-gray-700 p-1 rounded-full transition-colors"
           >
             <RefreshCw
               className={`h-5 w-5 ${isFetching ? "animate-spin" : ""}`}

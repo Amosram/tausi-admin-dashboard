@@ -37,7 +37,7 @@ const BoothsLogsCard: React.FC<BoothsLogsCardProps> = ({
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-lg font-bold">Latest Booth Logs</CardTitle>
-          <CardDescription className="text-sm text-gray-500">
+          <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
             Overview of recent activity
           </CardDescription>
         </CardHeader>
@@ -49,10 +49,10 @@ const BoothsLogsCard: React.FC<BoothsLogsCardProps> = ({
             >
               {/* Left: Log Details */}
               <div className="flex flex-col flex-grow gap-2">
-                <h4 className="text-md font-semibold text-gray-800">
+                <h4 className="text-md font-semibold text-gray-800 dark:text-gray-200">
                   {log.description || "No description provided"}
                 </h4>
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
                   <p>
                     <span className="font-bold">Performed By:</span>{" "}
                     {log.performedBy}
@@ -107,7 +107,7 @@ const BoothsLogsCard: React.FC<BoothsLogsCardProps> = ({
           ))}
         </CardContent>
         <CardFooter>
-          <Button>
+          <Button className="dark:bg-orange-600 dark:text-gray-300">
             <Link to={`/booths/${useParams().boothId}/logs`}>
               View All Logs
             </Link>

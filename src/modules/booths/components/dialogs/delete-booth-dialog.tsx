@@ -115,6 +115,7 @@ export const DeleteBoothDialog: React.FC<DeleteBoothDialogProps> = ({
           </div>
           <DialogFooter>
             <Button
+              className="dark:bg-black dark:hover:bg-card"
               variant="outline"
               onClick={() => setIsDeleteDialogOpen(false)}
             >

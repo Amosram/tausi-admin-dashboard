@@ -94,16 +94,22 @@ const BoothDetails: React.FC = () => {
             variant="outline"
             onClick={() => setIsAssignDialogOpen(true)}
             disabled={isAssignButtonDisabled}
+            className="hover:bg-gray-700 hover:text-white"
           >
             <Edit className="mr-2 h-4 w-4" /> Assign Booth
           </Button>
-          <Button variant="outline" onClick={() => setIsEditDialogOpen(true)}>
+          <Button
+            variant="outline"
+            onClick={() => setIsEditDialogOpen(true)}
+            className="hover:bg-gray-700 hover:text-white"
+          >
             <Edit className="mr-2 h-4 w-4" /> Edit
           </Button>
           <Button
             variant="destructive"
             onClick={() => setIsDeleteDialogOpen(true)}
             disabled={isDeleting}
+            className="hover:bg-red-700 hover:text-white"
           >
             <Trash2 className="mr-2 h-4 w-4" /> Delete
           </Button>
@@ -116,7 +122,7 @@ const BoothDetails: React.FC = () => {
             key={details.id}
             className="flex-1 flex flex-col border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
           >
-            <CardHeader className="bg-gray-50 p-4 border-b">
+            <CardHeader className="bg-gray-50 dark:bg-gray-800 p-4 border-b">
               <div className="flex items-center gap-4">
                 {details.icon}
                 <CardTitle>{details.label}</CardTitle>
@@ -128,11 +134,11 @@ const BoothDetails: React.FC = () => {
                   key={content.id}
                   className="flex justify-between items-center w-full py-2 border-b last:border-none"
                 >
-                  <span className="flex items-center gap-2 text-sm text-gray-700">
+                  <span className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200">
                     {content.icon}
                     {content.label}
                   </span>
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-gray-900 dark:text-gray-500">
                     {content.value}
                   </span>
                 </div>
