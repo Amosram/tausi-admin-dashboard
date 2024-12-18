@@ -86,7 +86,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <div className="px-6">
-      <div className="flex flex-col gap-4 p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
+      <div className="flex flex-col gap-4 p-4 bg-card border border-gray-200 rounded-lg shadow-sm">
         <div className="w-[60%] mx-auto">
           <Input
             type="text"
@@ -94,7 +94,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            className="w-full border border-gray-400 rounded-full p-2 px-6 text-sm text-black"
+            className="w-full border border-gray-400 rounded-full p-2 px-6 text-sm text-black dark:text-gray-300"
           />
         </div>
         <div className="flex w-full items-center gap-4">
