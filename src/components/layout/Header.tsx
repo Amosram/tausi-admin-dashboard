@@ -220,11 +220,11 @@ const Header = () => {
                 <DropdownMenuItem
                   onClick={toggleTheme}
                   className="flex items-center justify-between p-2 cursor-pointer">
-                  Dark Mode
+                  {theme === "dark" ? "Light Mode" : "Dark Mode"}
                   {theme === "dark" ? (
-                    <Sun className="mr-2 text-yellow-500" />
+                  <Sun className="mr-2 text-yellow-500" />
                   ): (
-                    <Moon className="mr-2 text-gray-600" />
+                  <Moon className="mr-2 text-gray-600" />
                   )}
                 </DropdownMenuItem>
                 <DropdownMenuItem className="flex items-center justify-between p-2 cursor-pointer">
