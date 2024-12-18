@@ -8,9 +8,9 @@ import { FaChevronDown, FaChevronLeft } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "../ui/sidebar";
 import { auth } from "@/app/firebase";
-import { DoorOpen, MessageCircle, Moon, Settings, Sun } from "lucide-react";
+import { DoorOpen, Moon, Settings, Sun } from "lucide-react";
 import { useTheme } from "@/providers/theme-provider";
-import { MdChat, MdNotificationImportant, MdNotifications } from "react-icons/md";
+import { MdChat, MdNotifications } from "react-icons/md";
 
 interface RouteDetails {
   title: string;
@@ -203,10 +203,10 @@ const Header = () => {
               <DropdownMenuContent
                 className="
                 min-w-[200px]
-                mt-8
+                mt-10
                 mr-5
                 rounded-md
-              bg-white
+                bg-card
                 p-[5px]
                 shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]
                 will-change-[opacity,transform]
@@ -217,6 +217,16 @@ const Header = () => {
                 "
                 sideOffset={5}
               >
+                <DropdownMenuItem
+                  onClick={toggleTheme}
+                  className="flex items-center justify-between p-2 cursor-pointer">
+                  Dark Mode
+                  {theme === "dark" ? (
+                    <Sun className="mr-2 text-yellow-500" />
+                  ): (
+                    <Moon className="mr-2 text-gray-600" />
+                  )}
+                </DropdownMenuItem>
                 <DropdownMenuItem className="flex items-center justify-between p-2 cursor-pointer">
                   <Link to="/settings">
                     Settings
@@ -229,16 +239,6 @@ const Header = () => {
                 >
                   Logout
                   <DoorOpen className="mr-2 text-red-500" />
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={toggleTheme}
-                  className="flex items-center justify-between p-2 cursor-pointer">
-                  Dark Mode
-                  {theme === "dark" ? (
-                    <Sun className="mr-2 text-yellow-500" />
-                  ): (
-                    <Moon className="mr-2 text-gray-600" />
-                  )}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
