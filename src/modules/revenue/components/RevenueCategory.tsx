@@ -29,9 +29,9 @@ const monthlyData: RevenueCategoryData[] = [
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-2 rounded-lg shadow-lg text-center">
-        <p className="font-semibold text-gray-800">${payload[0].value.toLocaleString()}</p>
-        <p className="text-xs text-gray-500">July {new Date().getFullYear()}</p>
+      <div className="bg-white dark:bg-gray-800 p-2 rounded-lg shadow-lg text-center">
+        <p className="font-semibold text-gray-800 dark:text-gray-100">${payload[0].value.toLocaleString()}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-300">July {new Date().getFullYear()}</p>
       </div>
     );
   }
@@ -42,27 +42,27 @@ const RevenueCategory: React.FC = () => {
   const [category, setCategory] = useState('Hair Styling');
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
+    <div className="p-6 bg-white dark:bg-card rounded-lg shadow-lg">
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">Revenue By Category</h2>
-        <div className="flex items-center gap-2 bg-gray-100 rounded-2xl">
+        <div className="flex items-center gap-2 bg-gray-100 dark:bg-card rounded-2xl">
           {/* Select Component */}
           <Select.Root value={category} onValueChange={(value) => setCategory(value)}>
-            <Select.Trigger className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white shadow cursor-pointer">
+            <Select.Trigger className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white dark:bg-gray-800 shadow cursor-pointer">
               <Select.Value placeholder="Select Category" />
               <Select.Icon asChild>
                 {category ? <ChevronDownIcon /> : <ChevronUpIcon />}
               </Select.Icon>
             </Select.Trigger>
-            <Select.Content className="bg-white shadow-lg rounded-md">
+            <Select.Content className="bg-white dark:bg-gray-800 shadow-lg rounded-md">
               <Select.ScrollUpButton />
               <Select.Viewport className="p-2">
                 {['Hair Styling', 'Make Up', 'Nail Art'].map((item) => (
                   <Select.Item
                     key={item}
                     value={item}
-                    className="flex items-center gap-2 px-4 py-2 rounded-md cursor-pointer hover:bg-gray-100"
+                    className="flex items-center gap-2 px-4 py-2 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     <Select.ItemIndicator className="text-blue-500">
                       <CheckIcon />

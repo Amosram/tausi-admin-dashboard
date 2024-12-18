@@ -9,7 +9,7 @@ const data = [
 
 const TopRevenueCategories: React.FC = () => {
   return (
-    <div className="bg-white shadow-md rounded-lg p-4">
+    <div className="bg-white dark:bg-card shadow-md rounded-lg p-4">
       <h2 className="text-lg font-medium mb-4">Top 3 Revenue Categories</h2>
       <div className="flex flex-col lg:flex-row items-center justify-between">
         {/* Left side: Progress bars */}

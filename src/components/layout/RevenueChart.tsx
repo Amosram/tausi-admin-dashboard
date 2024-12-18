@@ -27,9 +27,9 @@ const monthlyData: RevenueData[] = [
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-2 rounded-lg shadow-lg text-center">
-        <p className="font-semibold text-gray-800">${payload[0].value.toLocaleString()}</p>
-        <p className="text-xs text-gray-500">July {new Date().getFullYear()}</p>
+      <div className="bg-white dark:bg-gray-800 p-2 rounded-lg shadow-lg text-center">
+        <p className="font-semibold text-gray-800 dark:text-gray-100">${payload[0].value.toLocaleString()}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-300">July {new Date().getFullYear()}</p>
       </div>
     );
   }

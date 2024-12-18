@@ -12,18 +12,18 @@ const RevenueStats = () => {
   ];
 
   return (
-    <div className="p-0 space-y-6 bg-gray-50">
+    <div className="p-0 space-y-6 bg-gray-50  dark:bg-gray-800">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full">
         {revenueData.map((item) => (
           <div
             key={item.period}
-            className="bg-white p-4 rounded-2xl shadow-md border border-gray-200"
+            className="bg-white dark:bg-card p-4 rounded-2xl shadow-md border border-gray-200"
           >
             <div className="flex items-center">
-              <div className="bg-red-100 p-4 rounded-full mr-3">
+              <div className="bg-red-100 dark:bg-gray-800 p-4 rounded-full mr-3">
                 <FileSearch2 className="h-5 w-5 text-red-500" />
               </div>
-              <span><p className="text-2xl text-black font-medium capitalize">{item.period}</p></span>
+              <span><p className="text-2xl text-black dark:text-gray-300 font-medium capitalize">{item.period}</p></span>
               <Popover.Root>
                 <Popover.Trigger asChild>
          
@@ -46,11 +46,11 @@ const RevenueStats = () => {
             </div>
           </div>
         ))}
-        <div className="bg-red-100 p-4 rounded-2xl shadow-md border border-gray-200">
+        <div className="bg-red-100 p-4 dark:bg-gray-800 rounded-2xl shadow-md border border-gray-200">
           <div className="flex flex-col items-center mt-10">
             <FileUp className="text-red-500 bg-red-500 p-2 rounded-full cursor-pointer" size={40}
               fill='#fff'/>
-            <p className="text-2xl text-black mt-2">Export Data</p>
+            <p className="text-2xl text-black dark:text-gray-300 mt-2">Export Data</p>
           </div>
         </div>
       </div>
