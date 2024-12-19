@@ -35,7 +35,7 @@ export interface ChatItemProps {
     sender: string;
     recipient: string | string[];
     read: boolean;
-    timestamp: string; // Changed from createdAt to timestamp for consistency
+    timestamp?: string; // Changed from createdAt to timestamp for consistency
     createdAt: Date | Timestamp;
     senderName: string;
     senderAvatar: string;

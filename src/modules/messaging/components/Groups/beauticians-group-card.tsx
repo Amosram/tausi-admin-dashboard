@@ -86,7 +86,7 @@ export const BeauticiansGroupCard: React.FC<BeauticiansGroupCardProps> = ({
             className="hover:underline flex items-center gap-2"
           >
             <FaChevronLeft size={16} />
-            Professionals Group
+            Beauticians Group
           </button>
         </CardTitle>
         <CardDescription>
@@ -94,7 +94,7 @@ export const BeauticiansGroupCard: React.FC<BeauticiansGroupCardProps> = ({
             <div className="relative">
               <Input
                 type="text"
-                placeholder="Search professionals..."
+                placeholder="Search beauticians..."
                 className="pl-10 w-full text-black"
                 onChange={(e) => debouncedSearch(e.target.value)}
               />

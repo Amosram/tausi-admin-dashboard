@@ -21,11 +21,11 @@ export const useActiveComponent = () => {
     }
   };
 
-  useEffect(() => {
-    // Sync state with URL when the hook is initialized
-    const activeComponentFromUrl = searchParams.get("activeComponent");
-    setActiveComponent(activeComponentFromUrl);
-  }, [searchParams]);
+  // useEffect(() => {
+  //   // Sync state with URL when the hook is initialized
+  //   const activeComponentFromUrl = searchParams.get("activeComponent");
+  //   setActiveComponent(activeComponentFromUrl);
+  // }, [searchParams]);
 
   return { activeComponent, changeActiveComponent };
 };
