@@ -1,4 +1,5 @@
 import userReducer from "./userSlice";
+import appearanceReducer from "./appearanceSlice";
 import {ordersReducer, ordersRtkQueryMiddleware} from "@/modules/orders/reducers";
 import {usersReducer, usersRtkQueryMiddleware} from "@/modules/users/reducers";
 import { professionalReducer, professionalRtkQueryMiddleware } from "@/modules/applications/reducers";
@@ -24,5 +25,6 @@ export const rtkQueryMiddleware = [
 
 export const staticReducers = {
   user: userReducer,
+  appearance: appearanceReducer,
   ...modulesReducers
 };

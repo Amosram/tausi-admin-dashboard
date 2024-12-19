@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radioGroup';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
+import { useToast } from '@/hooks/use-toast';
+import { useTheme } from '@/providers/theme-provider';
 
 
 interface AppearanceSettingsProps {
@@ -27,10 +29,16 @@ export default function AppearanceSettings({
   font,
   setFont
 }: AppearanceSettingsProps) {
-  const [theme, setTheme] = useState('light');
   const [sidebarColor, setSidebarColor] = useState('default');
   const [density, setDensity] = useState(1);
   const [useCustomTheme, setUseCustomTheme] = useState(false);
+  const toast = useToast();
+
+  const { theme, setTheme, font: selectedFont, setFont: updateFont } = useTheme();
+
+  const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
+    setTheme(newTheme);
+  };
 
   const handleSave = () => {
     console.log('Saving appearance settings:', {
@@ -42,6 +50,13 @@ export default function AppearanceSettings({
       density,
       useCustomTheme
     });
+    localStorage.setItem("appearance-settings", JSON.stringify({AppearanceSettings}));
+    // Display a toast message
+    toast.toast({
+      title: "Settings saved",
+      description: "Your appearance settings have been saved.",
+      variant: "success"
+    });
   };
 
   return (
@@ -49,8 +64,7 @@ export default function AppearanceSettings({
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Theme</h3>
-          <RadioGroup value={theme} onValueChange={setTheme}
-            className="flex space-x-4">
+          <RadioGroup value={theme} onValueChange={setTheme} className="flex space-x-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="light" id="light" />
               <Label htmlFor="light">Light</Label>
@@ -68,8 +82,7 @@ export default function AppearanceSettings({
 
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Sidebar Color</h3>
-          <RadioGroup value={sidebarColor} onValueChange={setSidebarColor}
-            className="grid grid-cols-3 gap-4">
+          <RadioGroup value={sidebarColor} onValueChange={setSidebarColor} className="grid grid-cols-3 gap-4">
             {['default', 'aubergine', 'midnight'].map((color) => (
               <div key={color} className="flex items-center space-x-2">
                 <RadioGroupItem value={color} id={color} />
@@ -147,7 +160,7 @@ export default function AppearanceSettings({
 
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Typography</h3>
-          <Select value={font} onValueChange={setFont}>
+          <Select value={selectedFont} onValueChange={updateFont}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select a font" />
             </SelectTrigger>
@@ -156,6 +169,8 @@ export default function AppearanceSettings({
               <SelectItem value="Roboto">Roboto</SelectItem>
               <SelectItem value="Open Sans">Open Sans</SelectItem>
               <SelectItem value="Lato">Lato</SelectItem>
+              <SelectItem value="Lexend">Lexend</SelectItem>
+              <SelectItem value="Nunito">Nunito</SelectItem>
             </SelectContent>
           </Select>
         </div>
