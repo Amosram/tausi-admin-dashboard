@@ -50,12 +50,66 @@ export default function AppearanceSettings({
       density,
       useCustomTheme
     });
-    localStorage.setItem("appearance-settings", JSON.stringify({AppearanceSettings}));
+
+    // Update global CSS variables for primary and secondary colors
+    const root = document.documentElement;
+    root.style.setProperty('--primary', primaryColor);
+    root.style.setProperty('--secondary', secondaryColor);
+
+    localStorage.setItem(
+      "appearance-settings",
+      JSON.stringify({
+        theme,
+        sidebarColor,
+        primaryColor,
+        secondaryColor,
+        font,
+        density,
+        useCustomTheme,
+      })
+    );
     // Display a toast message
     toast.toast({
       title: "Settings saved",
       description: "Your appearance settings have been saved.",
       variant: "success"
+    });
+  };
+
+  const defaultColors = {
+    primary: "#ef3e23", // Initial primary color
+    secondary: "#f0f4f9", // Initial secondary color
+  };
+
+  const handleReset = () => {
+    // Reset global CSS variables to default values
+    const root = document.documentElement;
+    root.style.setProperty('--primary', defaultColors.primary);
+    root.style.setProperty('--secondary', defaultColors.secondary);
+
+    // Update state
+    setPrimaryColor(defaultColors.primary);
+    setSecondaryColor(defaultColors.secondary);
+
+    // Update localStorage
+    localStorage.setItem(
+      "appearance-settings",
+      JSON.stringify({
+        theme,
+        sidebarColor,
+        primaryColor: defaultColors.primary,
+        secondaryColor: defaultColors.secondary,
+        font,
+        density,
+        useCustomTheme,
+      })
+    );
+
+    // Display a toast message
+    toast.toast({
+      title: "Settings reset",
+      description: "Colors have been reset to default values.",
+      variant: "success",
     });
   };
 
@@ -190,8 +244,9 @@ export default function AppearanceSettings({
           </div>
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-4">
           <Button onClick={handleSave} className="w-[50%] bg-green-600">Save Changes</Button>
+          <Button onClick={handleReset} className="w-[50%] bg-gray-600">Reset Colors</Button>
         </div>
       </CardContent>
     </Card>

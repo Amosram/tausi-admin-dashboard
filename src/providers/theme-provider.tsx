@@ -4,19 +4,22 @@ type Theme = "dark" | "light" | "system";
 type Font = "Inter" | "Roboto" | "Open Sans" | "Lato" | "Lexend" | "Nunito";
 
 type ThemeProviderProps = {
-    children: React.ReactNode;
-    defaultTheme?: Theme;
-    defaultFont?: Font;
-    themeStorageKey?: string;
-    fontStorageKey?: string;
-    // storageKey?: string;
+  children: React.ReactNode;
+  defaultTheme?: Theme;
+  defaultFont?: Font;
+  themeStorageKey?: string;
+  fontStorageKey?: string;
 };
 
 type ThemeProviderState = {
-    theme: Theme;
-    setTheme: (theme: Theme) => void;
-    font: Font;
-    setFont: (font: Font) => void;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  font: Font;
+  setFont: (font: Font) => void;
+  primaryColor: string;
+  setPrimaryColor: (color: string) => void;
+  secondaryColor: string;
+  setSecondaryColor: (color: string) => void;
 };
 
 const initialState: ThemeProviderState = {
@@ -24,6 +27,10 @@ const initialState: ThemeProviderState = {
   setTheme: () => null,
   font: "Inter",
   setFont: () => null,
+  primaryColor: "#ef3e23",
+  setPrimaryColor: () => null,
+  secondaryColor: "#f0f4f9",
+  setSecondaryColor: () => null,
 };
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
@@ -34,7 +41,6 @@ export function ThemeProvider({
   defaultFont = "Inter",
   themeStorageKey = "vite-ui-theme",
   fontStorageKey = "vite-ui-font",
-  // storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
@@ -43,6 +49,14 @@ export function ThemeProvider({
 
   const [font, setFont] = useState<Font>(
     () => (localStorage.getItem(fontStorageKey) as Font) || defaultFont
+  );
+
+  const [primaryColor, setPrimaryColor] = useState<string>(
+    () => localStorage.getItem("primary-color") || "#ef3e23"
+  );
+
+  const [secondaryColor, setSecondaryColor] = useState<string>(
+    () => localStorage.getItem("secondary-color") || "#f0f4f9"
   );
 
   useEffect(() => {
@@ -62,25 +76,38 @@ export function ThemeProvider({
     localStorage.setItem(themeStorageKey, theme);
   }, [theme, themeStorageKey]);
 
-  // sync font with localStorage
   useEffect(() => {
     document.body.style.fontFamily = font;
     localStorage.setItem(fontStorageKey, font);
   }, [font, fontStorageKey]);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty("--primary", primaryColor);
+    localStorage.setItem("primary-color", primaryColor);
+  }, [primaryColor]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty("--secondary", secondaryColor);
+    localStorage.setItem("secondary-color", secondaryColor);
+  }, [secondaryColor]);
+
   const value = {
     theme,
     setTheme: (newTheme: Theme) => {
-      // Store theme preference in localStorage
       localStorage.setItem(themeStorageKey, newTheme);
       setTheme(newTheme);
     },
     font,
     setFont: (newFont: Font) => {
-      // Store font preference in localStorage
       localStorage.setItem(fontStorageKey, newFont);
       setFont(newFont);
     },
+    primaryColor,
+    setPrimaryColor,
+    secondaryColor,
+    setSecondaryColor,
   };
 
   return (
