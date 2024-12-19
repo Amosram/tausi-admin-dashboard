@@ -117,7 +117,7 @@ export default function AppearanceSettings({
     <Card>
       <CardContent className="space-y-6">
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Theme</h3>
+          <h3 className="text-lg font-bold">Theme</h3>
           <RadioGroup value={theme} onValueChange={setTheme} className="flex space-x-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="light" id="light" />
@@ -135,7 +135,7 @@ export default function AppearanceSettings({
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Sidebar Color</h3>
+          <h3 className="text-lg font-bold">Sidebar Color</h3>
           <RadioGroup value={sidebarColor} onValueChange={setSidebarColor} className="grid grid-cols-3 gap-4">
             {['default', 'aubergine', 'midnight'].map((color) => (
               <div key={color} className="flex items-center space-x-2">
@@ -148,7 +148,7 @@ export default function AppearanceSettings({
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium">Custom Theme</h3>
+            <h3 className="text-lg font-bold">Custom Theme</h3>
             <Switch
               checked={useCustomTheme}
               onCheckedChange={setUseCustomTheme}
@@ -196,7 +196,9 @@ export default function AppearanceSettings({
           )}
         </div>
 
-        <div className="space-y-4">
+        {/* TODO:IMPLEMENT LIGHT COMPATIBILITY WITH DEVICE */}
+
+        {/* <div className="space-y-4">
           <h3 className="text-lg font-medium">Density</h3>
           <Slider
             value={[density]}
@@ -210,10 +212,10 @@ export default function AppearanceSettings({
             {density === 2 && "Cozy"}
             {density === 3 && "Compact"}
           </div>
-        </div>
+        </div> */}
 
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Typography</h3>
+          <h3 className="text-lg font-bold">Typography</h3>
           <Select value={selectedFont} onValueChange={updateFont}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select a font" />
@@ -230,7 +232,7 @@ export default function AppearanceSettings({
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Preview</h3>
+          <h3 className="text-lg font-bold">Preview</h3>
           <div
             className="p-4 rounded-md"
             style={{
