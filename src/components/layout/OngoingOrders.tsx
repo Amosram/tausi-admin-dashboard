@@ -6,48 +6,51 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { FaChevronDown } from "react-icons/fa";
+import { useGetOrdersQuery } from "@/modules/orders/api/ordersApi";
+import Loader from "./Loader";
+import { useNavigate } from "react-router-dom";
+import { Button } from "../ui/button";
 
 const OngoingOrders = () => {
   // State to track the selected sorting option
   const [selectedOption, setSelectedOption] = useState("Newest");
+  const { data, isLoading, isError } = useGetOrdersQuery(10);
+  const navigate = useNavigate();
 
-  // Sample data
-  const orders = [
-    {
-      id: 1,
-      title: "Bubbles Hair Studios - Simple Hair",
-      time: "8 min ago",
-      location: "Evergreen Apartments, Kilimani, Nairobi",
-      color: "bg-blue-500",
-    },
-    {
-      id: 2,
-      title: "Bubbles Hair Studios - Simple Hair",
-      time: "8 min ago",
-      location: "Evergreen Apartments, Kilimani, Nairobi",
-      color: "bg-yellow-500",
-    },
-    {
-      id: 3,
-      title: "Bubbles Hair Studios - Simple Hair",
-      time: "8 min ago",
-      location: "Evergreen Apartments, Kilimani, Nairobi",
-      color: "bg-green-500",
-    },
-    {
-      id: 4,
-      title: "Bubbles Hair Studios - Simple Hair",
-      time: "8 min ago",
-      location: "Evergreen Apartments, Kilimani, Nairobi",
-      color: "bg-purple-500",
-    },
-  ];
+  const ordersData = data?.data || [];
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    return <div>Error fetching Pending Orders</div>;
+  }
+
+  // Function to sort orders based on createdAt
+  const sortOrders = (orders: any[]) => {
+    return orders.sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      if (selectedOption === "Newest") {
+        return dateB.getTime() - dateA.getTime(); // Newest first
+      } else {
+        return dateA.getTime() - dateB.getTime(); // Oldest first
+      }
+    });
+  };
+
+  const filteredOrders = ordersData
+    .filter((order) => order.status.includes("pending"))
+    .slice(0, 5); // Limit to 5 orders
+
+  const sortedOrders = sortOrders(filteredOrders); // Apply sorting
 
   return (
     <div className="bg-white dark:bg-card p-6 rounded-lg shadow-md w-full">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-bold">Ongoing Orders</h3>
+        <h3 className="text-xl font-bold">Pending Orders</h3>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="flex items-center space-x-1 cursor-pointer bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full px-3 py-2">
@@ -85,28 +88,32 @@ const OngoingOrders = () => {
 
       {/* Timeline List */}
       <div className="space-y-6">
-        {orders.map((order) => (
+        {sortedOrders.map((order, index) => (
           <div
-            key={order.id}
+            key={index}
             className="flex justify-between items-center space-x-4"
+            onClick={() => navigate(`/appointments/${order.id}`)}
           >
             {/* Left Section: Icon and Info */}
             <div className="flex items-center space-x-4">
               {/* Icon */}
               <div
-                className={`w-10 h-10 ${order.color} flex items-center justify-center rounded-md text-white`}
+                className="w-10 h-10 bg-blue-500 flex items-center justify-center rounded-md text-white"
               >
+                {/* Add any icon or content you wish here */}
               </div>
               {/* Order Info */}
               <div>
-                <p className="text-gray-800 font-semibold dark:text-gray-300">{order.title}</p>
-                <p className="text-gray-500 text-sm">{order.time}</p>
+                <p className="text-gray-800 font-semibold dark:text-gray-300">
+                  {order.service.name || "N/A"}
+                </p>
+                <p className="text-gray-500 text-sm">{order.appointmentDate}</p>
               </div>
             </div>
 
             {/* Right Section: Location */}
             <p className="text-gray-500 text-sm text-right w-1/3 dark:text-gray-400">
-              {order.location}
+              {order.locationAddress}
             </p>
           </div>
         ))}
@@ -114,9 +121,12 @@ const OngoingOrders = () => {
 
       {/* View More Button */}
       <div className="mt-6 flex justify-center">
-        <button className="text-red-600 border border-red-600 rounded-full px-6 py-2 hover:bg-red-50 dark:hover:bg-orange-600 dark:hover:text-gray-100">
+        <Button
+          className="text-white border-red-600 rounded-full px-6 py-2 hover:bg-black dark:hover:bg-orange-600 dark:hover:text-gray-100"
+          onClick={() => navigate("/orders")}
+        >
           View more
-        </button>
+        </Button>
       </div>
     </div>
   );
