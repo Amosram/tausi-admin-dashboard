@@ -8,7 +8,7 @@ import { FaChevronDown, FaChevronLeft } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "../ui/sidebar";
 import { auth } from "@/app/firebase";
-import { DoorOpen, Moon, Settings, Sun } from "lucide-react";
+import { DoorOpen, Moon, Search, SearchIcon, Settings, Sun } from "lucide-react";
 import { useTheme } from "@/providers/theme-provider";
 import { MdChat, MdNotifications } from "react-icons/md";
 
@@ -163,14 +163,10 @@ const Header = () => {
         <div className="relative max-w-xs w-full mr-4">
           <input
             type="text"
-            className="border rounded-full p-2 w-full bg-gray-100 pl-4 pr-10 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border rounded-full p-2 w-full bg-gray-100 dark:bg-gray-700 pl-4 pr-10 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <span className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <img
-              src="/searchIcon.png"
-              alt="Search Icon"
-              className="w-5 h-5 text-gray-500"
-            />
+            <SearchIcon className="h-5 w-5 text-gray-400" />
           </span>
         </div>
         <div className="flex items-center space-x-4">

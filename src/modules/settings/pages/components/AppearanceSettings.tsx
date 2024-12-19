@@ -164,13 +164,13 @@ export default function AppearanceSettings({
                     type="color"
                     value={primaryColor}
                     onChange={(e) => setPrimaryColor(e.target.value)}
-                    className="w-10 h-10 rounded-md cursor-pointer"
+                    className="w-10 h-10 rounded-xl cursor-pointer"
                   />
                   <input
                     type="text"
                     value={primaryColor}
                     onChange={(e) => setPrimaryColor(e.target.value)}
-                    className="flex-1 px-3 py-2 border rounded-md"
+                    className="flex-1 px-3 py-2 border rounded-xl dark:bg-gray-700"
                   />
                 </div>
               </div>
@@ -182,13 +182,13 @@ export default function AppearanceSettings({
                     type="color"
                     value={secondaryColor}
                     onChange={(e) => setSecondaryColor(e.target.value)}
-                    className="w-10 h-10 rounded-md cursor-pointer"
+                    className="w-10 h-10 rounded-xl cursor-pointer"
                   />
                   <input
                     type="text"
                     value={secondaryColor}
                     onChange={(e) => setSecondaryColor(e.target.value)}
-                    className="flex-1 px-3 py-2 border rounded-md"
+                    className="flex-1 px-3 py-2 border rounded-xl dark:bg-gray-700"
                   />
                 </div>
               </div>

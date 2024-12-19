@@ -49,7 +49,7 @@ export default function GeneralSettings() {
               onChange={handleLogoUpload}
               className="hidden"
             />
-            <Button asChild className='bg-black'>
+            <Button asChild className='bg-black dark:bg-blue-600 dark:text-gray-300'>
               <label htmlFor="logo" className="cursor-pointer">
                 <Upload className="mr-2 h-4 w-4" /> Upload Logo
               </label>

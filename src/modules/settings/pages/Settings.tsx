@@ -23,11 +23,15 @@ export default function SettingsPage() {
           <CardDescription>Manage your dashboard preferences and configurations.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="general" className="w-full">
+          <Tabs defaultValue="appearance" className="w-full">
             <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="general" className="flex items-center gap-2">
+              {/* <TabsTrigger value="general" className="flex items-center gap-2">
                 <Settings className="h-4 w-4" />
                 General
+              </TabsTrigger> */}
+              <TabsTrigger value="appearance" className="flex items-center gap-2">
+                <Palette className="h-4 w-4" />
+                Appearance
               </TabsTrigger>
               <TabsTrigger value="api" className="flex items-center gap-2">
                 <Key className="h-4 w-4" />
@@ -37,24 +41,14 @@ export default function SettingsPage() {
                 <Database className="h-4 w-4" />
                 Firebase
               </TabsTrigger>
-              <TabsTrigger value="appearance" className="flex items-center gap-2">
-                <Palette className="h-4 w-4" />
-                Appearance
-              </TabsTrigger>
               <TabsTrigger value="about" className="flex items-center gap-2">
                 <Info className="h-4 w-4" />
                 About
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="general">
+            {/* <TabsContent value="general">
               <GeneralSettings />
-            </TabsContent>
-            <TabsContent value="api">
-              <ApiIntegrations />
-            </TabsContent>
-            <TabsContent value="firebase">
-              <FirebaseConfiguration />
-            </TabsContent>
+            </TabsContent> */}
             <TabsContent value="appearance">
               <AppearanceSettings
                 primaryColor={primaryColor}
@@ -64,6 +58,12 @@ export default function SettingsPage() {
                 font={font}
                 setFont={setFont}
               />
+            </TabsContent>
+            <TabsContent value="api">
+              <ApiIntegrations />
+            </TabsContent>
+            <TabsContent value="firebase">
+              <FirebaseConfiguration />
             </TabsContent>
             <TabsContent value="about">
               <AboutSettings />
