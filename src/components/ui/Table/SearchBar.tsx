@@ -100,7 +100,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         <div className="flex w-full items-center gap-4">
           {/* Operator Selector */}
           <Select
-            value={searchOperator || ""}
+            value={searchOperator}
             onValueChange={(value) => setSearchOperator(value || "eq")}
           >
             <SelectTrigger>
@@ -108,13 +108,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="like">Contains</SelectItem>
+              <SelectItem value="ilike">Contains (Case Insensitive)</SelectItem>
               <SelectItem value="eq">Equals</SelectItem>
               <SelectItem value="gt">Greater Than</SelectItem>
               <SelectItem value="lt">Less Than</SelectItem>
               <SelectItem value="gte">Greater/Equal</SelectItem>
               <SelectItem value="lte">Less/Equal</SelectItem>
               <SelectItem value="ne">Not Equal</SelectItem>
-              <SelectItem value="ilike">Contains (Case Insensitive)</SelectItem>
             </SelectContent>
           </Select>
 

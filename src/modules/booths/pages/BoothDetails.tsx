@@ -25,6 +25,7 @@ import { BoothsAssignmentCard } from "../components/cards/booths-assignment-card
 import { BoothsMaintenanceCard } from "../components/cards/booths-maintenance-card";
 import BoothsLogsCard from "../components/cards/booths-logs-card";
 import { boothDetails } from "../constants";
+import BoothOrdersCard from "../components/cards/booth-orders-card";
 
 const BoothDetails: React.FC = () => {
   const { boothId } = useParams<{ boothId: string }>();
@@ -161,8 +162,9 @@ const BoothDetails: React.FC = () => {
         />
       </div>
 
-      <div className="flex w-full">
+      <div className="flex w-full gap-4 flex-col lg:flex-row">
         <BoothsLogsCard currentBoothLogs={currentBooth.logs} />
+        <BoothOrdersCard boothId={currentBooth.id} />
       </div>
 
       <div className="mt-8">

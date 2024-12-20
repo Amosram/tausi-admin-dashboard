@@ -26,7 +26,7 @@ const BoothsAssignments = () => {
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-6">
       <Link
         to={`/booths/${boothId}`}
         className="w-full items-center flex flex-col p-4 hover:underline text-blue-500"

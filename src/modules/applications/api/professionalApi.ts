@@ -7,7 +7,7 @@ export const professionalApi = createApi({
   reducerPath: 'professionalApi',
   baseQuery: axiosBaseQuery({isAuthorizedApi: true}),
   tagTypes: ['Professionals', 'ProfessionalsDetails', 'VerifiedBeauticians', 'VerifiedBeauticiansDetails'],
-  refetchOnMountOrArgChange:true,
+  refetchOnMountOrArgChange:false,
   endpoints: (builder) => ({
     getProfessionals: builder.query<ApiResponse<Professional[]>, number>({
       query: (limit) => ({
@@ -15,6 +15,7 @@ export const professionalApi = createApi({
         method: "GET",
       }),
       providesTags: ['Professionals'],
+      keepUnusedDataFor: 0,
     }),
 
     getProfessionalsById: builder.query<ProfessionalApiResponse, string> ({

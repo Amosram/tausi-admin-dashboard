@@ -7,7 +7,7 @@ export const usersApi = createApi({
   reducerPath: "usersApi",
   baseQuery: axiosBaseQuery({ isAuthorizedApi: true }),
   tagTypes: ["Users", "UserDetails"],
-  refetchOnMountOrArgChange: false,
+  refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
     getUsers: builder.query<TausiUser[], number>({
       query: (limit) => ({
@@ -15,7 +15,7 @@ export const usersApi = createApi({
         method: "GET",
       }),
       providesTags: ["Users"],
-      keepUnusedDataFor: 60,
+      keepUnusedDataFor: 0,
     }),
     getUserById: builder.query<TausiUserDetails, string>({
       query: (userId) => ({
@@ -38,13 +38,22 @@ export const usersApi = createApi({
       TausiUserDetails,
       Partial<TausiUserDetails> & { id: string }
     >({
-      query: ({ id, ...updates }) => ({
-        url: `/users/${id}`,
-        method: "PATCH",
-        data: updates,
-      }),
+      query: ({ id, ...updates }) => {
+        // Ensure the id is explicitly passed
+        if (!id || typeof id !== "string") {
+          throw new Error("Invalid or missing ID in updateUser mutation.");
+        }
+
+        // Return the manual query configuration
+        return {
+          url: `/users/${id}`, // Pass the id explicitly in the URL
+          method: "PATCH",
+          data: { id, ...updates }, // Optionally include id in the payload if the backend requires it
+        };
+      },
       invalidatesTags: ["UserDetails", "Users"],
     }),
+
   }),
 });
 

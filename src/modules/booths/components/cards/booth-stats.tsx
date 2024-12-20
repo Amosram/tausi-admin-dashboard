@@ -69,24 +69,24 @@ export const BoothStats = ({ booths }: BoothsStatsProps) => {
       bgColor: "bg-red-50",
       textColor: "text-red-800",
     },
-    {
-      icon: <PieChart className="h-8 w-8 text-orange-600" />,
-      label: "Assigned Booths",
-      value: boothsAssigned,
-      link: "/booths/list",
-      filter: null,
-      bgColor: "bg-orange-50",
-      textColor: "text-orange-800",
-    },
-    {
-      icon: <PieChart className="h-8 w-8 text-gray-600" />,
-      label: "Unassigned",
-      value: boothsUnassigned,
-      link: "/booths/list",
-      filter: null,
-      bgColor: "bg-gray-50",
-      textColor: "text-gray-800",
-    },
+    // {
+    //   icon: <PieChart className="h-8 w-8 text-orange-600" />,
+    //   label: "Assigned Booths",
+    //   value: boothsAssigned,
+    //   link: "/booths/list",
+    //   filter: null,
+    //   bgColor: "bg-orange-50",
+    //   textColor: "text-orange-800",
+    // },
+    // {
+    //   icon: <PieChart className="h-8 w-8 text-gray-600" />,
+    //   label: "Unassigned",
+    //   value: boothsUnassigned,
+    //   link: "/booths/list",
+    //   filter: null,
+    //   bgColor: "bg-gray-50",
+    //   textColor: "text-gray-800",
+    // },
     {
       icon: <CheckCircle2 className="h-8 w-8 text-indigo-600" />,
       label: "Active Booths",
@@ -99,7 +99,7 @@ export const BoothStats = ({ booths }: BoothsStatsProps) => {
   ];
 
   return (
-    <div className="w-full py-4 mx-auto">
+    <div className="w-full py-4 mx-auto mb-6">
       <p className="text-lg uppercase text-center font-semibold mb-3">STATS</p>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {statsItems.map((item, index) => (

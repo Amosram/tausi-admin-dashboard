@@ -1,7 +1,7 @@
 import { TausiUser } from "@/models/user";
 import { useMemo } from "react";
 
-interface UserMetrics {
+export interface UserMetrics {
   totalUsers: number;
   activeUsers: number;
   inactiveUsers: number;
