@@ -6,6 +6,8 @@ import { useAppDispatch } from "@/redux/hooks";
 import { setUser } from "@/redux/reducers/userSlice";
 import { TausiUser } from "@/models/user";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const validationSchema = yup.object({
   email: yup.string().email("Enter a valid email").required("Required"),
@@ -86,11 +88,11 @@ const Login = () => {
       </div>
 
       {/* Right side with form */}
-      <div className="w-1/2 flex flex-col justify-center items-center bg-white p-12">
+      <div className="w-1/2 flex flex-col justify-center items-center bg-card p-12">
         <img src="/tausi-logo.png" alt="Tausi Logo" className="w-32 mb-8" />
         <h1 className="text-2xl font-semibold mb-4">Login to Your Account</h1>
         <form onSubmit={formik.handleSubmit} className="flex flex-col w-full max-w-sm">
-          <input
+          <Input
             name="email"
             type="email"
             placeholder="Email"
@@ -104,7 +106,7 @@ const Login = () => {
           )}
 
           <div className="relative w-full mb-4">
-            <input
+            <Input
               name="password"
               type={passwordVisible ? "text" : "password"}
               placeholder="Password"
@@ -126,12 +128,12 @@ const Login = () => {
 
           {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
 
-          <button
+          <Button
             type="submit"
-            className="p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
+            className="p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600 dark:bg-blue-700 dark:hover:bg-gray-800"
           >
             Login
-          </button>
+          </Button>
         </form>
       </div>
     </div>
