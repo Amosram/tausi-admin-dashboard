@@ -8,6 +8,13 @@ import {
 } from "@/models";
 import { SearchCriteriaType } from "@/hooks/useSearch";
 
+export interface GetOrdersByBoothIdApiResponse {
+  statusCode: string;
+  message: string;
+  code: number;
+  data: Appointment[];
+}
+
 export const ordersApi = createApi({
   reducerPath: "ordersApi",
   baseQuery: axiosBaseQuery({ isAuthorizedApi: true }),
@@ -25,6 +32,13 @@ export const ordersApi = createApi({
     getOrderById: builder.query<AppointmentsApiResponse, string>({
       query: (orderId) => ({
         url: `/appointments/${orderId}`,
+        method: "GET",
+      }),
+      providesTags: ["OrderDetails"],
+    }),
+    getOrderByBoothId: builder.query<GetOrdersByBoothIdApiResponse, string>({
+      query: (boothId) => ({
+        url: `/appointments/booth/${boothId}`,
         method: "GET",
       }),
       providesTags: ["OrderDetails"],
@@ -53,5 +67,6 @@ export const ordersApi = createApi({
 export const {
   useGetOrdersQuery,
   useGetOrderByIdQuery,
+  useGetOrderByBoothIdQuery,
   useSearchOrdersMutation,
 } = ordersApi;

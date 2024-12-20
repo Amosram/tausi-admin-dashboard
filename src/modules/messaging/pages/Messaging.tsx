@@ -70,7 +70,7 @@ const MessagingContent = () => {
     <div className={`px-6 flex md:flex-row flex-col w-full gap-3`}>
       {/* LEFT SIDE */}
       <div
-        className={`transition-all duration-300 ${
+        className={`transition-all duration-600 ${
           !activeComponent ? "w-full flex md:px-6 px-2" : "w-1/3 space-y-4"
         }`}
       >

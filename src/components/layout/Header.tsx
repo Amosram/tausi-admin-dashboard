@@ -38,6 +38,7 @@ const routeMappings: Record<string, RouteDetails> = {
   "/booths/:id/logs": { title: "Booth Logs" },
   "/booths/:id/assignments": { title: "Booth Assignments" },
   "/booths/:id/edit": { title: "Edit Booth" },
+  "/booths/:id/orders": { title: "Booth Orders" },
   "/orders/:id": { title: "Order Details", backLink: "/orders" },
   "/ledgers/create-loan": { title: "Create Loan" },
   "/ledgers": { title: "Businesses" },

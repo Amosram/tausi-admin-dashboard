@@ -33,6 +33,7 @@ const EditBoothLazy = lazy(() => import("@/modules/booths/pages/EditBoothPage"))
 const BoothsListLazy = lazy(() => import('@/modules/booths/pages/BoothsList'));
 const BoothAssignmentsLazy = lazy(() => import('@/modules/booths/pages/BoothAssignments'));
 const BoothLogsLazy = lazy(() => import('@/modules/booths/pages/BoothLogs'));
+const BoothOrdersPageLazy = lazy(() => import('@/modules/booths/pages/BoothOrdersPage'));
 
 export const routes: RouteObject[] = [
   {
@@ -256,6 +257,14 @@ export const routes: RouteObject[] = [
                 element: (
                   <Suspense fallback={<Loader />}>
                     <BoothLogsLazy />
+                  </Suspense>
+                ),
+              },
+              {
+                path: "orders",
+                element: (
+                  <Suspense fallback={<Loader />}>
+                    <BoothOrdersPageLazy />
                   </Suspense>
                 ),
               },

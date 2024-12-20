@@ -34,8 +34,8 @@ export const MessagingGroupsCard = ({
 }: MessagingGroupsCardProps) => {
   const { changeActiveComponent } = useActiveComponentContext();
   const [activeGroupType, setActiveGroupType] = useState<
-    "professionals" | "clients"
-  >("professionals");
+    "professionals" | "clients" | ""
+  >("");
 
   const handleViewMore = (groupType: "professionals" | "clients") => {
     setActiveGroupType(groupType);
@@ -67,13 +67,13 @@ export const MessagingGroupsCard = ({
 
   if (isLoading)
     return (
-      <Card>
+      <Card className="w-full h-[500px] flex justify-center items-center">
         <CardContent>Loading...</CardContent>
       </Card>
     );
   if (error)
     return (
-      <Card>
+      <Card className="w-full h-[500px] flex justify-center items-center">
         <CardContent>Error loading users</CardContent>
       </Card>
     );
