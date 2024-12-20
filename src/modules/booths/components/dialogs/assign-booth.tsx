@@ -161,6 +161,7 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
 
             <DialogFooter>
               <Button
+                className="dark:bg-black dark:hover:bg-card"
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
@@ -168,6 +169,7 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
                 Cancel
               </Button>
               <Button
+                className="dark:text-gray-300 dark:bg-orange-600 dark:hover:bg-green-800"
                 type="submit"
                 disabled={isAssigning || isProfessionalsLoading}
               >

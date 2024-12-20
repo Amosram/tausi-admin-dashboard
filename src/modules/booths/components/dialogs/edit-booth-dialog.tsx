@@ -60,12 +60,13 @@ export const EditBoothDialog: React.FC<EditBoothDialogProps> = ({
           </div>
           <DialogFooter>
             <Button
+              className="dark:bg-black dark:hover:bg-card"
               variant="outline"
               onClick={() => setIsEditDialogOpen(false)}
             >
               Cancel
             </Button>
-            <Button onClick={handleEdit}>Proceed to Edit</Button>
+            <Button className="dark:text-gray-300 dark:bg-orange-600 dark:hover:bg-green-800" onClick={handleEdit}>Proceed to Edit</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

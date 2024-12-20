@@ -120,7 +120,7 @@ export const BoothStats = ({ booths }: BoothsStatsProps) => {
               <CardFooter className="p-4 pt-0">
                 <Button
                   variant="outline"
-                  className="w-full text-xs hover:bg-opacity-20 border-opacity-50 transition-colors hover:bg-primary hover:text-white"
+                  className="w-full text-xs hover:bg-opacity-20 border-opacity-50 transition-colors hover:bg-primary hover:text-white dark:hover:bg-orange-600"
                   asChild
                 >
                   <Link

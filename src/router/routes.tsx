@@ -4,6 +4,7 @@ import Layout from "@/components/layout";
 import { Outlet, RouteObject } from "react-router-dom";
 import Loader from "@/components/layout/Loader";
 import { Toaster } from "@/components/ui/toaster";
+import Login from "@/modules/auth/pages/Login";
 
 // Auth
 const LoginLazy = lazy(() => import("@/modules/auth/pages/Login"));
@@ -296,9 +297,7 @@ export const routes: RouteObject[] = [
       {
         path: "/auth/login",
         element: (
-          <Suspense fallback={<Loader />}>
-            <LoginLazy />
-          </Suspense>
+        <Login />
         )
       },
     ]

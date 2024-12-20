@@ -17,7 +17,7 @@ const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
     return (
       <TooltipRadix.Root>
         <TooltipRadix.Trigger className="focus:outline-none">
-          <div className="bg-white shadow-lg p-2 rounded-md">
+          <div className="bg-white dark:bg-gray-800 shadow-lg p-2 rounded-md">
             <p className="font-semibold">{label}</p>
             <p>Revenue: ${payload[0].value.toLocaleString()}</p>
           </div>
@@ -31,7 +31,7 @@ const CustomTooltip: React.FC<any> = ({ active, payload, label }) => {
 
 const RevenueByLocation: React.FC = () => {
   return (
-    <div className="bg-white shadow-md rounded-lg p-4">
+    <div className="bg-white dark:bg-card shadow-md rounded-lg p-4">
       <h2 className="text-lg font-medium mb-4">Revenue by Location</h2>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} margin={{ top: 20, right: 20, bottom: 10, left: 0 }}>

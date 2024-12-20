@@ -260,13 +260,16 @@ const EditBoothPage: React.FC = () => {
 
               <div className="flex justify-end space-x-4">
                 <Button
+                  className="dark:bg-black dark:hover:bg-card"
                   type="button"
                   variant="outline"
                   onClick={() => navigate(`/booths/${boothId}`)}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isUpdating}>
+                <Button
+                  className=" dark:bg-orange-600 dark:hover:bg-green-800 dark:text-gray-300"
+                  type="submit" disabled={isUpdating}>
                   {isUpdating ? "Updating..." : "Update Booth"}
                 </Button>
               </div>

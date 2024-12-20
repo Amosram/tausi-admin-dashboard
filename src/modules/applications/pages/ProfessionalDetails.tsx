@@ -127,11 +127,11 @@ const BusinessCard: React.FC<{
             <div className="space-y-1">
               <div>
                 <span className="text-muted-foreground capitalize">{professional.user.name}</span>
-                <p className="text-lg font-semibold text-blue-900">{professional.businessName}</p>
+                <p className="text-lg font-semibold text-blue-900 dark:text-blue-400">{professional.businessName}</p>
               </div>
               <div>
                 <span className="text-muted-foreground">Provider Location</span>
-                <p className="text-lg font-semibold text-blue-900">{professional.locationAddress}</p>
+                <p className="text-lg font-semibold text-blue-900 dark:text-blue-400">{professional.locationAddress}</p>
               </div>
             </div>
           </div>
@@ -144,26 +144,26 @@ const BusinessCard: React.FC<{
         <div className="grid grid-cols-3 gap-4 my-6 py-6 border-y">
           <div>
             <p className="text-muted-foreground">Completed Orders</p>
-            <p className="text-xl font-semibold text-blue-900">123</p>
+            <p className="text-xl font-semibold text-blue-900 dark:text-gray-300">123</p>
           </div>
           <div>
             <p className="text-muted-foreground">Cancelled Orders</p>
-            <p className="text-xl font-semibold text-blue-900">10</p>
+            <p className="text-xl font-semibold text-blue-900 dark:text-gray-300">10</p>
           </div>
           <div>
             <p className="text-muted-foreground">Total Revenue</p>
-            <p className="text-xl font-semibold text-blue-900">$2,500</p>
+            <p className="text-xl font-semibold text-blue-900 dark:text-gray-300">$2,500</p>
           </div>
         </div>
       
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-muted-foreground">Provider Phone</p>
-            <p className="text-lg font-semibold text-blue-900">{professional.user.phoneNumber}</p>
+            <p className="text-lg font-semibold text-blue-900 dark:text-gray-300">{professional.user.phoneNumber}</p>
           </div>
           <div>
             <p className="text-muted-foreground">Provider Email;</p>
-            <p className="text-lg font-semibold text-blue-900">{professional.user.email}</p>
+            <p className="text-lg font-semibold text-blue-900 dark:text-gray-300">{professional.user.email}</p>
           </div>
         </div>
       </div>

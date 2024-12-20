@@ -57,7 +57,7 @@ const LedgerBookDetails = () => {
       entries = entries.filter(
         (entry) =>
           entry.title.toLowerCase().includes(searchTerm) ||
-          (entry.remark && typeof entry.remark === "string" && entry.remark.toLowerCase().includes(searchTerm))
+          (entry.remark && typeof entry.remark === "string" && (entry.remark as string).toLowerCase().includes(searchTerm))
       );
     }
   
@@ -144,7 +144,7 @@ const LedgerBookDetails = () => {
           </CardContent>
           <CardFooter>
             <Badge
-              className="text-sm p-2 w-40 text-center justify-center"
+              className="text-sm p-2 w-40 text-center justify-center dark:bg-green-600 dark:text-gray-300"
               variant={business.isDeleted ? "destructive" : "default"}
             >
         Status: {business.isDeleted ? "Deleted" : "Active"}
@@ -164,8 +164,8 @@ const LedgerBookDetails = () => {
                   <AccordionContent>
                     <p>Created: {format(new Date(book.createdAt), "PPpp")}</p>
                     <p>Updated: {format(new Date(book.updatedAt), "PPpp")}</p>
-                    <p className="text-gray-600 text-sm font-medium mt-3">
-                      <Badge className="font-bold text-white p-2 rounded-lg bg-destructive">Total Expense</Badge> <span className="mr-1">KES</span>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mt-3">
+                      <Badge className="font-bold text-white p-2 rounded-lg bg-destructive dark:bg-red-600">Total Expense</Badge> <span className="mr-1">KES</span>
                       {book.bookEntries
                         ? book.bookEntries
                           .filter((entry) => entry.type === "Expense")
@@ -173,7 +173,7 @@ const LedgerBookDetails = () => {
                           .toFixed(2)
                         : 0}
                     </p>
-                    <p className="text-gray-600 text-sm font-medium mt-6">
+                    <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mt-6">
                       <Badge className="font-bold text-white bg-green-600 p-2 rounded-lg">Total Revenue</Badge> <span className="mr-1">KES</span>
                       {book.bookEntries
                         ? book.bookEntries
@@ -302,7 +302,7 @@ const LedgerBookDetails = () => {
         <h2 className="text-xl font-semibold mb-2">Book Entries</h2>
         <div className="flex justify-between items-stretch gap-4 mb-4">
           {/* Total Expense Card */}
-          <Card className="flex flex-col justify-between border-2 border-transparent hover:shadow-xl hover:border-opacity-50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 rounded-xl overflow-hidden bg-white flex-grow">
+          <Card className="flex flex-col justify-between border-2 border-transparent hover:shadow-xl hover:border-opacity-50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 rounded-xl overflow-hidden bg-card flex-grow">
             <CardHeader className="flex flex-row items-center justify-center p-4 pb-2">
               <div className="p-3 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
                 <BadgeDollarSign className="h-8 w-8 text-red-600" />
@@ -312,14 +312,14 @@ const LedgerBookDetails = () => {
               <div className="text-2xl font-bold mb-1 text-red-600">
                 Total Expense: KES {totalExpense.toFixed(2)}
               </div>
-              <p className="text-xs opacity-70 uppercase tracking-wider truncate">
+              <p className="text-sm font-bold opacity-70 uppercase tracking-wider truncate">
                 Expenses
               </p>
             </CardContent>
           </Card>
 
           {/* Total Revenue Card */}
-          <Card className="flex flex-col justify-between border-2 border-transparent hover:shadow-xl hover:border-opacity-50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 rounded-xl overflow-hidden bg-white flex-grow">
+          <Card className="flex flex-col justify-between border-2 border-transparent hover:shadow-xl hover:border-opacity-50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 rounded-xl overflow-hidden bg-card flex-grow">
             <CardHeader className="flex flex-row items-center justify-center p-4 pb-2">
               <div className="p-3 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
                 <BadgeDollarSign className="h-8 w-8 text-green-600" />
@@ -329,7 +329,7 @@ const LedgerBookDetails = () => {
               <div className="text-2xl font-bold mb-1 text-green-600">
                 Total Revenue: KES {totalRevenue.toFixed(2)}
               </div>
-              <p className="text-xs opacity-70 uppercase tracking-wider truncate">
+              <p className="text-sm font-bold opacity-70 uppercase tracking-wider truncate">
                Revenue
               </p>
             </CardContent>

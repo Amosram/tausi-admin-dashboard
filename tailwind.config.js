@@ -65,6 +65,14 @@ module.exports = {
   				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
+			fontFamily: {
+				inter: ['Inter', 'sans-serif'],
+				roboto: ['Roboto', 'sans-serif'],
+				openSans: ['"Open Sans"', 'sans-serif'],
+				lato: ['Lato', 'sans-serif'],
+				lexend: ['Lexend', 'sans-serif'],
+				nunito: ['Nunito', 'sans-serif'],
+			},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
