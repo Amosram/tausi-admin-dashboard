@@ -22,6 +22,7 @@ import { FiSend } from "react-icons/fi";
 import { ChatMessage } from "./chat-message";
 import { TausiUser } from "@/models/user";
 import { useGetUsersQuery } from "@/modules/users/api/usersApi";
+import { ChatItemProps } from "../types";
 
 export const MessagingChatCard = () => {
   const { data: users, isLoading, error } = useGetUsersQuery(10000);
@@ -46,10 +47,26 @@ export const MessagingChatCard = () => {
     ...clients.map((user) => user.id),
   ];
 
-  const messages = messagesSnapshot?.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  const messages = messagesSnapshot?.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      text: data.text || "",
+      sender: data.sender || "",
+      recipient: data.recipients || [],
+      read: data.read || false,
+      timestamp: data.timestamp || "",
+      createdAt: data.createdAt || new Date(),
+      senderName: data.senderName || "Unknown",
+      senderAvatar: data.senderAvatar || "",
+      messageType: data.messageType || "text",
+      attachments: data.attachments || [],
+      replyTo: data.replyTo || null,
+      reactions: data.reactions || {},
+      edited: data.edited || false,
+      delivered: data.delivered || false,
+    } as ChatItemProps;
+  });
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
