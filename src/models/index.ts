@@ -490,22 +490,22 @@ export interface BoothsApiResponse<T> {
 
 export interface Assignment {
   id:                string;
-  createdAt:         Date;
-  updatedAt:         Date;
+  createdAt:         Date | string;
+  updatedAt:         Date | string;
   isActive:          boolean;
   isDeleted:         boolean;
-  deletedAt:         null;
-  deletedReason:     null;
+  deletedAt:         string | null;
+  deletedReason:     string | null;
   boothId:           string;
   beauticianId:      string;
-  startDate:         Date;
-  endDate:           Date;
+  startDate:         Date | string;
+  endDate:           Date | string;
   isLapsed:          boolean;
-  lapsedAt:          null;
+  lapsedAt:          string | null;
   isTerminated:      boolean;
-  terminatedBy:      null;
-  terminatedAt:      null;
-  terminationReason: null;
+  terminatedBy:      string | null;
+  terminatedAt:      string | null;
+  terminationReason: string | null;
   booth:             Booth;
 }
 
