@@ -3,11 +3,26 @@ import OngoingOrders from '@/components/layout/OngoingOrders';
 import OrdersChart from '@/components/layout/OrdersChart';
 import RevenueChart from '@/components/layout/RevenueChart';
 import React, { useState } from 'react';
+import { useGetDashboardAnalyticsQuery } from '../api/dashboardApi';
+import Loader from '@/components/layout/Loader';
+import { Frown } from 'lucide-react';
 
 const DashBoard: React.FC = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState('Monthly');
   const [selectedRevenueTimeframe, setSelectedRevenueTimeframe] = useState('Monthly');
 
+  const { data, isLoading, isError } = useGetDashboardAnalyticsQuery('dashboard');
+
+  if (isLoading) return <Loader />;
+
+  if (isError) return <Frown />;
+
+  const allOrders = data.data.data.metrics.allOrders;
+  const appUsers = data.data.data.metrics.totalCLients;
+  const revenue = data.data.data.metrics.totalRevenue;
+  const applications = data.data.data.metrics.totalProfessionals;
+
+  
   return (
     <div className="flex h-screen overflow-y-scroll overflow-x-hidden bg-gray-100 dark:bg-gray-800 w-full">
       {/* Main content */}
@@ -18,19 +33,19 @@ const DashBoard: React.FC = () => {
             <div className="grid grid-cols-2 grid-rows-2 gap-2 bg-card p-4 rounded-lg shadow-md sm:gap-4 sm:p-6">
               <div className="border-r border-b p-2 sm:p-4">
                 <div className="text-gray-600 dark:text-gray-300">Client Orders</div>
-                <div className="text-2xl font-bold sm:text-3xl">--</div>
+                <div className="text-2xl font-bold sm:text-3xl">{allOrders ?? '--'}</div>
               </div>
               <div className="border-b p-2 sm:p-4">
                 <div className="text-gray-600 dark:text-gray-300">App Users</div>
-                <div className="text-2xl font-bold sm:text-3xl">--</div>
+                <div className="text-2xl font-bold sm:text-3xl">{appUsers ?? '--'}</div>
               </div>
               <div className="border-r p-2 sm:p-4">
                 <div className="text-gray-600 dark:text-gray-300">Revenue</div>
-                <div className="text-2xl font-bold sm:text-3xl">--</div>
+                <div className="text-2xl font-bold sm:text-3xl">{revenue ?? '--'}</div>
               </div>
               <div className="p-2 sm:p-4">
-                <div className="text-gray-600 dark:text-gray-300">New Applications</div>
-                <div className="text-2xl font-bold sm:text-3xl">--</div>
+                <div className="text-gray-600 dark:text-gray-300">All Professionals</div>
+                <div className="text-2xl font-bold sm:text-3xl">{applications ?? '--'}</div>
               </div>
             </div>
 
@@ -41,7 +56,7 @@ const DashBoard: React.FC = () => {
 
                 {/* Buttons */}
                 <div className="flex space-x-2 flex-grow w-full max-w-xs sm:max-w-sm flex-wrap">
-                  <button
+                  {/* <button
                     onClick={() => setSelectedTimeframe('Daily')}
                     className={`px-2 py-1 flex-1 rounded-full ${
                       selectedTimeframe === 'Daily' ? 'bg-red-500 text-white dark:text-gray-300' : 'bg-card text-gray-700 dark:text-gray-300'
@@ -67,7 +82,7 @@ const DashBoard: React.FC = () => {
                     style={{ fontSize: 'clamp(0.75rem, 1vw, 1rem)' }}
                   >
                     Monthly
-                  </button>
+                  </button> */}
                 </div>
               </div>
               <div className="flex space-x-4 mb-4">

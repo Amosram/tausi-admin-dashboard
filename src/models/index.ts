@@ -597,3 +597,43 @@ export interface CreateBoothAssignmentRequest {
   startDate: string;
   endDate: string;
 }
+
+export interface DashboardAnalyticsResponse {
+    statusCode: string;
+    code:       number;
+    message:    string;
+    data:       DashboardAnalyticsResponseData;
+}
+
+export interface DashboardAnalyticsResponseData {
+    data: DashboardAnalyticsData;
+}
+
+export interface DashboardAnalyticsData {
+    last_7_days:   Last[];
+    last_1_month:  Last[];
+    last_90_days:  Last[];
+    last_6_months: Last[];
+    last_year:     Last[];
+    metrics:       Metrics;
+}
+
+export interface Last {
+    appointment_date:   Date;
+    status:             Status;
+    total_appointments: number;
+}
+
+export enum Status {
+    Cancelled = "cancelled",
+    Completed = "completed",
+    Pending = "pending",
+    Scheduled = "scheduled",
+}
+
+export interface Metrics {
+    totalCLients:       number;
+    totalProfessionals: number;
+    totalRevenue:       string;
+    allOrders:          number;
+}
