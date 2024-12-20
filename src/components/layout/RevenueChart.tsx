@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid } from 'recharts';
 
 interface RevenueData {
   date: string;
@@ -49,47 +49,19 @@ const RevenueChart: React.FC = () => {
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">Revenue</h2>
-        <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-full">
-          {['daily', 'weekly', 'monthly'].map((frame) => (
-            <button
-              key={frame}
-              onClick={() => handleTimeFrameChange(frame as 'daily' | 'weekly' | 'monthly')}
-              className={`px-4 py-2 rounded-full ${
-                timeFrame === frame ? 'bg-red-500 text-white dark:text-gray-300' : 'text-gray-700 dark:text-gray-300'
-              }`}
-            >
-              {frame.charAt(0).toUpperCase() + frame.slice(1)}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Income and Expense Details */}
-      <div className="flex justify-between items-center text-sm mb-4">
-        <div className="flex items-center gap-2">
-          <span className="text-red-500">■</span>
-          <span>Income</span>
-          <span className="font-semibold">$122,239</span>
-          <span className="text-green-600">+0.4%</span>
-        </div>
-        {/* <div className="flex items-center gap-2">
-          <span className="text-gray-500">■</span>
-          <span>Expense</span>
-          <span className="font-semibold">$8,345</span>
-        </div> */}
       </div>
 
       {/* Chart Section */}
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <LineChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" />
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
           <Legend verticalAlign="top" align="left" height={36} />
-          <Bar dataKey="income" fill="#ff4500" barSize={20} />
-          {/* <Bar dataKey="expense" fill="#888888" barSize={20} /> */}
-        </BarChart>
+          <Line type="monotone" dataKey="income" stroke="#ff4500" strokeWidth={2} />
+          {/* <Line type="monotone" dataKey="expense" stroke="#888888" strokeWidth={2} /> */}
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );
