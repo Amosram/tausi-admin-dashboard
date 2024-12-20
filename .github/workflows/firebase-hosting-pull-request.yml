@@ -11,11 +11,13 @@ permissions:
 env:
   CI: true
   VITE_API_URL: ${{ vars.VITE_API_URL }}
+  VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
 
 jobs:
   build_and_preview:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
+    environment: Staging
     steps:
       - uses: actions/checkout@v4
       - name: Install pnpm
