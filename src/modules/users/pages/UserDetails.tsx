@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { ShieldCheck, Trash2 } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import {
   Card,
@@ -37,6 +37,7 @@ import {
   AlertDialogHeader,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 const ProfileOverviewCard: React.FC<{ user: TausiUserDetails }> = ({
   user,
@@ -192,19 +193,67 @@ const UserDetails: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const { data: user, isLoading, isError } = useGetUserByIdQuery(userId || "");
   const [updateUser] = useUpdateUserMutation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isAlertOpen, setAlertOpen] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
 
   const handleDelete = async () => {
-    await updateUser({
-      id: userId,
-      isDeleted: true,
-      deletedReason: deleteReason,
-    });
-    setDialogOpen(false);
-    setAlertOpen(false);
+    try {
+      if (!user?.id) {
+        console.error("User ID is missing or invalid.");
+        return;
+      }
+
+      console.log("ID being passed to updateUser:", user?.id, typeof user?.id);
+
+      const beauticianDetails = {
+        id: user.id,
+        name: user?.name,
+        email: user?.email,
+        phoneNumber: user?.phoneNumber,
+        profilePictureUrl: user?.profilePictureUrl,
+        profilePicturePath: user?.profilePicturePath,
+        bio: user?.bio,
+        locationAddress: user?.locationAddress,
+        isActive: user?.isActive,
+        deactivatedAt: user?.deactivatedAt,
+        deactivatedBy: user?.deactivatedBy,
+        deactivatedReason: user?.deactivatedReason,
+        phoneVerified: user?.phoneVerified,
+        emailVerified: user?.emailVerified,
+        isDeleted: true,
+        deletedAt: user?.deletedAt,
+        deletedReason: deleteReason,
+        createdAt: user?.createdAt,
+        updatedAt: user?.updatedAt,
+        latitude: user?.latitude,
+        longitude: user?.longitude,
+        coordinates: user?.coordinates,
+        fcmToken: user?.fcmToken,
+        userTypeSession: user?.sessionData?.userTypeSession,
+      };
+
+      await updateUser(beauticianDetails);
+      setDialogOpen(false);
+      setAlertOpen(false);
+
+      toast({
+        title: "Success",
+        description: "User has been deleted successfully.",
+        variant: "success",
+      });
+
+      navigate("/users/list");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete user",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) return <Skeleton />;
