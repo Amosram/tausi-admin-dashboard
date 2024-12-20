@@ -5,6 +5,7 @@ import {usersReducer, usersRtkQueryMiddleware} from "@/modules/users/reducers";
 import { professionalReducer, professionalRtkQueryMiddleware } from "@/modules/applications/reducers";
 import { boothsReducer, boothsRtkQueryMiddleware } from "@/modules/booths/reducers";
 import { ledgersReducer, ledgersRTKQueryMiddleware } from "@/modules/ledger/reducers";
+import { dashboardReducer, dashboardRtkQueryMiddleware } from "@/modules/dashboard/reducers";
 
 export const modulesReducers = {
   ...ordersReducer,
@@ -12,6 +13,7 @@ export const modulesReducers = {
   ...boothsReducer,
   ...professionalReducer,
   ...ledgersReducer,
+  ...dashboardReducer
 };
 
 
@@ -21,6 +23,7 @@ export const rtkQueryMiddleware = [
   ...boothsRtkQueryMiddleware,
   ...professionalRtkQueryMiddleware,
   ...ledgersRTKQueryMiddleware,
+  ...dashboardRtkQueryMiddleware
 ];
 
 export const staticReducers = {
