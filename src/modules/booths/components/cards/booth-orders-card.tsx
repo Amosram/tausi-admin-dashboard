@@ -51,7 +51,7 @@ const BoothOrdersCard: React.FC<BoothOrdersCardProps> = ({ boothId }) => {
     <Card className="w-full flex-1">
       <CardHeader>
         <CardTitle className="text-lg font-bold">Latest Booth Orders</CardTitle>
-        <CardDescription className="text-sm text-gray-500">
+        <CardDescription className="text-sm text-gray-500 dark:text-gray-300">
           Overview of recent orders
         </CardDescription>
       </CardHeader>
@@ -64,15 +64,15 @@ const BoothOrdersCard: React.FC<BoothOrdersCardProps> = ({ boothId }) => {
                 className="p-4 border border-gray-300 rounded-lg shadow-sm mb-4 transition-shadow duration-200 flex justify-between items-center"
               >
                 <div>
-                  <p className="font-semibold text-gray-800 mb-2">
+                  <p className="font-semibold text-gray-800 dark:text-gray-300 mb-2">
                     Order ID: {order.id}
                   </p>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 dark:text-gray-400">
                     Amount:{" "}
                     <span className="font-medium">${order.totalPrice}</span>
                   </p>
 
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 dark:text-gray-400">
                     Amount Upfront: ${order.amountUpfront}
                   </p>
                 </div>

@@ -115,7 +115,7 @@ const OrdersChart = () => {
           id="timeRange"
           value={timeRange}
           onChange={handleTimeRangeChange}
-          className="p-2 border rounded"
+          className="p-2 border rounded bg-card"
         >
           <option value="last_7_days">Last 7 Days</option>
           <option value="last_1_month">Last 1 Month (Weekly)</option>
