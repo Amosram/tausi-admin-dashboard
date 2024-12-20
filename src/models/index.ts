@@ -632,8 +632,21 @@ export enum Status {
 }
 
 export interface Metrics {
-    totalCLients:       number;
-    totalProfessionals: number;
-    totalRevenue:       string;
-    allOrders:          number;
+   totalCLients:           number;
+    totalProfessionals:     number;
+    totalRevenue:           string;
+    allOrders:              number;
+    total_orders:           number;
+    completed_orders:       number;
+    pending_orders:         number;
+    sheduled_orders:        number;
+    cancelled_orders:       number;
+    total_users:            number;
+    active_users:           number;
+    inactive_users:         number;
+    verified_users:         number;
+    unverified_users:       number;
+    total_professionals:    number;
+    active_professionals:   number;
+    verified_professionals: number;
 }
