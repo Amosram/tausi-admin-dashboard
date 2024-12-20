@@ -11,6 +11,8 @@ import { auth } from "@/app/firebase";
 import { DoorOpen, Moon, Search, SearchIcon, Settings, Sun } from "lucide-react";
 import { useTheme } from "@/providers/theme-provider";
 import { MdChat, MdNotifications } from "react-icons/md";
+import { useAppDispatch } from "@/redux/hooks";
+import { clearLocalState, signOutUser } from "@/redux/reducers/userSlice";
 
 interface RouteDetails {
   title: string;
@@ -63,6 +65,7 @@ const getDynamicRouteDetails = (pathname: string): RouteDetails => {
 
 const Header = () => {
   const location = useLocation();
+  const dispatch = useAppDispatch();
 
   const titles: { [key: string]: string } = {
     "/": "Dashboard",
@@ -114,6 +117,8 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    dispatch(signOutUser());
+    dispatch(clearLocalState());
     navigate("/auth/login");
   };
 
@@ -122,6 +127,8 @@ const Header = () => {
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
+
+
 
   return (
     <header className="sticky top-0 border-b z-30 flex justify-between w-full shadow-sm px-4 py-6 bg-card text-card-foreground transition-colors duration-300">

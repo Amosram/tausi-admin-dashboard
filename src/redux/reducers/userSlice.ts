@@ -1,61 +1,39 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 import { TausiUser } from "@/models/user";
+import { ACCESS_TOKEN_STORAGE_KEY, REFRESH_TOKEN_STORAGE_KEY } from "@/Utils/constants";
 
-const initialState: TausiUser = {
-  id: '',
-  name: '',
-  email: '',
-  bio: '',
-  phoneNumber: '',
-  createdAt: new Date(),
-  deactivatedAt: null,
-  deactivatedBy: null,
-  deactivatedReason: null,
-  deletedAt: null,
-  deletedReason: null,
-  emailVerified: false,
-  fcmToken: null,
-  isActive: false,
-  isDeleted: false,
-  latitude: "",
-  locationAddress: "",
-  longitude: "",
-  phoneVerified: false,
-  profilePicturePath: null,
-  profilePictureUrl: null,
-  updatedAt: new Date(),
-  sessionData: {
-    userTypeSession: 'client',
-    id: 0,
-    userId: "",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deletedAt: null,
-    isDeleted: false
-  }
+const initialState: {
+  user: TausiUser | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+} = {
+  user: null,
+  accessToken: null,
+  refreshToken: null,
 };
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
-    setUser : (state, action: { payload: TausiUser }) => {
-      state = action.payload;
-
+    setUser: (state, action: { payload: { user: TausiUser; accessToken: string, refreshToken: string } }) => {
+      state.user = action.payload.user;
+      state.accessToken = action.payload.accessToken;
+      localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, action.payload.accessToken);
+      localStorage.setItem(REFRESH_TOKEN_STORAGE_KEY, action.payload.refreshToken);
     },
     signOutUser: (state) => {
-       
-      state = {
-        ...initialState
-      };
+      state.user = null;
+      state.accessToken = null;
+      localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+    },
+    clearLocalState: (_state) => {
+      localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
     }
-  }
+  },
 });
 
-export const {
-  setUser,
-  signOutUser
-} = userSlice.actions;
-
+export const { setUser, signOutUser, clearLocalState } = userSlice.actions;
 
 export default userSlice.reducer;
