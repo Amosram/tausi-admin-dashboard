@@ -104,13 +104,13 @@ export const MessagingGroupsCard = ({
             key={group.type}
             className={`flex justify-between items-center py-4 md:px-6 px-2 rounded-md ${
               index !== 0 ? "border-t border-gray-200" : ""
-            } ${activeGroupType === group.type ? "bg-primary-superlight" : ""}`}
+            } ${activeGroupType === group.type ? "bg-primary-superlight dark:bg-gray-700" : ""}`}
           >
             {/* Group Details */}
             <div className="flex gap-3 items-center">
               <div className="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center">
                 <div className="w-8 h-8 relative">
-                  <div className="absolute inset-0 bg-white rounded-full" />
+                  <div className="absolute inset-0 bg-white dark:bg-gray-700 rounded-full" />
                   <div className="absolute bottom-0 right-0 w-4 h-4 bg-yellow-300 rounded-full" />
                   <div className="absolute top-0 right-0 w-4 h-4 bg-green-500 rounded-full" />
                 </div>
