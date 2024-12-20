@@ -13,12 +13,6 @@ export default function AboutSettings() {
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Version Information</h3>
-          <p>Current Version: 1.0.0</p>
-          <Button variant="default">Check for Updates</Button>
-        </div>
-
-        <div className="space-y-4">
           <h3 className="text-lg font-medium">Credits</h3>
           <ul className="list-disc list-inside space-y-2">
             <li>Developed by: Tausi</li>
