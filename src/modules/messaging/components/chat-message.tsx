@@ -24,8 +24,6 @@ export const ChatMessage: React.FC<{ message: ChatItemProps }> = ({
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  console.log(message);
-
   const { text, sender, senderAvatar, senderName, id, createdAt, attachments } =
     message;
 

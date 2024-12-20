@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormInputField } from "@/components/ui/Form/FormInputField";
 import { useCreateUserMutation } from "../api/usersApi";
-import { CreateUserRequest } from "@/models";
+import { CreateUserRequest } from "../types";
 
 const userFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
