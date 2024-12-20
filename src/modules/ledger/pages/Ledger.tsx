@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import { MoreVertical } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from "@/components/layout/Loader";
-import TanStackTable from "@/components/ui/Table";
+import TanStackTable from "@/components/ui/Table/index";
 import { FaPlus } from "react-icons/fa";
 import CreateLoanBookModal from "../components/CreateLoanBookModal";
 import { useToast } from "@/hooks/use-toast";
