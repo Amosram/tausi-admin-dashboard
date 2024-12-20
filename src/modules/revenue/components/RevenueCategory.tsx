@@ -39,7 +39,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 const RevenueCategory: React.FC = () => {
-  const [category, setCategory] = useState('Hair Styling');
+  const [category, setCategory] = useState('Nail Tech');
 
   return (
     <div className="p-6 bg-white dark:bg-card rounded-lg shadow-lg">
@@ -58,7 +58,7 @@ const RevenueCategory: React.FC = () => {
             <Select.Content className="bg-white dark:bg-gray-800 shadow-lg rounded-md">
               <Select.ScrollUpButton />
               <Select.Viewport className="p-2">
-                {['Hair Styling', 'Make Up', 'Nail Art'].map((item) => (
+                {['Massage', 'DreadLocks', 'Hair Dressing', 'Barber', 'Makeup', 'Nail Tech'].map((item) => (
                   <Select.Item
                     key={item}
                     value={item}
