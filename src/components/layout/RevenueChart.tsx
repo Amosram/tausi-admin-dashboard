@@ -38,7 +38,6 @@ const RevenueChart: React.FC = () => {
 
   const revenueAnalyticsData = data as DashboardAnalyticsResponse | undefined;
   const revenueData: DashboardAnalyticsData['revenue'] | undefined = revenueAnalyticsData.data.data.revenue;
-  console.log("revenueData ========>",revenueData);
 
   // Helper Function
   const formatLast7Days = (data: Last[]) => {
