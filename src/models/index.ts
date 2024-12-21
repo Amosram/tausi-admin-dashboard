@@ -610,29 +610,13 @@ export interface DashboardAnalyticsResponseData {
 }
 
 export interface DashboardAnalyticsData {
-    last_7_days:   Last[];
-    last_1_month:  Last[];
-    last_90_days:  Last[];
-    last_6_months: Last[];
-    last_year:     Last[];
-    metrics:       Metrics;
-}
-
-export interface Last {
-    appointment_date:   Date;
-    status:             Status;
-    total_appointments: number;
-}
-
-export enum Status {
-    Cancelled = "cancelled",
-    Completed = "completed",
-    Pending = "pending",
-    Scheduled = "scheduled",
+    metrics: Metrics;
+    revenue: Revenue;
+    orders:  Orders;
 }
 
 export interface Metrics {
-   totalCLients:           number;
+    totalCLients:           number;
     totalProfessionals:     number;
     totalRevenue:           string;
     allOrders:              number;
@@ -649,4 +633,47 @@ export interface Metrics {
     total_professionals:    number;
     active_professionals:   number;
     verified_professionals: number;
+}
+
+export interface Orders {
+    last_7_days:   Last[];
+    last_1_month:  Last[];
+    last_90_days:  Last[];
+    last_6_months: Last[];
+    last_year:     Last[];
+}
+
+export interface Last {
+    appointment_date:   Date;
+    status:             Status;
+    total_appointments: number;
+}
+
+export enum Status {
+    Cancelled = "cancelled",
+    Pending = "pending",
+}
+
+export interface Revenue {
+    last_7_days:   any[];
+    last_1_month:  any[];
+    last_90_days:  any[];
+    last_6_months: any[];
+    last_year:     LastYear[];
+}
+
+export interface LastYear {
+    created_at: Date;
+    revenue:    number;
+}
+
+export interface DashboardAnalyticsResponse {
+    statusCode: string;
+    code:       number;
+    message:    string;
+    data:       DashboardAnalyticsResponseData;
+}
+
+export interface DashboardAnalyticsResponseData {
+    data: DashboardAnalyticsData;
 }

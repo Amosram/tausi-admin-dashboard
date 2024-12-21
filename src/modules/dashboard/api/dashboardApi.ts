@@ -1,4 +1,4 @@
-import { DashboardAnalyticsData,DashboardAnalyticsResponse  } from "@/models";
+import {DashboardAnalyticsResponse  } from "@/models";
 import { axiosBaseQuery } from "@/Utils/axios";
 import { createApi } from "@reduxjs/toolkit/query/react";
 

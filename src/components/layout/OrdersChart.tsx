@@ -23,7 +23,8 @@ const OrdersChart = () => {
   if (isError) return <div>Error fetching data</div>;
 
   const analyticsData = data as DashboardAnalyticsResponse | undefined;
-  const ordersData: DashboardAnalyticsData | undefined = analyticsData.data.data;
+  const ordersData: DashboardAnalyticsData['orders'] | undefined = analyticsData.data.data.orders;
+  console.log("ordersData ========>", ordersData);
 
   // Helper Functions
   const formatLast7Days = (data: Last[]) => {
@@ -151,9 +152,9 @@ const OrdersChart = () => {
             <Line type="monotone" dataKey="completed"
               stroke="#4CAF50" strokeWidth={2}
               dot={false} name="Completed" />
-            <Line type="monotone" dataKey="scheduled"
+            <Line type="monotone" dataKey="cancelled"
               stroke="#F44336" strokeWidth={2}
-              dot={false} name="Scheduled" />
+              dot={false} name="Cancelled" />
           </LineChart>
         </ResponsiveContainer>
       </div>
