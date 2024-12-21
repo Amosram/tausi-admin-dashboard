@@ -24,7 +24,7 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="appearance" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-4">
               {/* <TabsTrigger value="general" className="flex items-center gap-2">
                 <Settings className="h-4 w-4" />
                 General
