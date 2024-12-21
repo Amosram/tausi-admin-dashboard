@@ -44,9 +44,9 @@ const SidebarAccordion = ({ title, icon, children, isOpen, onLinkClick  }) => {
                 <TooltipTrigger asChild>
                   <Link
                     to={link}
-                    className={`flex items-center justify-center font-semibold px-2 py-5 hover:bg-primary-extralight ${
+                    className={`flex items-center justify-center font-semibold px-2 py-5 hover:bg-primary-extralight dark:hover:bg-gray-700 ${
                       pathname === link
-                        ? "bg-primary-extralight border-r-8 border-primary dark:border-[#ef3e23] text-primary dark:text-[#ef3e23]"
+                        ? "bg-primary-extralight dark:bg-gray-700 border-r-8 border-primary dark:border-[#ef3e23] text-primary dark:text-[#ef3e23]"
                         : "text-black dark:text-primary hover:dark:text-black"
                     }`}
                   >
@@ -85,10 +85,10 @@ const SidebarAccordion = ({ title, icon, children, isOpen, onLinkClick  }) => {
               onClick={onLinkClick}
               key={title}
               to={link}
-              className={`flex items-center gap-4 pl-14 pr-5 py-5 font-medium rounded-md hover:bg-primary-extralight ${
+              className={`flex items-center gap-4 pl-14 pr-5 py-5 font-medium rounded-md hover:bg-primary-extralight dark:hover:bg-gray-300 ${
                 pathname === link
-                  ? "bg-primary-extralight text-primary border-r-8 border-primary dark:text-secondary"
-                  : "text-gray-500 hover:text-primary dark:text-primary hover:dark:text-black"
+                  ? "bg-primary-extralight dark:bg-gray-700 text-primary border-r-8 border-primary dark:text-secondary"
+                  : "text-gray-500 hover:text-primary dark:text-primary dark:hover:text-black"
               }`}
             >
               <span className="text-xl">{icon}</span>
@@ -163,7 +163,7 @@ const SideBar = () => {
                       to={item.link}
                       className={`flex gap-6 items-center font-semibold px-5 py-5 hover:bg-primary-extralight ${
                         pathname === item.link
-                          ? "bg-primary-extralight border-r-8 border-primary dark:border-secondary text-primary dark:text-secondary"
+                          ? "bg-primary-extralight dark:bg-gray-700 border-r-8 border-primary dark:border-secondary text-primary dark:text-secondary"
                           : "text-gray-500 dark:text-primary hover:dark:text-black"
                       }`}
                     >
