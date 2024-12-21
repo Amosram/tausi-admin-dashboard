@@ -602,6 +602,25 @@ export interface DashboardAnalyticsData {
     metrics: Metrics;
     revenue: Revenue;
     orders:  Orders;
+    total_users:             number;
+    active_users:            number;
+    inactive_users:          number;
+    verified_users:          number;
+    unverified_users:        number;
+    total_professionals:     number;
+    active_professionals:    number;
+    inactive_professionals:  number;
+    verified_professionals:  number;
+    top_rated_professionals: number;
+    all_services:            number;
+    verifications:           Verifications;
+}
+
+export interface Verifications {
+    total_applications:        number;
+    pending_applications:      number;
+    rejected_applications:     number;
+    applications_under_review: number;
 }
 
 export interface Metrics {
