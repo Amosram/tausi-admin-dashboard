@@ -103,8 +103,18 @@ const ProfessionalDashboard = () => {
     clearSearch();
   };
 
+  const TruncatedCell = ({ content }: { content: string | null | undefined }) => {
+    if (!content) return <span>-</span>;
+    return (
+      <span className="truncate block max-w-[150px]" title={content}>
+        {content}
+      </span>
+    );
+  };
+
   const columns: ColumnDef<Professional>[] = [
     {
+      id:"id",
       accessorKey: 'id',
       header: 'Beautician ID',
       cell: ({row}) => (
@@ -118,6 +128,13 @@ const ProfessionalDashboard = () => {
       ),
     },
     {
+      id: "name",
+      accessorKey: "user.name",
+      header: "FullNames",
+      cell: ({ row }) => <span>{row.original.user?.name || "-"}</span>
+    },
+    {
+      id:"createdAt",
       accessorKey: "createdAt",
       header: "Date Applied",
       cell: ({ row }) => {
@@ -126,19 +143,22 @@ const ProfessionalDashboard = () => {
       }
     },
     {
+      id: "businessName",
       accessorKey: "businessName",
       header: "Business",
-      cell: ({row}) => <span>{row.original.businessName}</span>
+      cell: ({ row }) => <TruncatedCell content={row.getValue("businessName")} />,
     },
     {
+      id: "locationAddress",
       accessorKey: "locationAddress",
       header: "Location",
-      cell: ({row}) => <span>{row.original.locationAddress}</span>
+      cell: ({ row }) => <TruncatedCell content={row.getValue("locationAddress")} />,
     },
     {
-      accessorKey: "user.phoneNumber",
+      id: "phoneNumber",
+      accessorKey: "phoneNumber",
       header: "Contact",
-      cell: ({ row }) => <span>{row.original.user?.phoneNumber || "N/A"}</span>
+      cell: ({ row }) => <span>{row.original.user?.phoneNumber || "-"}</span>
     },
     // {
     //   id: "isActive",

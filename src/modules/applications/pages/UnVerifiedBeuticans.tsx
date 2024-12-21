@@ -164,6 +164,7 @@ const VerifiedBeuticans: React.FC = () => {
 
   const columns: ColumnDef<VerifiedBeauticians>[] = [
     {
+      id:"id",
       accessorKey: "id",
       header: "Beautician ID",
       cell: ({ row }) => (
@@ -175,31 +176,37 @@ const VerifiedBeuticans: React.FC = () => {
       ),
     },
     {
+      id:"name",
       accessorKey:'user.name',
       header: "FullNames",
       cell: ({row}) => <span>{row.original?.user.name}</span>
     },
     {
+      id:"email",
       accessorKey: 'user.email',
       header: "Email Address",
       cell: ({row}) => <span>{row.original?.user.email}</span>
     },
     {
+      id: "phoneNumber",
       accessorKey: "user.phoneNumber",
       header: "Phone Number",
       cell: ({row}) => <span>{row.original.user.phoneNumber}</span>
     },
     {
+      id: "businessName",
       accessorKey: "businessName",
       header:"Bussiness Name",
       cell: ({row}) => <span>{row.original.businessName}</span>
     },
     {
+      id: "locationAddress",
       accessorKey: "locationAddress",
       header:"Location",
       cell: ({row}) => <span>{row.original.locationAddress}</span>
     },
     {
+      id: "createdAt",
       accessorKey: "createdAt",
       header: "Creation Date",
       cell: ({ row }) => {
