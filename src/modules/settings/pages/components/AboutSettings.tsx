@@ -25,7 +25,7 @@ export default function AboutSettings() {
               href="https://play.google.com/store/apps/details?id=com.example"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+              className="flex items-center px-4 py-2 hover:bg-gray-400 text-white rounded-lg"
             >
               <img
                 src="/googlelogo.svg"
@@ -34,14 +34,14 @@ export default function AboutSettings() {
             </a>
 
             <a
-              href="https://apps.apple.com/app/id1234567890"
+              href="https://apps.apple.com/ap/id1234567890"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+              className="flex items-center px-4 py-2 hover:bg-gray-400 text-white rounded-lg "
             >
               <img
-              src="/applogo.svg"
-              alt="App Store"
+                src="/applogo.svg"
+                alt="App Store"
               />
             </a>
           </div>
