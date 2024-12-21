@@ -94,7 +94,7 @@ const DashBoard: React.FC = () => {
                 </div>
                 <div className="flex items-center">
                   <span className="w-3 h-3 bg-blue-500 rounded-full inline-block mr-2"></span>
-                  <span className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Scheduled</span>
+                  <span className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Pending</span>
                 </div>
                 <div className="flex items-center">
                   <span className="w-3 h-3 bg-red-500 rounded-full inline-block mr-2"></span>

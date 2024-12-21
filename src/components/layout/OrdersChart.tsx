@@ -109,13 +109,13 @@ const OrdersChart = () => {
   return (
     <div className="bg-card p-6 rounded-lg shadow-md">
       {/* Dropdown for Time Range */}
-      <div className="flex justify-end items-center mb-4">
-        <label htmlFor="timeRange" className="mr-2">Select Time Range:</label>
+      <div className="flex justify-end items-center mb-4 w-full">
+        <label htmlFor="timeRange" className="mr-2 font-semibold">Time Range:</label>
         <select
           id="timeRange"
           value={timeRange}
           onChange={handleTimeRangeChange}
-          className="p-2 border rounded bg-card"
+          className="p-2 border rounded bg-card w-full md:w-auto"
         >
           <option value="last_7_days">Last 7 Days</option>
           <option value="last_1_month">Last 1 Month (Weekly)</option>
@@ -131,7 +131,7 @@ const OrdersChart = () => {
             data={selectedData}
             margin={{ top: 50, right: 40, left: 30, bottom: 50 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3"/>
             <XAxis
               dataKey={timeRange === 'last_7_days' ? 'day' : timeRange === 'last_1_month' ? 'week' : 'month'}
               label={{
