@@ -42,7 +42,7 @@ const OrdersChart = () => {
       const week = Math.floor(diffInDays / 7) + 1;
 
       if (!acc[`Week ${week}`]) {
-        acc[`Week ${week}`] = { week: `Week ${week}`, pending: 0, completed: 0, scheduled: 0 };
+        acc[`Week ${week}`] = { week: `Week ${week}`, pending: 0, completed: 0, cancelled: 0 };
       }
       acc[`Week ${week}`][status] = (acc[`Week ${week}`][status] || 0) + total_appointments;
       return acc;
@@ -57,7 +57,7 @@ const OrdersChart = () => {
       const monthKey = date.toLocaleString('default', { month: 'short' }) + ' ' + date.getFullYear();
 
       if (!acc[monthKey]) {
-        acc[monthKey] = { month: monthKey, pending: 0, completed: 0, scheduled: 0 };
+        acc[monthKey] = { month: monthKey, pending: 0, completed: 0, cancelled: 0 };
       }
       acc[monthKey][status] = (acc[monthKey][status] || 0) + total_appointments;
       return acc;
@@ -72,7 +72,7 @@ const OrdersChart = () => {
       const month = date.toLocaleString('default', { month: 'short' }) + ' ' + date.getFullYear();
 
       if (!acc[month]) {
-        acc[month] = { month, pending: 0, completed: 0, scheduled: 0 };
+        acc[month] = { month, pending: 0, completed: 0, cancelled: 0 };
       }
       acc[month][status] = (acc[month][status] || 0) + total_appointments;
       return acc;

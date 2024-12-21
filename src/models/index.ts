@@ -598,17 +598,6 @@ export interface CreateBoothAssignmentRequest {
   endDate: string;
 }
 
-export interface DashboardAnalyticsResponse {
-    statusCode: string;
-    code:       number;
-    message:    string;
-    data:       DashboardAnalyticsResponseData;
-}
-
-export interface DashboardAnalyticsResponseData {
-    data: DashboardAnalyticsData;
-}
-
 export interface DashboardAnalyticsData {
     metrics: Metrics;
     revenue: Revenue;
@@ -647,6 +636,8 @@ export interface Last {
     appointment_date:   Date;
     status:             Status;
     total_appointments: number;
+     created_at: Date;
+    revenue:    number;
 }
 
 export enum Status {
@@ -655,16 +646,11 @@ export enum Status {
 }
 
 export interface Revenue {
-    last_7_days:   any[];
-    last_1_month:  any[];
-    last_90_days:  any[];
-    last_6_months: any[];
-    last_year:     LastYear[];
-}
-
-export interface LastYear {
-    created_at: Date;
-    revenue:    number;
+    last_7_days:   Last[];
+    last_1_month:  Last[];
+    last_90_days:  Last[];
+    last_6_months: Last[];
+    last_year:     Last[];
 }
 
 export interface DashboardAnalyticsResponse {
