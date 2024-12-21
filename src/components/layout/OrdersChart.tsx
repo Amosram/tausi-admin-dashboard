@@ -24,7 +24,6 @@ const OrdersChart = () => {
 
   const analyticsData = data as DashboardAnalyticsResponse | undefined;
   const ordersData: DashboardAnalyticsData['orders'] | undefined = analyticsData.data.data.orders;
-  console.log("ordersData ========>", ordersData);
 
   // Helper Functions
   const formatLast7Days = (data: Last[]) => {

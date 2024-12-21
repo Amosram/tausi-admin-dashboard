@@ -618,7 +618,7 @@ export interface DashboardAnalyticsData {
 export interface Metrics {
     totalCLients:           number;
     totalProfessionals:     number;
-    totalRevenue:           string;
+    totalRevenue:           number;
     allOrders:              number;
     total_orders:           number;
     completed_orders:       number;
