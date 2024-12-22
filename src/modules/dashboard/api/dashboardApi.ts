@@ -3,7 +3,7 @@ import { axiosBaseQuery } from "@/Utils/axios";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 // Define the allowed analysis pages
-type AnalysisPage = 'orders' | 'dashboard' | 'users';
+type AnalysisPage = 'orders' | 'dashboard' | 'users' | 'revenue';
 
 export const dashboardApi = createApi({
   reducerPath: 'dashboardApi',

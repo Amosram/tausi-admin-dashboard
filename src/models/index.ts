@@ -660,6 +660,27 @@ export interface DashboardAnalyticsData {
     top_rated_professionals: number;
     all_services:            number;
     verifications:           Verifications;
+    generalRevenue:    GeneralRevenue;
+    categoriesRevenue: CategoriesRevenue;
+}
+
+export interface CategoriesRevenue {
+    "Hair Dressing ": Barber[];
+    Makeup:           Barber[];
+    Barber:           Barber[];
+}
+
+export interface Barber {
+    created_at_transactions: Date;
+    Amount:                  number;
+}
+
+export interface GeneralRevenue {
+    last_7_days:   Last[];
+    last_1_month:  Last[];
+    last_90_days:  Last[];
+    last_6_months: Last[];
+    last_year:     Last[];
 }
 
 export interface Verifications {

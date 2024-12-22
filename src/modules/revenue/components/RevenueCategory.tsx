@@ -1,37 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LineChart, Line, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import * as Select from '@radix-ui/react-select';
-
-interface RevenueCategoryData {
-  date: string;
-  income: number;
-  expense: number;
-}
-
-const monthlyData: RevenueCategoryData[] = [
-  { date: '01', income: 52000, expense: 8345 },
-  { date: '02', income: 42000, expense: 7345 },
-  { date: '03', income: 46000, expense: 8345 },
-  { date: '04', income: 38000, expense: 8345 },
-  { date: '05', income: 45000, expense: 8345 },
-  { date: '06', income: 35000, expense: 7345 },
-  { date: '07', income: 41000, expense: 8345 },
-  { date: '08', income: 53000, expense: 8345 },
-  { date: '09', income: 30000, expense: 8345 },
-  { date: '10', income: 50000, expense: 8345 },
-  { date: '11', income: 47000, expense: 7345 },
-  { date: '12', income: 52000, expense: 8345 },
-  { date: '13', income: 33000, expense: 7345 },
-];
+import { useGetDashboardAnalyticsQuery } from '@/modules/dashboard/api/dashboardApi';
+import { DashboardAnalyticsData, CategoriesRevenue, Barber } from '@/models'; // adjust import path
+import dayjs from 'dayjs'; // Make sure to install dayjs for date formatting
+import Loader from '@/components/layout/Loader';
 
 // Custom tooltip component
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white dark:bg-gray-800 p-2 rounded-lg shadow-lg text-center">
-        <p className="font-semibold text-gray-800 dark:text-gray-100">${payload[0].value.toLocaleString()}</p>
-        <p className="text-xs text-gray-500 dark:text-gray-300">July {new Date().getFullYear()}</p>
+        <p className="font-semibold text-gray-800 dark:text-gray-100">KES {payload[0].value.toLocaleString()}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-300">Transaction Date: {new Date(payload[0].payload.created_at_transactions).toLocaleDateString()}</p>
       </div>
     );
   }
@@ -39,7 +21,32 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 const RevenueCategory: React.FC = () => {
-  const [category, setCategory] = useState('Nail Tech');
+  const { data, isLoading, isError } = useGetDashboardAnalyticsQuery('revenue');
+  const [category, setCategory] = useState<string>('Hair Dressing ');
+  const [categoryData, setCategoryData] = useState<Barber[]>([]);
+
+  useEffect(() => {
+    if (data) {
+      const categoriesRevenue: CategoriesRevenue = data.data.data.categoriesRevenue;
+      const selectedCategoryData = categoriesRevenue[category] || [];
+      setCategoryData(selectedCategoryData);
+    }
+  }, [category, data]);
+  
+  if (isLoading) return <Loader />;
+
+  if (isError) return <div>Error fetching data</div>;
+
+  // Format date to display as "Jan 2024"
+  const formatDate = (date: Date) => {
+    return dayjs(date).format('MMM YYYY'); // Example: "Jan 2024"
+  };
+
+  // Process data to include formatted date
+  const formattedData = categoryData.map((item) => ({
+    ...item,
+    formattedDate: formatDate(item.created_at_transactions),
+  }));
 
   return (
     <div className="p-6 bg-white dark:bg-card rounded-lg shadow-lg">
@@ -58,7 +65,7 @@ const RevenueCategory: React.FC = () => {
             <Select.Content className="bg-white dark:bg-gray-800 shadow-lg rounded-md">
               <Select.ScrollUpButton />
               <Select.Viewport className="p-2">
-                {['Massage', 'DreadLocks', 'Hair Dressing', 'Barber', 'Makeup', 'Nail Tech'].map((item) => (
+                {['Massage', 'DreadLocks', 'Hair Dressing ', 'Barber', 'Makeup', 'Nail Tech'].map((item) => (
                   <Select.Item
                     key={item}
                     value={item}
@@ -79,14 +86,16 @@ const RevenueCategory: React.FC = () => {
 
       {/* Chart Section */}
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <LineChart data={formattedData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
+          <XAxis
+            dataKey="formattedDate"
+            tickFormatter={(tick) => tick} // Ensures the formatted date is used for X-axis
+          />
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
           <Legend verticalAlign="top" align="left" height={36} />
-          <Line type="monotone" dataKey="income" stroke="#3b82f6" strokeWidth={2} />
-          {/* <Line type="monotone" dataKey="expense" stroke="#888888" strokeWidth={2} /> */}
+          <Line type="monotone" dataKey="Amount" stroke="#3b82f6" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
     </div>
