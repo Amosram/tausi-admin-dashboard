@@ -1,8 +1,6 @@
 import { lazy, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Coordinates, Professional } from "@/models";
-import { Avatar } from "@/components/ui/avatar";
-import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import {
   Phone,
   Mail,
@@ -17,9 +15,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
-import { useGetProfessionalsByIdQuery, useGetProfessionalsPorfolioQuery, useUpdateProfessionalMutation } from "../api/professionalApi";
+import { useGetBeauticianNearbyQuery, useGetProfessionalsByIdQuery, useGetProfessionalsPorfolioQuery, useUpdateProfessionalMutation } from "../api/professionalApi";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DEFAULT_LOCATION } from "@/Utils/constants";
 import { ImageLightbox } from "../components/ImageGallery";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils";
@@ -248,17 +245,23 @@ const ProfessionalDetails = () => {
   const {data, isLoading, isError} = useGetProfessionalsByIdQuery(professionalId!);
   const {data: portfolio, isLoading: isPortfolioLoading, isError: isPortfolioError} = useGetProfessionalsPorfolioQuery(professionalId!);
   const [updateProfessional] = useUpdateProfessionalMutation();
-
-  const professional = data?.data;
   
+  const professional = data?.data;
+
   // using the map component
-  const [coordinates, setCoordinates] = useState<Coordinates>(professional?.coordinates || DEFAULT_LOCATION);
+  const [coordinates, setCoordinates] = useState<Coordinates>(professional?.coordinates || { x: -1.286389, y: 36.817223 });
+  
+  const {data: beauticianNearby, isLoading:isBeauticianNearbyLoading, isError:isBeauticianNearbyError} = useGetBeauticianNearbyQuery({
+    latitude: coordinates.x.toString(),
+    longitude: coordinates.y.toString(),
+    limit: 10,
+  });
   
   if (!professionalId) {
     return <div>Invalid professional ID</div>;
   }
 
-  if (isLoading || isPortfolioLoading) {
+  if (isLoading || isPortfolioLoading || isBeauticianNearbyLoading) {
     return (
       <div className="container mx-auto p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -275,7 +278,7 @@ const ProfessionalDetails = () => {
     );
   }
 
-  if (isError || !professional || isPortfolioError) {
+  if (isError || !professional || isPortfolioError || isBeauticianNearbyError) {
     return (
       <div className="container mx-auto p-4">
         <div className="bg-destructive text-destructive-foreground p-4 rounded-lg">
@@ -284,6 +287,44 @@ const ProfessionalDetails = () => {
       </div>
     );
   }
+
+  // Generate markers for beauticians nearby
+  const markers = beauticianNearby?.data?.map((item) => ({
+    id: item.id,
+    lat: Number(item.latitude),
+    lng: Number(item.longitude),
+    profilePictureUrl: item.user.profilePictureUrl,
+    name: item.user.name,
+    locationName: item.locationAddress || null,
+  })) || [];
+
+  console.log("data 1=======>",markers);
+  console.log("Profile Picture URLs:", beauticianNearby?.data.map(item => item.user?.profilePictureUrl));
+
+
+  // infobody for markers
+  const infoBody = (name: string, profilePictureUrl: string, locationName: string) => {
+    console.log("Name:", name, "Profile Picture:", profilePictureUrl, "Location:", locationName);
+
+    // Fallback for profile picture and location name
+    const sanitizedProfilePictureUrl = profilePictureUrl || "/tausi-logo.png";
+    const sanitizedLocationName = locationName || "Location not available";
+
+    return (
+      <div className="flex flex-col items-center p-4">
+        <img
+          src={sanitizedProfilePictureUrl}
+          alt={`Profile of ${name}`}
+          className="w-16 h-16 rounded-full"
+          onError={(e) => {
+        e.currentTarget.src = "/tausi-logo.png"; // Fallback if image fails to load
+          }}
+        />
+        <h3 className="text-lg font-semibold mt-2 text-center">{name}</h3>
+        <p className="text-sm text-gray-600 text-center">{sanitizedLocationName}</p>
+      </div>
+    );
+  };
 
   const handleActivate = async () => {
     try {
@@ -464,15 +505,11 @@ const ProfessionalDetails = () => {
         <TabsContent value="location" className="mt-4">
           <div className="md:col-span-3 grid-cols-3">
             <Maps
-              coordinates={{
-                lat: Number(professional.latitude) || coordinates.x,
-                lng: Number(professional.longitude) || coordinates.y,
-              }}
-              setCoordinates={(coords) => {
-                setCoordinates({
-                  x: coords.lat,
-                  y: coords.lng,
-                });
+              coordinates={markers}
+              setCoordinates={(coords) => setCoordinates({ x: coords.lat, y: coords.lng })}
+              infoBody={(index) => {
+                const marker = markers[index];
+                return infoBody(marker?.name, marker?.profilePictureUrl, marker?.locationName);
               }}
             />
           </div>

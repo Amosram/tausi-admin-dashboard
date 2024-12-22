@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "../../../Utils/axios";
-import { ApiResponse, PortfolioApiResponse, Professional, ProfessionalApiResponse, ProfSearchApiResponse, VerifiedBeauticians, VerifiedBeauticiansResponse } from "@/models";
+import { ApiResponse, BeauticianNearMeResponse, PortfolioApiResponse, Professional, ProfessionalApiResponse, ProfSearchApiResponse, VerifiedBeauticians, VerifiedBeauticiansResponse } from "@/models";
 import { SearchCriteriaType } from "@/hooks/useSearch";
 
 export const professionalApi = createApi({
@@ -17,6 +17,16 @@ export const professionalApi = createApi({
       providesTags: ['Professionals'],
       keepUnusedDataFor: 0,
     }),
+
+    getBeauticianNearby: builder.query<BeauticianNearMeResponse, { latitude: string; longitude: string; limit: number }>({
+      query: ({ latitude, longitude, limit }) => ({
+        url: `/professionals?latitude=${latitude}&longitude=${longitude}&limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ['Professionals'],
+      keepUnusedDataFor: 0,
+    }),
+
 
     getProfessionalsById: builder.query<ProfessionalApiResponse, string> ({
       query: (professionalId) => ({
@@ -87,6 +97,7 @@ export const professionalApi = createApi({
 
 export const {
   useGetProfessionalsQuery,
+  useGetBeauticianNearbyQuery,
   useGetProfessionalsByIdQuery,
   useGetProfessionalsPorfolioQuery,
   useGetVerifiedBeauticiansQuery,

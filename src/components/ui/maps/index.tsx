@@ -10,7 +10,7 @@ const API_KEY =
 interface MapsProps {
   coordinates: MapCoordinates;
   setCoordinates?: (coordinates: MapCoordinate) => void;
-  infoBody?: React.ReactNode | JSX.Element;
+  infoBody?: (index: number) => React.ReactNode;
   onMarkerClick?: (index: number) => void;
 }
 

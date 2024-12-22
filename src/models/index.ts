@@ -70,6 +70,12 @@ export interface TopRatedBeautician {
     services:             Service[];
 }
 
+export interface BeauticianNearMeResponse {
+    statusCode: string;
+    code:       number;
+    message:    string;
+    data:       Professional[];
+}
 
 export interface Professional {
   id: string;
@@ -93,7 +99,7 @@ export interface Professional {
   longitude: string;
   businessName: string;
   registrationProgress: number;
-  businessType: string;
+  businessType: string | "individual";
   specialization: string | null;
   bio: string;
   fcmToken: string | null;
