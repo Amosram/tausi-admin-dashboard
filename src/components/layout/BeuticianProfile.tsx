@@ -5,16 +5,19 @@ import { FaChevronDown } from 'react-icons/fa';
 import { useGetProfessionalsQuery } from '@/modules/applications/api/professionalApi';
 import Loader from './Loader';
 import { useNavigate } from 'react-router-dom';
+import { useGetTopRatedBeauticiansQuery } from '@/modules/dashboard/api/dashboardApi';
 
 const sortOptions = ['Newest', 'Highest Rated', 'Most Reviews'];
 
 export default function BeauticianProfiles() {
   // State to track the selected sort option
   const [selectedSort, setSelectedSort] = useState<string>('Newest');
-  const {data, isLoading, isError} = useGetProfessionalsQuery(15);
+  const {data, isLoading, isError} = useGetTopRatedBeauticiansQuery(15);
   const navigate = useNavigate();
   
   const topRatedData = data?.data || [];
+
+  console.log("topRatedData =======>", topRatedData);
 
   const handleSortChange = (option: string) => {
     setSelectedSort(option);
@@ -55,7 +58,6 @@ export default function BeauticianProfiles() {
       <div className="overflow-x-auto">
         <div className="flex gap-4">
           {topRatedData
-            .filter((beautician) => beautician.topRated)
             .map((beautician, index) => (
               <div
                 key={index}

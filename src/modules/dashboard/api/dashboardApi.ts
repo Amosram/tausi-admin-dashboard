@@ -1,4 +1,4 @@
-import {DashboardAnalyticsResponse  } from "@/models";
+import {DashboardAnalyticsResponse, TopRatedBeauticianResponse  } from "@/models";
 import { axiosBaseQuery } from "@/Utils/axios";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
@@ -16,7 +16,13 @@ export const dashboardApi = createApi({
         method: "GET",
       }),
     }),
+    getTopRatedBeauticians: builder.query<TopRatedBeauticianResponse, number>({
+      query:(limit) => ({
+        url: `/professionals/top-rated?limit=${limit}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetDashboardAnalyticsQuery } = dashboardApi;
+export const { useGetDashboardAnalyticsQuery, useGetTopRatedBeauticiansQuery } = dashboardApi;

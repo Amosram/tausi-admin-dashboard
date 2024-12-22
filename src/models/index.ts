@@ -31,6 +31,46 @@ export interface Client {
   fcmToken: string;
 }
 
+export interface TopRatedBeauticianResponse {
+    statusCode: string;
+    code:       number;
+    message:    string;
+    data:       TopRatedBeautician[];
+}
+
+export interface TopRatedBeautician {
+    id:                   string;
+    locationAddress:      string;
+    resumeUrl:            null | string;
+    resumePath:           null | string;
+    isVerified:           boolean;
+    isActive:             boolean;
+    termsAndConditions:   boolean;
+    deactivatedAt:        null;
+    deactivatedBy:        null;
+    deactivatedReason:    null;
+    isDeleted:            boolean;
+    deletedAt:            null;
+    deletedReason:        null;
+    createdAt:            Date;
+    updatedAt:            Date;
+    coordinates:          Coordinates;
+    latitude:             string;
+    longitude:            string;
+    businessName:         string;
+    parentId:             null;
+    registrationProgress: number;
+    businessType:         string;
+    specialization:       null;
+    bio:                  string;
+    fcmToken:             null;
+    topRated:             boolean;
+    rating:               number;
+    user:                 User;
+    services:             Service[];
+}
+
+
 export interface Professional {
   id: string;
   locationAddress: string;
