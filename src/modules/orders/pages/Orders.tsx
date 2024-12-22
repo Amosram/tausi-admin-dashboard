@@ -1,51 +1,15 @@
 import React from "react";
-import { ordersColumns } from "../components/orders-columns";
 import { useToast } from "@/hooks/use-toast";
 import Loader from "@/components/layout/Loader";
-import { useGetOrdersQuery, useSearchOrdersMutation } from "../api/ordersApi";
-import TanStackTable from "@/components/ui/Table/Table";
-import SearchBar from "@/components/ui/Table/SearchBar";
-import { searchPresets, useSearch } from "@/hooks/useSearch";
-import Filters from "@/components/ui/Table/Filters";
+import { useGetOrdersQuery } from "../api/ordersApi";
+import { PartialOrdersTable } from "../components/partial-table";
+import OrdersChart from "@/components/layout/OrdersChart";
 
 const Orders: React.FC = () => {
   const { data, error, isLoading, refetch } = useGetOrdersQuery(50);
   const { toast } = useToast();
 
   const ordersData = data?.data || [];
-
-  const columnLabels: Record<string, string> = {
-    professionalId: "Professional ID",
-    clientId: "Client ID",
-    locationAddress: "Location Address",
-    serviceId: "Service ID",
-    id: "Order ID",
-  };
-
-  const searchableColumns = Object.keys(columnLabels);
-
-  const {
-    data: displayData,
-    isSearchActive,
-    isLoading: isSearchLoading,
-    triggerSearch,
-    clearSearch,
-  } = useSearch({
-    initialData: ordersData,
-    searchMutation: useSearchOrdersMutation,
-    searchableColumns: searchableColumns,
-    onSearchError: (error) => {
-      toast({
-        title: "Search Failed",
-        description: "No results found. Consider trying other filters.",
-        variant: "destructive",
-      });
-      console.error("Search error:", error);
-    },
-    onClearSearch: () => {
-      refetch();
-    },
-  });
 
   const [retryCount, setRetryCount] = React.useState(0);
   const maxRetries = 3;
@@ -68,56 +32,41 @@ const Orders: React.FC = () => {
   }, [error, toast, retryCount, refetch]);
 
   const isDataEmpty = !ordersData || ordersData.length === 0;
-
-  const handleClearFilters = () => {
-    clearSearch(); // Clear all search and filter params
-  };
-
-  const handleCombinedSearch = (criteria, updateSearchParams = true) => {
-    criteria.forEach(({ column, value, operator, timeRange }) => {
-      triggerSearch(column, value, operator, timeRange, updateSearchParams);
-    });
-  };
-
-  if (isSearchLoading) {
-    return <Loader />;
-  }
   if (isLoading && isDataEmpty) return <Loader />;
   if (error && retryCount >= maxRetries && isDataEmpty)
     return <div>Error: Unable to load order data after multiple attempts.</div>;
   if (isDataEmpty) return <div>No orders found.</div>;
 
   return (
-    <div className="">
-      <Filters
-        filters={searchPresets.orders.defaultFilters}
-        onFilterSelect={(filter) =>
-          handleCombinedSearch([
-            {
-              column: filter.column,
-              value: filter.value,
-              operator: filter.operator,
-            },
-          ])
-        }
-      />
-
-      <SearchBar
-        columns={searchableColumns}
-        onSearch={(column, value, operator, timeRange) =>
-          handleCombinedSearch([{ column, value, operator, timeRange }])
-        }
-        onClear={handleClearFilters}
-        columnLabels={columnLabels}
-      />
-
-      <div className="pl-6 pr-1">
-        <TanStackTable
-          data={isSearchActive ? displayData : ordersData}
-          columns={ordersColumns}
-          dateSortingId="appointmentDate"
-          withSearch={false}
-        />
+    <div className=" flex flex-col gap-5 px-6 py-6">
+      <div className="shadow-lg bg-white">
+        <h1 className="text-center font-bold text-xl uppercase underline mt-2">
+          Orders Chart
+        </h1>
+        <div className="flex space-x-4 mb-4 justify-center mt-3">
+          <div className="flex items-center">
+            <span className="w-3 h-3 bg-green-500 rounded-full inline-block mr-2"></span>
+            <span className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+              Completed
+            </span>
+          </div>
+          <div className="flex items-center">
+            <span className="w-3 h-3 bg-blue-500 rounded-full inline-block mr-2"></span>
+            <span className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+              Pending
+            </span>
+          </div>
+          <div className="flex items-center">
+            <span className="w-3 h-3 bg-red-500 rounded-full inline-block mr-2"></span>
+            <span className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+              Cancelled
+            </span>
+          </div>
+        </div>
+        <OrdersChart />
+      </div>
+      <div className="w-full">
+        <PartialOrdersTable orders={ordersData} />
       </div>
     </div>
   );

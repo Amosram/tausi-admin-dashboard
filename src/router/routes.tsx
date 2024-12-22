@@ -12,6 +12,7 @@ const LoginLazy = lazy(() => import("@/modules/auth/pages/Login"));
 // Dashboard
 const DashboardLazy = lazy(() => import("@/modules/dashboard/pages/Dashboard"));
 const OrdersLazy = lazy(() => import("@/modules/orders/pages/Orders"));
+const OrdersListLazy = lazy(() => import("@/modules/orders/pages/OrdersList"));
 const RevenueLazy = lazy(() => import("@/modules/revenue/pages/Revenue"));
 const UsersLazy = lazy(() => import("@/modules/users/pages/Users"));
 const BeauticiansListLazy = lazy(() => import("@/modules/applications/pages/BeauticiansList"));
@@ -64,6 +65,14 @@ export const routes: RouteObject[] = [
                 <OrdersLazy />
               </Suspense>
             ),
+          },
+          {
+            path: "list",
+            element: (
+              <Suspense fallback={<Loader />}>
+                <OrdersListLazy />
+              </Suspense>
+            )
           },
           {
             path: ":orderId",
