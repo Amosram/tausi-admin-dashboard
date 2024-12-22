@@ -22,6 +22,8 @@ interface RouteDetails {
 const routeMappings: Record<string, RouteDetails> = {
   "/": { title: "Dashboard" },
   "/orders": { title: "Orders" },
+  "/orders/list": { title: "Orders List", backLink: "/orders" },
+  "/orders/:id": { title: "Order Details", backLink: "/orders/list" },
   "/revenue": { title: "Revenue" },
   "/users": { title: "Users" },
   "/users/list": { title: "Users List", backLink: "/users" },
@@ -43,7 +45,6 @@ const routeMappings: Record<string, RouteDetails> = {
   "/booths/:id/assignments": { title: "Booth Assignments" },
   "/booths/:id/edit": { title: "Edit Booth" },
   "/booths/:id/orders": { title: "Booth Orders" },
-  "/orders/:id": { title: "Order Details", backLink: "/orders" },
   "/ledgers/create-loan": { title: "Create Loan" },
   "/ledgers": { title: "Businesses" },
   "/ledgers/:ownerId": { title: "Business Details", backLink: "/ledgers" },

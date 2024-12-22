@@ -38,7 +38,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     searchParams.get("q") || ""
   );
   const [searchOperator, setSearchOperator] = useState<string>(
-    searchParams.get("operator") || "eq"
+    searchParams.get("op") || ""
   );
   const [timeRange, setTimeRange] = useState<string | undefined>(
     searchParams.get("timeRange") || undefined
@@ -47,14 +47,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
   useEffect(() => {
     const column = searchParams.get("column");
     const q = searchParams.get("q");
-    const operator = searchParams.get("operator");
+    const operator = searchParams.get("op");
     const range = searchParams.get("timeRange");
 
     if (column && columns.includes(column)) setSelectedColumn(column);
     else setSelectedColumn(undefined);
 
     setSearchValue(q || "");
-    setSearchOperator(operator || "eq");
+    setSearchOperator(operator || "");
     setTimeRange(range || undefined);
   }, [searchParams, columns]);
 
@@ -101,14 +101,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
           {/* Operator Selector */}
           <Select
             value={searchOperator}
-            onValueChange={(value) => setSearchOperator(value || "eq")}
+            onValueChange={(value) => setSearchOperator(value || "")}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Operator" />
+              <SelectValue placeholder="Select Operator" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="like">Contains</SelectItem>
-              <SelectItem value="ilike">Contains (Case Insensitive)</SelectItem>
+              <SelectItem value="ilike">Contains</SelectItem>
               <SelectItem value="eq">Equals</SelectItem>
               <SelectItem value="gt">Greater Than</SelectItem>
               <SelectItem value="lt">Less Than</SelectItem>
