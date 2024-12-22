@@ -323,6 +323,20 @@ const ProfessionalDetails = () => {
     }
   };
 
+  const handleUnmarkTopRatedBeautician = async () => {
+    try {
+      await updateProfessional({
+        id: professional.id,
+        topRated: false
+      }).unwrap;
+      toast({ title: "Success", description: "Successfully unmarked the beautician as top rated", variant: "success" });
+    }
+    catch (error) {
+      console.error("Failed to unmark a beautician as top rated", error);
+      toast({ title: "Error", description: "An error occurred while unmarking a beautician as top rated.", variant: "destructive" });
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       {/* Professional Management */}
@@ -337,27 +351,36 @@ const ProfessionalDetails = () => {
         </div>
         <div className="flex gap-3">
           {!professional.isActive && (
-            <Button className="flex items-center space-x-2 bg-green-600" onClick={handleActivate}>
+            <Button
+              className="flex items-center space-x-2 bg-green-600"
+              onClick={handleActivate}
+            >
               <CheckCircle size={16} />
               <span>Activate</span>
             </Button>
-            
           )}
-          {
-            professional.isActive && (
-              <>
-                <DeactivateDialog professionalId={professionalId} />
+          {professional.isActive && (
+            <>
+              <DeactivateDialog professionalId={professionalId} />
+              {professional.topRated ? (
+                <Button
+                  className="bg-gray-500"
+                  onClick={handleUnmarkTopRatedBeautician}
+                >
+                  <StarIcon size={16} />
+                  <span>Unmark Top Rated</span>
+                </Button>
+              ) : (
                 <Button
                   className="bg-yellow-500"
                   onClick={handleTopRatedBeautician}
-                  disabled={professional.topRated}
                 >
                   <StarIcon size={16} />
                   <span>Mark as Top Rated</span>
                 </Button>
-              </>
-            )
-          }
+              )}
+            </>
+          )}
         </div>
       </div>
       {/* professional Profile */}
