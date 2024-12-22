@@ -15,12 +15,14 @@ const DashBoard: React.FC = () => {
 
   if (isLoading) return <Loader />;
 
-  if (isError) return <Frown />;
+  if (isError) return <Frown className='justify-center' size={60}/>;
+
+  const formatter = new Intl.NumberFormat('en-US');
 
   const allOrders = data.data.data.metrics.allOrders;
-  const appUsers = data.data.data.metrics.totalCLients;
-  const revenue = data.data.data.metrics.totalRevenue;
-  const applications = data.data.data.metrics.totalProfessionals;
+  const appUsers = formatter.format(data.data.data.metrics.totalCLients);
+  const revenue = formatter.format(data.data.data.metrics.totalRevenue);
+  const applications = formatter.format(data.data.data.metrics.totalProfessionals);
 
   
   return (
@@ -92,7 +94,7 @@ const DashBoard: React.FC = () => {
                 </div>
                 <div className="flex items-center">
                   <span className="w-3 h-3 bg-blue-500 rounded-full inline-block mr-2"></span>
-                  <span className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Scheduled</span>
+                  <span className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Pending</span>
                 </div>
                 <div className="flex items-center">
                   <span className="w-3 h-3 bg-red-500 rounded-full inline-block mr-2"></span>

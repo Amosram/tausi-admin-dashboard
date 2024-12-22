@@ -11,7 +11,9 @@ interface BeauticianListStatsProps {
 
 const BeauticianListStats = ({beauticians}: BeauticianListStatsProps) => {
 
-  const {data, isLoading, isError} = useGetDashboardAnalyticsQuery('orders');
+  const {data, isLoading, isError} = useGetDashboardAnalyticsQuery('users');
+
+  const formatter = new Intl.NumberFormat('en-US');
 
   if (isLoading) {
     return <Loader />;
@@ -26,7 +28,7 @@ const BeauticianListStats = ({beauticians}: BeauticianListStatsProps) => {
       icon: <User className="h-8 w-8 text-blue-600" />,
       label: "Total Verified Beauticians",
       filter: null,
-      value: data.data.data.metrics.verified_professionals,
+      value: formatter.format(data.data.data.verified_professionals),
       bgColor: "bg-blue-50",
       textColor: "text-blue-800",
     },
@@ -34,7 +36,7 @@ const BeauticianListStats = ({beauticians}: BeauticianListStatsProps) => {
       icon: <UserRoundCheck className="h-8 w-8 text-green-600" />,
       label: "Total Active Beauticians",
       filter: "active",
-      value: data.data.data.metrics.active_professionals,
+      value: formatter.format(data.data.data.active_professionals),
       bgColor: "bg-green-50",
       textColor: "text-green-800",
     },
@@ -42,7 +44,7 @@ const BeauticianListStats = ({beauticians}: BeauticianListStatsProps) => {
       icon: <UserRoundX className="h-8 w-8 text-red-600" />,
       label: "Total Inactive Beauticians",
       filter: "inactive",
-      value: 2,
+      value: formatter.format(data.data.data.inactive_professionals),
       bgColor: "bg-red-50",
       textColor: "text-red-800",
     },
@@ -50,7 +52,7 @@ const BeauticianListStats = ({beauticians}: BeauticianListStatsProps) => {
       icon: <Star className="h-8 w-8  text-orange-600" />,
       label: "Top Rated Beautician",
       filter: "top-rated",
-      value: 0,
+      value: formatter.format(data.data.data.top_rated_professionals),
       bgColor: "bg-orange-50",
       textColor: "text-orange-800",
     },
@@ -58,7 +60,7 @@ const BeauticianListStats = ({beauticians}: BeauticianListStatsProps) => {
       icon: <BriefcaseBusiness className="h-8 w-8 text-indigo-600" />,
       label: "Total Services Offered",
       filter: "services",
-      value: data.data.data.metrics.completed_orders,
+      value: formatter.format(data.data.data.all_services),
       bgColor: "bg-indigo-50",
       textColor: "text-indigo-800",
     }
@@ -68,7 +70,7 @@ const BeauticianListStats = ({beauticians}: BeauticianListStatsProps) => {
   return (
     <div className="w-full p-4 mx-auto">
       <p className="text-lg uppercase text-center font-semibold mb-3">STATS</p>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {statsItems.map((item, index) => (
           <Card
             key={index}

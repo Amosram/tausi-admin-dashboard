@@ -168,7 +168,7 @@ const Header = () => {
 
         <div className="flex items-center space-x-4"></div>
         {/* Search Bar */}
-        <div className="relative max-w-xs w-full mr-4">
+        {/* <div className="relative max-w-xs w-full mr-4">
           <input
             type="text"
             className="border rounded-full p-2 w-full bg-gray-100 dark:bg-gray-700 pl-4 pr-10 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -176,16 +176,16 @@ const Header = () => {
           <span className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
             <SearchIcon className="h-5 w-5 text-gray-400" />
           </span>
-        </div>
+        </div> */}
         <div className="flex items-center space-x-4">
           {/* Notifications */}
           <div className="relative">
             {/* notification code = <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 absolute top-0 right-0">2</span>*/}
-            <MdChat size={26} fill="orange"/>
+            {/* <MdChat size={26} fill="orange"/> */}
           </div>
           <div className="relative">
             {/*<span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 absolute top-0 right-0">2</span>*/}
-            <MdNotifications size={26} />
+            {/* <MdNotifications size={26} /> */}
           </div>
           {/* Avatar */}
           <div className="flex items-center space-x-2">

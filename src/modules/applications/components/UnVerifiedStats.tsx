@@ -1,68 +1,81 @@
-import { Professional, VerifiedBeauticians } from "@/models";
-import { BriefcaseBusiness, ListChecks, FileCheck, Ban, CircleEllipsis } from "lucide-react";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-
+import { VerifiedBeauticians } from "@/models";
+import { FileCheck, Ban, ListChecks, CircleEllipsis } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useGetDashboardAnalyticsQuery } from "@/modules/dashboard/api/dashboardApi";
+import Loader from "@/components/layout/Loader";
 
 interface UnVerifiedBeauticianStatsProps {
-    beauticians: VerifiedBeauticians[];
+  beauticians: VerifiedBeauticians[];
 }
 
-const UnVerifiedBeauticianStats = ({beauticians}: UnVerifiedBeauticianStatsProps) => {
+const UnVerifiedBeauticianStats = ({ beauticians }: UnVerifiedBeauticianStatsProps) => {
 
+  const {data, isLoading, isError} = useGetDashboardAnalyticsQuery('users');
+  
+  const formatter = new Intl.NumberFormat('en-US');
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    return <div>Error while fetching data</div>;
+  }
 
   const statsItems = [
     {
       icon: <FileCheck className="h-8 w-8 text-blue-600" />,
       label: "Total Beauticians Applications",
-      filter: null,
-      value: 150,
-      bgColor: "bg-blue-50",
-      textColor: "text-blue-800",
+      value: formatter.format(data?.data.data.verifications.total_applications),
+      bgColor: "bg-card ",
+      textColor: "text-blue-800 dark:text-gray-300",
     },
     {
-        icon: <CircleEllipsis className="h-8 w-8 text-green-600" />,
-        label: "Pending Applications",
-        filter: "active",
-        value: 0,
-        bgColor: "bg-green-50",
-        textColor: "text-green-800",
+      icon: <CircleEllipsis className="h-8 w-8 text-green-600" />,
+      label: "Pending Applications",
+      value: formatter.format(data?.data.data.verifications.pending_applications),
+      bgColor: "bg-card ",
+      textColor: "text-green-800 dark:text-gray-300",
     },
     {
-        icon: <Ban className="h-8 w-8 text-red-600" />,
-        label: "Total Rejected Applications",
-        filter: "inactive",
-        value: 40,
-        bgColor: "bg-red-50",
-        textColor: "text-red-800",
+      icon: <Ban className="h-8 w-8 text-red-600" />,
+      label: "Total Rejected Applications",
+      value: formatter.format(data?.data.data.verifications.rejected_applications),
+      bgColor: "bg-card ",
+      textColor: "text-red-800 dark:text-gray-300",
     },
     {
-        icon: <ListChecks className="h-8 w-8  text-orange-600" />,
-        label: "Aplications in Review",
-        filter: "top-rated",
-        value: 2,
-        bgColor: "bg-orange-50",
-        textColor: "text-orange-800",
+      icon: <ListChecks className="h-8 w-8 text-orange-600" />,
+      label: "Applications in Review",
+      value: formatter.format(data?.data.data.verifications.applications_under_review),
+      bgColor: "bg-card ",
+      textColor: "text-orange-800 dark:text-gray-300",
     },
-    
   ];
 
   return (
-    <div className="w-full p-4 mx-auto">
-      <p className="text-lg uppercase text-center font-semibold mb-3">STATS</p>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+    <div className="w-full p-6">
+      <p className="text-lg uppercase text-center font-semibold mb-6 text-gray-700 dark:text-gray-300">
+        Stats
+      </p>
+      <div className="grid grid-cols-4 gap-4">
         {statsItems.map((item, index) => (
           <Card
             key={index}
-            className="flex flex-col justify-between border-2 border-transparent hover:shadow-xl hover:border-opacity-50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 rounded-xl overflow-hidden"
+            className={`p-4 flex flex-col items-center justify-between rounded-lg shadow-md border border-gray-200 ${item.bgColor}`}
           >
-            <CardHeader className="flex flex-row items-center justify-center p-4 pb-2">
-              <div className="p-3 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+            <CardHeader className="flex flex-col items-center mb-4">
+              <div className={`p-3 rounded-full flex items-center justify-center shadow-md ${item.bgColor}`}>
                 {item.icon}
               </div>
             </CardHeader>
-            <CardContent className="p-4 pt-2 text-center flex-grow flex flex-col justify-center">
-              <div className="text-2xl font-bold mb-1">{item.value}</div>
-              <p className="text-xs opacity-70 uppercase tracking-wider truncate">{item.label}</p>
+            <CardContent className="text-center">
+              <div className={`text-2xl font-bold ${item.textColor}`}>
+                {item.value}
+              </div>
+              <p className="text-sm font-medium mt-2 text-gray-600 dark:text-gray-400">
+                {item.label}
+              </p>
             </CardContent>
           </Card>
         ))}

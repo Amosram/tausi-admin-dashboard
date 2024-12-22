@@ -133,8 +133,8 @@ export default function AppearanceSettings({
             </div>
           </RadioGroup>
         </div>
-
-        <div className="space-y-4">
+            {/* TODO: IMPLEMENT SIDEBAR COLOR REACTIVITY */}
+        {/* <div className="space-y-4">
           <h3 className="text-lg font-bold">Sidebar Color</h3>
           <RadioGroup value={sidebarColor} onValueChange={setSidebarColor} className="grid grid-cols-3 gap-4">
             {['default', 'aubergine', 'midnight'].map((color) => (
@@ -144,7 +144,7 @@ export default function AppearanceSettings({
               </div>
             ))}
           </RadioGroup>
-        </div>
+        </div> */}
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">

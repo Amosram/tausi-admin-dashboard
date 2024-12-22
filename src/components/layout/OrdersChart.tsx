@@ -23,7 +23,7 @@ const OrdersChart = () => {
   if (isError) return <div>Error fetching data</div>;
 
   const analyticsData = data as DashboardAnalyticsResponse | undefined;
-  const ordersData: DashboardAnalyticsData | undefined = analyticsData.data.data;
+  const ordersData: DashboardAnalyticsData['orders'] | undefined = analyticsData.data.data.orders;
 
   // Helper Functions
   const formatLast7Days = (data: Last[]) => {
@@ -42,7 +42,7 @@ const OrdersChart = () => {
       const week = Math.floor(diffInDays / 7) + 1;
 
       if (!acc[`Week ${week}`]) {
-        acc[`Week ${week}`] = { week: `Week ${week}`, pending: 0, completed: 0, scheduled: 0 };
+        acc[`Week ${week}`] = { week: `Week ${week}`, pending: 0, completed: 0, cancelled: 0 };
       }
       acc[`Week ${week}`][status] = (acc[`Week ${week}`][status] || 0) + total_appointments;
       return acc;
@@ -57,7 +57,7 @@ const OrdersChart = () => {
       const monthKey = date.toLocaleString('default', { month: 'short' }) + ' ' + date.getFullYear();
 
       if (!acc[monthKey]) {
-        acc[monthKey] = { month: monthKey, pending: 0, completed: 0, scheduled: 0 };
+        acc[monthKey] = { month: monthKey, pending: 0, completed: 0, cancelled: 0 };
       }
       acc[monthKey][status] = (acc[monthKey][status] || 0) + total_appointments;
       return acc;
@@ -72,7 +72,7 @@ const OrdersChart = () => {
       const month = date.toLocaleString('default', { month: 'short' }) + ' ' + date.getFullYear();
 
       if (!acc[month]) {
-        acc[month] = { month, pending: 0, completed: 0, scheduled: 0 };
+        acc[month] = { month, pending: 0, completed: 0, cancelled: 0 };
       }
       acc[month][status] = (acc[month][status] || 0) + total_appointments;
       return acc;
@@ -109,13 +109,13 @@ const OrdersChart = () => {
   return (
     <div className="bg-card p-6 rounded-lg shadow-md">
       {/* Dropdown for Time Range */}
-      <div className="flex justify-end items-center mb-4">
-        <label htmlFor="timeRange" className="mr-2">Select Time Range:</label>
+      <div className="flex justify-end items-center mb-4 w-full">
+        <label htmlFor="timeRange" className="mr-2 font-semibold">Time Range:</label>
         <select
           id="timeRange"
           value={timeRange}
           onChange={handleTimeRangeChange}
-          className="p-2 border rounded bg-card"
+          className="p-2 border rounded bg-card w-full md:w-auto"
         >
           <option value="last_7_days">Last 7 Days</option>
           <option value="last_1_month">Last 1 Month (Weekly)</option>
@@ -131,7 +131,7 @@ const OrdersChart = () => {
             data={selectedData}
             margin={{ top: 50, right: 40, left: 30, bottom: 50 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3"/>
             <XAxis
               dataKey={timeRange === 'last_7_days' ? 'day' : timeRange === 'last_1_month' ? 'week' : 'month'}
               label={{
@@ -151,9 +151,9 @@ const OrdersChart = () => {
             <Line type="monotone" dataKey="completed"
               stroke="#4CAF50" strokeWidth={2}
               dot={false} name="Completed" />
-            <Line type="monotone" dataKey="scheduled"
+            <Line type="monotone" dataKey="cancelled"
               stroke="#F44336" strokeWidth={2}
-              dot={false} name="Scheduled" />
+              dot={false} name="Cancelled" />
           </LineChart>
         </ResponsiveContainer>
       </div>

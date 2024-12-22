@@ -68,6 +68,7 @@ const Ledger = () => {
 
   const columns: ColumnDef<Ledgers>[] = [
     {
+      id:"ownerId",
       accessorKey: 'ownerId',
       header: 'Owner ID',
       cell: ({row}) => (
@@ -81,6 +82,7 @@ const Ledger = () => {
       ),
     },
     {
+      id:"name",
       accessorKey: 'name',
       header: 'Name',
       cell: ({row}) => (
@@ -88,11 +90,13 @@ const Ledger = () => {
       )
     },
     {
+      id: "owner",
       accessorKey:'owner',
       header: 'Owner',
       cell: ({row}) => <span>{row.original.owner.businessName}</span>
     },
     {
+      id:"createdAt",
       accessorKey:'createdAt',
       header: 'Creation Date',
       cell: ({row}) => {

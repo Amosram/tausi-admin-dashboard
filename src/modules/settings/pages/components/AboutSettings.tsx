@@ -13,6 +13,41 @@ export default function AboutSettings() {
         </div>
 
         <div className="space-y-4">
+          <h3 className="text-lg font-medium">Version Information</h3>
+          <p>Current Version: 1.0.0</p>
+          <Button variant="default" className="hover:bg-black hover:text-white dark:text-gray-300">Check for Updates</Button>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Download the App</h3>
+          <div className="flex space-x-4">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.example"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center px-4 py-2 hover:bg-gray-400 text-white rounded-lg"
+            >
+              <img
+                src="/googlelogo.svg"
+                alt="Google Play Store"
+              />
+            </a>
+
+            <a
+              href="https://apps.apple.com/ap/id1234567890"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center px-4 py-2 hover:bg-gray-400 text-white rounded-lg "
+            >
+              <img
+                src="/applogo.svg"
+                alt="App Store"
+              />
+            </a>
+          </div>
+        </div>
+
+        <div className="space-y-4">
           <h3 className="text-lg font-medium">Credits</h3>
           <ul className="list-disc list-inside space-y-2">
             <li>Developed by: Tausi</li>
@@ -25,7 +60,7 @@ export default function AboutSettings() {
           <h3 className="text-lg font-medium">Legal</h3>
           <ul className="space-y-2">
             <li>
-              <a href="#" className="text-blue-500 hover:underline">Terms of Service</a>
+              <a href="https://tausiapp.com/terms-conditions/" className="text-blue-500 hover:underline">Terms of Service</a>
             </li>
             <li>
               <a href="#" className="text-blue-500 hover:underline">Privacy Policy</a>
