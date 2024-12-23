@@ -5,7 +5,7 @@ import { MapCoordinate } from "./types";
 interface MarkerProps {
   coordinates: MapCoordinate[];
   setCoordinates?: (coordinates: MapCoordinate) => void;
-  infoBody?: React.ReactNode | JSX.Element;
+  infoBody?: (index: number) => React.ReactNode;
   onMarkerClick?: (index: number) => void;
 }
 
@@ -45,7 +45,7 @@ const Marker: React.FC<MarkerProps> = ({ coordinates, setCoordinates, infoBody, 
               maxWidth={200}
               onCloseClick={() => setInfoIndex(null)}
             >
-              {infoBody? infoBody : <div>Info Window</div> }
+              {infoBody? infoBody(index) : <div>Info Window</div> }
             </InfoWindow>
           )}
         </React.Fragment>

@@ -31,6 +31,52 @@ export interface Client {
   fcmToken: string;
 }
 
+export interface TopRatedBeauticianResponse {
+    statusCode: string;
+    code:       number;
+    message:    string;
+    data:       TopRatedBeautician[];
+}
+
+export interface TopRatedBeautician {
+    id:                   string;
+    locationAddress:      string;
+    resumeUrl:            null | string;
+    resumePath:           null | string;
+    isVerified:           boolean;
+    isActive:             boolean;
+    termsAndConditions:   boolean;
+    deactivatedAt:        null;
+    deactivatedBy:        null;
+    deactivatedReason:    null;
+    isDeleted:            boolean;
+    deletedAt:            null;
+    deletedReason:        null;
+    createdAt:            Date;
+    updatedAt:            Date;
+    coordinates:          Coordinates;
+    latitude:             string;
+    longitude:            string;
+    businessName:         string;
+    parentId:             null;
+    registrationProgress: number;
+    businessType:         string;
+    specialization:       null;
+    bio:                  string;
+    fcmToken:             null;
+    topRated:             boolean;
+    rating:               number;
+    user:                 User;
+    services:             Service[];
+}
+
+export interface BeauticianNearMeResponse {
+    statusCode: string;
+    code:       number;
+    message:    string;
+    data:       Professional[];
+}
+
 export interface Professional {
   id: string;
   locationAddress: string;
@@ -53,7 +99,7 @@ export interface Professional {
   longitude: string;
   businessName: string;
   registrationProgress: number;
-  businessType: string;
+  businessType: string | "individual";
   specialization: string | null;
   bio: string;
   fcmToken: string | null;
@@ -614,6 +660,27 @@ export interface DashboardAnalyticsData {
     top_rated_professionals: number;
     all_services:            number;
     verifications:           Verifications;
+    generalRevenue:    GeneralRevenue;
+    categoriesRevenue: CategoriesRevenue;
+}
+
+export interface CategoriesRevenue {
+    "Hair Dressing ": Barber[];
+    Makeup:           Barber[];
+    Barber:           Barber[];
+}
+
+export interface Barber {
+    created_at_transactions: Date;
+    Amount:                  number;
+}
+
+export interface GeneralRevenue {
+    last_7_days:   Last[];
+    last_1_month:  Last[];
+    last_90_days:  Last[];
+    last_6_months: Last[];
+    last_year:     Last[];
 }
 
 export interface Verifications {
@@ -641,6 +708,13 @@ export interface Metrics {
     total_professionals:    number;
     active_professionals:   number;
     verified_professionals: number;
+    today:         string;
+    last_7_days:   string;
+    last_1_month:  string;
+    last_90_days:  string;
+    last_6_months: string;
+    last_year:     string;
+
 }
 
 export interface Orders {

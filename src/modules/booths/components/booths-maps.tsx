@@ -18,16 +18,19 @@ const BoothsMap: React.FC<BoothsMapProps> = ({ coordinates, booths }) => {
       <div className="h-[500px]">
         <Maps
           coordinates={coordinates}
-          infoBody={
-            selectedBooth && (
-              <InfoComponent
-                imageSrc={selectedBooth.imageUrl || "/placeholder.jpg"}
-                name={selectedBooth.name}
-                moreInfo={`Occupancy Status: ${selectedBooth.occupancyStatus}`}
-                link={`${selectedBooth.id}`}
-              />
-            )
-          }
+          infoBody={(index) => {
+            const booth = booths[index];
+            return (
+              booth && (
+                <InfoComponent
+                  imageSrc={booth.imageUrl || "/placeholder.jpg"}
+                  name={booth.name}
+                  moreInfo={`Occupancy Status: ${booth.occupancyStatus}`}
+                  link={`${booth.id}`}
+                />
+              )
+            );
+          }}
           onMarkerClick={(index) => setSelectedBooth(booths[index])}
         />
       </div>
