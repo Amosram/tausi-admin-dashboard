@@ -3,7 +3,7 @@ import { LineChart, Line, CartesianGrid, Legend, ResponsiveContainer, Tooltip, X
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import * as Select from '@radix-ui/react-select';
 import { useGetDashboardAnalyticsQuery } from '@/modules/dashboard/api/dashboardApi';
-import { DashboardAnalyticsData, CategoriesRevenue, Barber } from '@/models';
+import { CategoriesRevenue, Barber } from '@/models';
 import dayjs from 'dayjs';
 import Loader from '@/components/layout/Loader';
 
@@ -94,8 +94,10 @@ const RevenueCategory: React.FC = () => {
           />
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
-          <Legend verticalAlign="top" align="left" height={36} />
-          <Line type="monotone" dataKey="Amount" stroke="#3b82f6" strokeWidth={2} />
+          <Legend verticalAlign="top" align="left"
+            height={36} />
+          <Line type="monotone" dataKey="Amount"
+            stroke="#3b82f6" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
     </div>

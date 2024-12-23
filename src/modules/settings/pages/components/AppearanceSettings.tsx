@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radioGroup';
 import { Switch } from '@/components/ui/switch';
-import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
 import { useTheme } from '@/providers/theme-provider';
 
@@ -118,7 +117,8 @@ export default function AppearanceSettings({
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <h3 className="text-lg font-bold">Theme</h3>
-          <RadioGroup value={theme} onValueChange={setTheme} className="flex space-x-4">
+          <RadioGroup value={theme} onValueChange={setTheme}
+            className="flex space-x-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="light" id="light" />
               <Label htmlFor="light">Light</Label>
@@ -133,7 +133,7 @@ export default function AppearanceSettings({
             </div>
           </RadioGroup>
         </div>
-            {/* TODO: IMPLEMENT SIDEBAR COLOR REACTIVITY */}
+        {/* TODO: IMPLEMENT SIDEBAR COLOR REACTIVITY */}
         {/* <div className="space-y-4">
           <h3 className="text-lg font-bold">Sidebar Color</h3>
           <RadioGroup value={sidebarColor} onValueChange={setSidebarColor} className="grid grid-cols-3 gap-4">

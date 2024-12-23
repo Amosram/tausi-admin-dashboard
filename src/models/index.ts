@@ -1,4 +1,4 @@
-import { SessionData, TausiUser, TausiUserDetails } from "./user";
+import { TausiUser } from "./user";
 
 export interface Coordinates {
   x: number;

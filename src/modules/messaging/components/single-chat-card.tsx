@@ -97,10 +97,10 @@ export const SingleChatCard: React.FC<SingleChatCardProps> = ({
           ? attachments[0].type.startsWith("image/")
             ? "image"
             : attachments[0].type.startsWith("video/")
-            ? "video"
-            : attachments[0].type.startsWith("audio/")
-            ? "audio"
-            : "text"
+              ? "video"
+              : attachments[0].type.startsWith("audio/")
+                ? "audio"
+                : "text"
           : "text",
       attachments: attachmentURLs.filter(Boolean),
       reactions: {},

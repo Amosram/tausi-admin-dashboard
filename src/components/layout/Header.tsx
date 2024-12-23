@@ -8,9 +8,8 @@ import { FaChevronDown, FaChevronLeft } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "../ui/sidebar";
 import { auth } from "@/app/firebase";
-import { DoorOpen, Moon, Search, SearchIcon, Settings, Sun } from "lucide-react";
+import { DoorOpen, Moon, Settings, Sun } from "lucide-react";
 import { useTheme } from "@/providers/theme-provider";
-import { MdChat, MdNotifications } from "react-icons/md";
 import { useAppDispatch } from "@/redux/hooks";
 import { clearLocalState, signOutUser } from "@/redux/reducers/userSlice";
 
@@ -227,9 +226,9 @@ const Header = () => {
                   className="flex items-center justify-between p-2 cursor-pointer">
                   {theme === "dark" ? "Light Mode" : "Dark Mode"}
                   {theme === "dark" ? (
-                  <Sun className="mr-2 text-yellow-500" />
+                    <Sun className="mr-2 text-yellow-500" />
                   ): (
-                  <Moon className="mr-2 text-gray-600" />
+                    <Moon className="mr-2 text-gray-600" />
                   )}
                 </DropdownMenuItem>
                 <DropdownMenuItem className="flex items-center justify-between p-2 cursor-pointer">

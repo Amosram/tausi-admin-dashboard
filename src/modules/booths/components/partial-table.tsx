@@ -42,7 +42,7 @@ export const PartialBoothsTable = ({
 
   return (
     <div className="sm:max-w-[90vw] max-w-[80vw] mx-auto border border-gray-300 shadow-lg overflow-hidden">
-        <p className="text-lg uppercase text-center font-semibold mb-2">Table overview</p>
+      <p className="text-lg uppercase text-center font-semibold mb-2">Table overview</p>
       <div className="overflow-x-auto sm:max-w-[90vw] max-w-[80vw] mx-auto border border-gray-300 shadow-lg">
         <table className="w-full table-auto">
           <thead className="bg-gray-100 dark:bg-gray-800 border-b">
@@ -56,9 +56,9 @@ export const PartialBoothsTable = ({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </th>
                 ))}
               </tr>

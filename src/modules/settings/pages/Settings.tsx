@@ -3,10 +3,9 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import GeneralSettings from './components/GeneralSettings';
 import AppearanceSettings from './components/AppearanceSettings';
 import AboutSettings from './components/AboutSettings';
-import { Settings, Key, Database, Palette, Info } from 'lucide-react';
+import { Key, Database, Palette, Info } from 'lucide-react';
 import ApiIntegrations from './components/ApiIntergration';
 import FirebaseConfiguration from './components/FirebaseConfigurations';
 

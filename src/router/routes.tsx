@@ -306,7 +306,7 @@ export const routes: RouteObject[] = [
       {
         path: "/auth/login",
         element: (
-        <Login />
+          <Login />
         )
       },
     ]

@@ -200,7 +200,8 @@ const SideBar = () => {
       {open ? (
         <SidebarFooter className="flex items-center border-t border-gray-300 dark:text-black">
           <div className="px-3 py-2 bg-primary-superlight flex gap-2 items-center">
-            <img src="/tausi-logo.png" alt="Footer Logo" className="w-8 h-8" />
+            <img src="/tausi-logo.png" alt="Footer Logo"
+              className="w-8 h-8" />
             <div className="flex flex-col gap-1 text-sm">
               <p>tausi admin dashboard</p>
               <p className="font-semibold">
@@ -212,7 +213,8 @@ const SideBar = () => {
       ) : (
         <SidebarFooter className="border-t border-gray-300 dark:text-black">
           <div className="flex flex-col items-center ">
-            <img src="/tausi-logo.png" alt="Footer Logo" className="w-6 h-6" />
+            <img src="/tausi-logo.png" alt="Footer Logo"
+              className="w-6 h-6" />
             <p className="text-[12px] text-center font-semibold dark:hidden">
               &copy; 2022
             </p>

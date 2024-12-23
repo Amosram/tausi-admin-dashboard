@@ -14,30 +14,30 @@ import { Appointment } from "@/models";
 
 const getStatusBadge = (status: string) => {
   switch (status) {
-    case "completed":
-      return (
-        <Badge className="bg-transparent border-2 font-semibold text-md border-green-500 text-green-500">
-          {status}
-        </Badge>
-      );
-    case "pending":
-      return (
-        <Badge className="bg-transparent border-2 font-semibold text-md border-blue-500 text-blue-500">
-          {status}
-        </Badge>
-      );
-    case "cancelled":
-      return (
-        <Badge className="bg-transparent border-2 font-semibold text-md border-red-500 text-red-500">
-          {status}
-        </Badge>
-      );
-    default:
-      return (
-        <Badge className="bg-transparent border-2 font-semibold text-md border-gray-500 text-gray-500">
-          {status}
-        </Badge>
-      );
+  case "completed":
+    return (
+      <Badge className="bg-transparent border-2 font-semibold text-md border-green-500 text-green-500">
+        {status}
+      </Badge>
+    );
+  case "pending":
+    return (
+      <Badge className="bg-transparent border-2 font-semibold text-md border-blue-500 text-blue-500">
+        {status}
+      </Badge>
+    );
+  case "cancelled":
+    return (
+      <Badge className="bg-transparent border-2 font-semibold text-md border-red-500 text-red-500">
+        {status}
+      </Badge>
+    );
+  default:
+    return (
+      <Badge className="bg-transparent border-2 font-semibold text-md border-gray-500 text-gray-500">
+        {status}
+      </Badge>
+    );
   }
 };
 

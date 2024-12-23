@@ -60,7 +60,8 @@ const MessagingContent = () => {
       );
     } else if (activeComponentId === "clients-group") {
       changeActiveComponent(
-        <ClientsGroupCard data={clients} isLoading={isLoading} error={error} />,
+        <ClientsGroupCard data={clients} isLoading={isLoading}
+          error={error} />,
         "clients-group"
       );
     }

@@ -317,7 +317,7 @@ const ProfessionalDetails = () => {
           alt={`Profile of ${name}`}
           className="w-16 h-16 rounded-full"
           onError={(e) => {
-        e.currentTarget.src = "/tausi-logo.png"; // Fallback if image fails to load
+            e.currentTarget.src = "/tausi-logo.png"; // Fallback if image fails to load
           }}
         />
         <h3 className="text-lg font-semibold mt-2 text-center">{name}</h3>

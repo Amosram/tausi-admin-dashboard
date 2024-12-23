@@ -40,28 +40,28 @@ export const MessagingGroupsCard = ({
   const handleViewMore = (groupType: "professionals" | "clients") => {
     setActiveGroupType(groupType);
     switch (groupType) {
-      case "professionals":
-        changeActiveComponent(
-          <BeauticiansGroupCard
-            data={beauticians}
-            isLoading={isLoading}
-            error={error}
-          />,
-          "professionals-group"
-        );
-        break;
-      case "clients":
-        changeActiveComponent(
-          <ClientsGroupCard
-            data={clients}
-            isLoading={isLoading}
-            error={error}
-          />,
-          "clients-group"
-        );
-        break;
-      default:
-        changeActiveComponent(<ChatCard />);
+    case "professionals":
+      changeActiveComponent(
+        <BeauticiansGroupCard
+          data={beauticians}
+          isLoading={isLoading}
+          error={error}
+        />,
+        "professionals-group"
+      );
+      break;
+    case "clients":
+      changeActiveComponent(
+        <ClientsGroupCard
+          data={clients}
+          isLoading={isLoading}
+          error={error}
+        />,
+        "clients-group"
+      );
+      break;
+    default:
+      changeActiveComponent(<ChatCard />);
     }
   };
 

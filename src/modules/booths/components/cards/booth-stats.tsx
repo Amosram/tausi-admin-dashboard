@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Booth } from "@/models";
-import { Building2, Wrench, CheckCircle2, Users, XCircle, PieChart } from "lucide-react";
+import { Building2, Wrench, CheckCircle2, Users, XCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useBoothMetrics } from "../../hooks/useBoothMetrics";
 

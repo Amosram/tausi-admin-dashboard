@@ -272,14 +272,14 @@ const UserDetails: React.FC = () => {
           </Badge>
         </div>
         <div className="flex">
-            <Button
+          <Button
             variant="destructive"
             className="flex items-center space-x-2 hover:bg-red-700 hover:text-white"
             onClick={() => setDialogOpen(true)}
-            >
+          >
             <Trash2 size={16} />
             <span>Delete User</span>
-            </Button>
+          </Button>
         </div>
       </div>
 

@@ -68,7 +68,8 @@ export const FormInputField: React.FC<FormInputFieldProps> = ({
                 </SelectContent>
               </Select>
             ) : (
-              <Input type={type} placeholder={placeholder} {...field} />
+              <Input type={type} placeholder={placeholder}
+                {...field} />
             )}
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}

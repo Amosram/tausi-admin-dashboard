@@ -84,7 +84,8 @@ const AddEntryDialog: React.FC<{ bookId: string; ownerId: string }> = ({ bookId,
           {/* Title */}
           <div>
             <Label htmlFor="title">Title</Label>
-            <Input id="title" {...register("title")} placeholder="Enter title" />
+            <Input id="title" {...register("title")}
+              placeholder="Enter title" />
             {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
           </div>
 
@@ -157,7 +158,7 @@ const AddEntryDialog: React.FC<{ bookId: string; ownerId: string }> = ({ bookId,
             {errors.bookId && (
               <p className="text-red-500 text-sm">{errors.bookId.message}</p>
             )}
-            </div>
+          </div>
 
           {/* Save Button */}
           <Button type="submit" className="w-full">

@@ -6,7 +6,6 @@ import { XCircle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useUpdateProfessionalMutation } from "../api/professionalApi";
-import { Professional } from "@/models";
 
 
 const DeactivateDialog = ({ professionalId }: { professionalId: string }) => {
