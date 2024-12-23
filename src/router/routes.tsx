@@ -36,6 +36,7 @@ const BoothsListLazy = lazy(() => import('@/modules/booths/pages/BoothsList'));
 const BoothAssignmentsLazy = lazy(() => import('@/modules/booths/pages/BoothAssignments'));
 const BoothLogsLazy = lazy(() => import('@/modules/booths/pages/BoothLogs'));
 const BoothOrdersPageLazy = lazy(() => import('@/modules/booths/pages/BoothOrdersPage'));
+const ServiceCategoriesLazy = lazy(() => import('@/modules/service-categories'));
 
 export const routes: RouteObject[] = [
   {
@@ -298,6 +299,14 @@ export const routes: RouteObject[] = [
           </Suspense>
         )
       },
+      {
+        path: "/service-categories/*",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ServiceCategoriesLazy />
+          </Suspense>
+        )
+      }
     ]
   },
   {

@@ -3,6 +3,7 @@ import { IoLogoWechat } from "react-icons/io5";
 import { GoHomeFill } from "react-icons/go";
 import { FaShoppingCart, FaUserAlt, } from "react-icons/fa";
 import { RiBookletFill, RiFile4Fill } from "react-icons/ri";
+import { BiCategory } from "react-icons/bi";
 import { FaUserCheck } from "react-icons/fa6";
 import { MdSpa, MdStore } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
@@ -118,6 +119,7 @@ const menuItems = [
   { title: "Businesses", icon: <RiBookletFill />, link: "/ledgers" },
   { title: "Booths", icon: <MdStore />, link: "/booths" },
   { title: "Messaging", icon: <IoLogoWechat />, link: "/messaging" },
+  { title: "Service Categories", icon: <BiCategory />, link: "/service-categories" },
   { title: "Settings", icon: <IoMdSettings />, link: "/settings" },
 ];
 
