@@ -41,7 +41,7 @@ export const PartialOrdersTable = ({
     });
 
   return (
-    <div className="sm:max-w-[90vw] max-w-[80vw] mx-auto bg-white border border-gray-300 shadow-lg overflow-hidden">
+    <div className="sm:max-w-[90vw] max-w-[80vw] mx-auto bg-card border border-gray-300 shadow-lg overflow-hidden">
       <p className="text-lg uppercase text-center font-semibold mb-2">
         Table overview
       </p>

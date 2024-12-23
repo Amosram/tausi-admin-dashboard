@@ -39,7 +39,7 @@ const Orders: React.FC = () => {
 
   return (
     <div className=" flex flex-col gap-5 px-6 py-6">
-      <div className="shadow-lg bg-white">
+      <div className="shadow-lg bg-card">
         <h1 className="text-center font-bold text-xl uppercase underline mt-2">
           Orders Chart
         </h1>

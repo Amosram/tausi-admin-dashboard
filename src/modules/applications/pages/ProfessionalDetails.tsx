@@ -298,16 +298,12 @@ const ProfessionalDetails = () => {
     locationName: item.locationAddress || null,
   })) || [];
 
-  console.log("data 1=======>",markers);
-  console.log("Profile Picture URLs:", beauticianNearby?.data.map(item => item.user?.profilePictureUrl));
-
-
   // infobody for markers
   const infoBody = (name: string, profilePictureUrl: string, locationName: string) => {
-    console.log("Name:", name, "Profile Picture:", profilePictureUrl, "Location:", locationName);
 
     // Fallback for profile picture and location name
     const sanitizedProfilePictureUrl = profilePictureUrl || "/tausi-logo.png";
+    const sanitizedBeauticianName = name || "Beautician not available";
     const sanitizedLocationName = locationName || "Location not available";
 
     return (
@@ -315,13 +311,13 @@ const ProfessionalDetails = () => {
         <img
           src={sanitizedProfilePictureUrl}
           alt={`Profile of ${name}`}
-          className="w-16 h-16 rounded-full"
+          className="w-16 h-16 object-cover rounded-full"
           onError={(e) => {
-        e.currentTarget.src = "/tausi-logo.png"; // Fallback if image fails to load
+            e.currentTarget.src = "/tausi-logo.png"; // Fallback if image fails to load
           }}
         />
-        <h3 className="text-lg font-semibold mt-2 text-center">{name}</h3>
-        <p className="text-sm text-gray-600 text-center">{sanitizedLocationName}</p>
+        <h3 className="text-lg font-semibold mt-2 text-center capitalize text-gray-500">{sanitizedBeauticianName}</h3>
+        <p className="text-sm text-gray-500 text-center">{sanitizedLocationName}</p>
       </div>
     );
   };
