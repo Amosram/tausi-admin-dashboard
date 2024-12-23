@@ -3,8 +3,8 @@ import { LineChart, Line, CartesianGrid, Legend, ResponsiveContainer, Tooltip, X
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import * as Select from '@radix-ui/react-select';
 import { useGetDashboardAnalyticsQuery } from '@/modules/dashboard/api/dashboardApi';
-import { DashboardAnalyticsData, CategoriesRevenue, Barber } from '@/models'; // adjust import path
-import dayjs from 'dayjs'; // Make sure to install dayjs for date formatting
+import { DashboardAnalyticsData, CategoriesRevenue, Barber } from '@/models';
+import dayjs from 'dayjs';
 import Loader from '@/components/layout/Loader';
 
 // Custom tooltip component
@@ -37,9 +37,9 @@ const RevenueCategory: React.FC = () => {
 
   if (isError) return <div>Error fetching data</div>;
 
-  // Format date to display as "Jan 2024"
+  // Format date to "MMM YYYY"
   const formatDate = (date: Date) => {
-    return dayjs(date).format('MMM YYYY'); // Example: "Jan 2024"
+    return dayjs(date).format('MMM YYYY');
   };
 
   // Process data to include formatted date
