@@ -574,8 +574,11 @@ const UserDetails: React.FC = () => {
           <AlertDialogHeader>
             <h3 className="text-primary text-2xl">Text User?</h3>
             <p>
-              Are you sure you want to proceed? You will be redirected to the
-              messaging page.
+              Select the{" "}
+              {user.sessionData?.userTypeSession === "professional"
+                ? "beauticians"
+                : "clients"}{" "}
+              group and search for {user.name}
             </p>
           </AlertDialogHeader>
           <AlertDialogFooter>

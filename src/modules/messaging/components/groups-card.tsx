@@ -137,7 +137,7 @@ export const MessagingGroupsCard = ({
                 className="flex items-center gap-2 px-3 py-2 text-white bg-primary hover:bg-red-700 rounded-md shadow-sm text-xs"
                 onClick={() => handleViewMore(group.type)}
               >
-                <span>Manage</span>
+                <span>View All</span>
               </button>
             </div>
           </div>
