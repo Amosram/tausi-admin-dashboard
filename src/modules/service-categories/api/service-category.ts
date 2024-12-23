@@ -1,7 +1,7 @@
 import { axiosBaseQuery } from "@/Utils/axios";
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Response } from '../../messaging/types';
 import { ServiceCategory } from '../../../models/user';
+import { ApiResponse } from "@/models";
 
 export const serviceCategoryApi = createApi({
   reducerPath: "serviceCategoryApi",
@@ -9,7 +9,7 @@ export const serviceCategoryApi = createApi({
   tagTypes: ["ServiceCategory"],
   refetchOnMountOrArgChange: false,
   endpoints: (builder) => ({
-    getServiceCategories: builder.query<Response<ServiceCategory []>, void>({
+    getServiceCategories: builder.query<ApiResponse<ServiceCategory []>, void>({
       query: () => ({
         url: "/service-categories",
         method: "GET",

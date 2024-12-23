@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import CategoryModal from '../components/CategoryModal'; // Import CategoryModal
+import AddServiceCategory from '../components/AddServiceCategory';
 
 const ServiceCategories = () => {
   const { data, isLoading, refetch } = useGetServiceCategoriesQuery();
@@ -96,9 +97,19 @@ const ServiceCategories = () => {
     <div className="px-6">
       {data?.data.length > 0 && <TanStackTable
         data={data.data}
+        button={AddCategoryButton}
         columns={columns}
-        // button={AddCategoryButton}
       />}
+
+      {/* AddServiceCategoryModal for creating a new category */}
+      {addModalVisible && (
+        <AddServiceCategory
+          visible={addModalVisible}
+          onClose={() => setAddModalVisible(false)}
+          refetchCategories={refetch}
+        />
+      )}
+
       {/* CategoryModal for editing an existing category */}
       {editModalVisible && selectedCategory && (
         <CategoryModal

@@ -7,6 +7,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useUpdateServiceCategoryMutation } from '../api/service-category';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const CategoryModal = ({ visible, handleCloseButton, modalData, refetchCategories }) => {
   const toast = useToast();
@@ -102,33 +104,33 @@ const CategoryModal = ({ visible, handleCloseButton, modalData, refetchCategorie
     <div className={`overflow-y-auto ${visible ? 'fixed z-50 inset-0' : 'hidden'}`}>
       <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-        <div className="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+        <div className="relative inline-block align-bottom bg-card rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
           <p className="text-center font-medium text-lg">Edit Category</p>
           <form onSubmit={formik.handleSubmit}>
             <div className="mt-3 sm:mt-5">
               <div className="grid">
-                <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-2">
+                <Label htmlFor="name" className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-2">
                                     Name
-                </label>
-                <input
+                </Label>
+                <Input
                   type="text"
                   id="name"
                   name="name"
-                  className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500"
                   onChange={formik.handleChange}
                   value={formik.values.name}
                 />
               </div>
               <div className="mt-4">
-                <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-900 mb-2">
+                <Label htmlFor="imageUrl" className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-2">
                                     Image
-                </label>
-                <input
+                </Label>
+                <Input
                   type="file"
                   accept="image/*"
                   id="imageUrl"
                   name="imageUrl"
-                  className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500"
                   onChange={(event) => {
                     setSelectedImage(event.target.files[0]);
                   }}
@@ -150,14 +152,14 @@ const CategoryModal = ({ visible, handleCloseButton, modalData, refetchCategorie
                 )}
               </div>
               <div className="mt-4">
-                <label htmlFor="description" className="block text-sm font-medium text-gray-900 mb-2">
+                <Label htmlFor="description" className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-2">
                                     Description
-                </label>
+                </Label>
                 <Textarea
                   id="description"
                   name="description"
                   rows={4}
-                  className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                  className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 dark:bg-gray-800 dark:text-gray-300 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                   onChange={formik.handleChange}
                   value={formik.values.description}
                 />
