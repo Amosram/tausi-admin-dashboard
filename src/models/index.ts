@@ -708,6 +708,13 @@ export interface Metrics {
     total_professionals:    number;
     active_professionals:   number;
     verified_professionals: number;
+    today:         string;
+    last_7_days:   string;
+    last_1_month:  string;
+    last_90_days:  string;
+    last_6_months: string;
+    last_year:     string;
+
 }
 
 export interface Orders {
