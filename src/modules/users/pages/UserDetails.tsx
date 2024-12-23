@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
-import { ShieldCheck, Trash2 } from "lucide-react";
+import {
+  AlertCircle,
+  Calendar,
+  Info,
+  MessageSquare,
+  ShieldCheck,
+  Trash2,
+  User,
+  UserX,
+} from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -38,6 +47,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/app/firebase";
 
 const ProfileOverviewCard: React.FC<{ user: TausiUserDetails }> = ({
   user,
@@ -116,22 +127,22 @@ const ProfessionalDetailsCard: React.FC<{
       <CardTitle>Professional Details</CardTitle>
     </CardHeader>
     <CardContent className="space-y-2">
-      <p>Business Type: {professional.businessType}</p>
-      {professional.specialization && (
-        <p>Specialization: {professional.specialization}</p>
+      <p>Business Type: {professional?.businessType}</p>
+      {professional?.specialization && (
+        <p>Specialization: {professional?.specialization}</p>
       )}
-      {professional.businessName && (
-        <p>Business Name: {professional.businessName}</p>
+      {professional?.businessName && (
+        <p>Business Name: {professional?.businessName}</p>
       )}
       <div>
-        <p>Registration Progress: {professional.registrationProgress} / 3</p>
-        <Badge variant={professional.isVerified ? "default" : "outline"}>
-          {professional.isVerified ? "Verified" : "Pending Verification"}
+        <p>Registration Progress: {professional?.registrationProgress} / 3</p>
+        <Badge variant={professional?.isVerified ? "default" : "outline"}>
+          {professional?.isVerified ? "Verified" : "Pending Verification"}
         </Badge>
       </div>
       <p>
-        Rating: {professional.rating.toFixed(1)}{" "}
-        {professional.topRated && <Badge>Top Rated</Badge>}
+        Rating: {professional?.rating.toFixed(1)}{" "}
+        {professional?.topRated && <Badge>Top Rated</Badge>}
       </p>
     </CardContent>
   </Card>
@@ -188,26 +199,72 @@ const VerificationDetailsCard: React.FC<{
   </Card>
 );
 
-// User Details Page Component
+// Deactivation Details Card
+const DeactivationDetailsCard: React.FC<{
+  deactivatedBy: string | null;
+  deactivatedAt: Date | null;
+  deactivatedReason: string | null;
+}> = ({ deactivatedBy, deactivatedAt, deactivatedReason }) => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Deactivation Details</CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-2">
+      {deactivatedAt ? (
+        <>
+          <div className="flex items-center space-x-2">
+            <Calendar size={16} />
+            <span>
+              Deactivated At: {new Date(deactivatedAt).toLocaleDateString()}{" "}
+              {new Date(deactivatedAt).toLocaleTimeString()}
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <User size={16} />
+            <span>Deactivated By: {deactivatedBy || "Unknown"}</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <AlertCircle size={16} />
+            <span>Reason: {deactivatedReason || "No reason provided"}</span>
+          </div>
+        </>
+      ) : (
+        <div className="flex items-center space-x-2">
+          <Info size={16} />
+          <span>This user is currently active.</span>
+        </div>
+      )}
+    </CardContent>
+  </Card>
+);
+
 const UserDetails: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const { data: user, isLoading, isError } = useGetUserByIdQuery(userId || "");
   const [updateUser] = useUpdateUserMutation();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [signedInUser] = useAuthState(auth);
 
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isAlertOpen, setAlertOpen] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
 
+  const [isDeactivateDialogOpen, setIsDeactivateDialogOpen] = useState(false);
+  const [isReactivateDialogOpen, setIsReactivateDialogOpen] = useState(false);
+  const [deactivationReason, setDeactivationReason] = useState("");
+  const [isChatAlertOpen, setIsChatAlertOpen] = useState(false);
+
   const handleDelete = async () => {
     try {
       if (!user?.id) {
-        console.error("User ID is missing or invalid.");
+        toast({
+          title: "",
+          description: "User ID is missing or invalid.",
+          variant: "destructive",
+        });
         return;
       }
-
-      console.log("ID being passed to updateUser:", user?.id, typeof user?.id);
 
       const beauticianDetails = {
         id: user.id,
@@ -256,6 +313,109 @@ const UserDetails: React.FC = () => {
     }
   };
 
+  const handleDeactivate = async () => {
+    try {
+      const updatedUser = {
+        id: user.id,
+        name: user?.name,
+        email: user?.email,
+        phoneNumber: user?.phoneNumber,
+        profilePictureUrl: user?.profilePictureUrl,
+        profilePicturePath: user?.profilePicturePath,
+        bio: user?.bio,
+        locationAddress: user?.locationAddress,
+        isActive: false,
+        deactivatedReason: deactivationReason,
+        deactivatedAt: user?.deactivatedAt,
+        deactivatedBy: signedInUser?.uid || "System",
+        phoneVerified: user?.phoneVerified,
+        emailVerified: user?.emailVerified,
+        isDeleted: user?.isDeleted,
+        deletedAt: user?.deletedAt,
+        deletedReason: user?.deletedReason,
+        createdAt: user?.createdAt,
+        updatedAt: user?.updatedAt,
+        latitude: user?.latitude,
+        longitude: user?.longitude,
+        coordinates: user?.coordinates,
+        fcmToken: user?.fcmToken,
+        userTypeSession: user?.sessionData?.userTypeSession,
+      };
+
+      await updateUser(updatedUser);
+      setIsDeactivateDialogOpen(false);
+      toast({
+        title: "Success",
+        description: "User has been deactivated successfully.",
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to deactivate user",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleReactivate = async () => {
+    try {
+      if (!user?.id) {
+        toast({
+          title: "Error",
+          description: "User ID is missing or invalid.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const updatedUser = {
+        id: user.id,
+        name: user?.name,
+        email: user?.email,
+        phoneNumber: user?.phoneNumber,
+        profilePictureUrl: user?.profilePictureUrl,
+        profilePicturePath: user?.profilePicturePath,
+        bio: user?.bio,
+        locationAddress: user?.locationAddress,
+        isActive: true,
+        deactivatedReason: null,
+        deactivatedAt: null,
+        deactivatedBy: null,
+        phoneVerified: user?.phoneVerified,
+        emailVerified: user?.emailVerified,
+        isDeleted: user?.isDeleted,
+        deletedAt: user?.deletedAt,
+        deletedReason: user?.deletedReason,
+        createdAt: user?.createdAt,
+        updatedAt: user?.updatedAt,
+        latitude: user?.latitude,
+        longitude: user?.longitude,
+        coordinates: user?.coordinates,
+        fcmToken: user?.fcmToken,
+        userTypeSession: user?.sessionData?.userTypeSession,
+      };
+
+      await updateUser(updatedUser);
+      setIsReactivateDialogOpen(false);
+      toast({
+        title: "Success",
+        description: "User has been reactivated successfully.",
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to reactivate user.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (!signedInUser) {
+    return <div>No logged in user found</div>;
+  }
+
   if (isLoading) return <Skeleton />;
   if (isError || !user) return <div>Error loading user data.</div>;
 
@@ -271,15 +431,31 @@ const UserDetails: React.FC = () => {
             {user.isActive ? "Active" : "Inactive"}
           </Badge>
         </div>
-        <div className="flex">
-            <Button
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            className="flex items-center space-x-2"
+            onClick={() => setIsChatAlertOpen(true)}
+          >
+            <MessageSquare size={16} />
+            <span>Text User</span>
+          </Button>
+          <Button
+            variant="light"
+            className="flex items-center space-x-2"
+            onClick={() => setDialogOpen(true)}
+          >
+            <UserX size={16} />
+            <span>Deactivate User</span>
+          </Button>
+          <Button
             variant="destructive"
             className="flex items-center space-x-2 hover:bg-red-700 hover:text-white"
             onClick={() => setDialogOpen(true)}
-            >
+          >
             <Trash2 size={16} />
             <span>Delete User</span>
-            </Button>
+          </Button>
         </div>
       </div>
 
@@ -315,6 +491,65 @@ const UserDetails: React.FC = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Deactivate User Dialog */}
+      <Dialog
+        open={isDeactivateDialogOpen}
+        onOpenChange={setIsDeactivateDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Deactivate User</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p>Enter a reason for deactivating this user:</p>
+            <Input
+              placeholder="Reason for deactivation"
+              value={deactivationReason}
+              onChange={(e) => setDeactivationReason(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeactivateDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeactivate}
+              disabled={!deactivationReason.trim()}
+            >
+              Deactivate User
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reactivate User Dialog */}
+      <Dialog
+        open={isReactivateDialogOpen}
+        onOpenChange={setIsReactivateDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reactivate User</DialogTitle>
+          </DialogHeader>
+          <p>Are you sure you want to reactivate this user?</p>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsReactivateDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="default" onClick={handleReactivate}>
+              Reactivate User
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Confirmation Alert */}
       <AlertDialog open={isAlertOpen} onOpenChange={setAlertOpen}>
         <AlertDialogTrigger asChild />
@@ -332,6 +567,31 @@ const UserDetails: React.FC = () => {
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Text User Confirmation Alert */}
+      <AlertDialog open={isChatAlertOpen} onOpenChange={setIsChatAlertOpen}>
+        <AlertDialogTrigger asChild />
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <h3 className="text-primary text-2xl">Text User?</h3>
+            <p>
+              Are you sure you want to proceed? You will be redirected to the
+              messaging page.
+            </p>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setIsChatAlertOpen(false);
+                navigate(`/messaging`);
+              }}
+            >
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Main Content */}
       <div className="grid gap-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -343,6 +603,11 @@ const UserDetails: React.FC = () => {
           <ProfessionalDetailsCard professional={user.professional} />
         )}
         <AccountMetadataCard user={user} />
+        <DeactivationDetailsCard
+          deactivatedAt={user.deactivatedAt}
+          deactivatedBy={user.deactivatedBy}
+          deactivatedReason={user.deactivatedReason}
+        />
         {user.professional && user.professional.verificationData && (
           <VerificationDetailsCard
             verificationData={user.professional.verificationData}

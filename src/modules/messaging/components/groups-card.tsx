@@ -15,6 +15,7 @@ import {
 } from "@/modules/users/hooks/useUserMetrics";
 import { ClientsGroupCard } from "./Groups/clients-group-card";
 import { TausiUser } from "@/models/user";
+import Loader from "@/components/layout/Loader";
 
 
 interface MessagingGroupsCardProps {
@@ -68,7 +69,7 @@ export const MessagingGroupsCard = ({
   if (isLoading)
     return (
       <Card className="w-full h-[500px] flex justify-center items-center">
-        <CardContent>Loading...</CardContent>
+        <CardContent><Loader/></CardContent>
       </Card>
     );
   if (error)

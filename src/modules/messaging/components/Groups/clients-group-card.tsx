@@ -14,6 +14,7 @@ import { debounce } from "lodash";
 import { FaChevronLeft } from "react-icons/fa";
 import { useActiveComponentContext } from "../../context";
 import { SingleChatCard } from "../single-chat-card";
+import Loader from "@/components/layout/Loader";
 
 interface ClientsGroupCardProps {
   data: TausiUser[];
@@ -63,7 +64,7 @@ export const ClientsGroupCard: React.FC<ClientsGroupCardProps> = ({
   if (isLoading)
     return (
       <Card>
-        <CardContent>Loading...</CardContent>
+        <CardContent><Loader/></CardContent>
       </Card>
     );
   if (error)
