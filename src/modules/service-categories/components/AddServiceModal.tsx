@@ -51,7 +51,7 @@ const AddServiceModal = ({visible, onClose, refetchServices}) => {
 
       toast.toast({
         title: "Success",
-        description: "Service category created successfully.",
+        description: "Service created successfully.",
         variant: "success",
       });
 
@@ -62,7 +62,7 @@ const AddServiceModal = ({visible, onClose, refetchServices}) => {
       console.error("API submission error:", error);
       toast.toast({
         title: "Error",
-        description: "Failed to create service category.",
+        description: "Failed to create a service.",
         variant: "destructive",
       });
     }
@@ -121,7 +121,7 @@ const AddServiceModal = ({visible, onClose, refetchServices}) => {
         console.error(error);
         toast.toast({
           title: "Error",
-          description: "An error occurred while creating the category.",
+          description: "An error occurred while creating a service.",
           variant: "destructive",
         });
       }
