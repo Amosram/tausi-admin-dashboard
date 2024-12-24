@@ -64,10 +64,22 @@ const Services = () => {
     <div>Error Fetching table data</div>;
   }
 
+  const TruncatedCell = ({ content }: { content: string | null | undefined }) => {
+    if (!content) return <span>-</span>;
+    return (
+      <span className="truncate block max-w-[150px]" title={content}>
+        {content}
+      </span>
+    );
+  };
+
   const columns: ColumnDef<Services>[] = [
     { accessorKey: 'id', header: 'ID' },
     { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'description', header: 'Description' },
+    { accessorKey: 'description',
+      header: 'Description',
+      cell: ({ row }) => <TruncatedCell content={row.getValue("description")} />,
+    },
     {accessorKey: 'minimumPrice', header: 'Minimum Price'},
     {accessorKey: "serviceCategory.name", header: "Service Category"},
     {
