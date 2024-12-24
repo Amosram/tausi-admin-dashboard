@@ -15,6 +15,7 @@ import {
 } from "@/modules/users/hooks/useUserMetrics";
 import { ClientsGroupCard } from "./Groups/clients-group-card";
 import { TausiUser } from "@/models/user";
+import Loader from "@/components/layout/Loader";
 
 
 interface MessagingGroupsCardProps {
@@ -68,7 +69,7 @@ export const MessagingGroupsCard = ({
   if (isLoading)
     return (
       <Card className="w-full h-[500px] flex justify-center items-center">
-        <CardContent>Loading...</CardContent>
+        <CardContent><Loader/></CardContent>
       </Card>
     );
   if (error)
@@ -136,7 +137,7 @@ export const MessagingGroupsCard = ({
                 className="flex items-center gap-2 px-3 py-2 text-white bg-primary hover:bg-red-700 rounded-md shadow-sm text-xs"
                 onClick={() => handleViewMore(group.type)}
               >
-                <span>Manage</span>
+                <span>View All</span>
               </button>
             </div>
           </div>

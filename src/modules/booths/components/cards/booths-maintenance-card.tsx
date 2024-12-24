@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Calendar, RefreshCw, ShieldAlert, Tag } from "lucide-react";
 import { toZonedTime, format as formatWithTZ } from "date-fns-tz";
+import { toast } from "@/hooks/use-toast";
 
 import {
   Card,
@@ -21,7 +22,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Booth } from "@/models";
-import { useGetBoothByIdQuery, useUpdateBoothMutation } from "../../api/boothsApi";
+import {
+  useGetBoothByIdQuery,
+  useUpdateBoothMutation,
+} from "../../api/boothsApi";
 
 interface BoothsMaintenanceCardProps {
   currentBooth: Booth;
@@ -53,15 +57,23 @@ export const BoothsMaintenanceCard: React.FC<BoothsMaintenanceCardProps> = ({
         },
       }).unwrap();
       await refetch();
-      alert(
-        currentBooth.underMaintenance
-          ? "The booth is now operational."
-          : "The booth is now under maintenance."
-      );
+      const message = currentBooth.underMaintenance
+        ? "The booth is now operational."
+        : "The booth is now under maintenance.";
+
+      toast({
+        title: "Success",
+        description: message,
+        variant: "success", // Use appropriate variant, like "success" or "info"
+      });
 
       setIsAssignButtonDisabled(!isAssignButtonDisabled);
     } catch (error) {
-      alert(`Failed to update maintenance status. Please try again. ${error}`);
+      toast({
+        title: "Error",
+        description: `Failed to update maintenance status. Please try again. ${error}`,
+        variant: "destructive", // This indicates an error or failure
+      });
     }
   };
 

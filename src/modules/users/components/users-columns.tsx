@@ -125,18 +125,6 @@ export const usersColumns: ColumnDef<TausiUser>[] = [
               View User Details
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => console.log("Edit:", row.original)}
-            className="cursor-pointer"
-          >
-            Edit User
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => console.log("Delete:", row.original)}
-            className="bg-destructive text-white cursor-pointer"
-          >
-            Delete User
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),

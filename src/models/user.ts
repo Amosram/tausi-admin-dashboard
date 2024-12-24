@@ -110,7 +110,7 @@ export interface TausiUserDetails {
   bio?: string | null;
   locationAddress?: string | null;
   isActive: boolean;
-  deactivatedAt?: string | null;
+  deactivatedAt?: Date | null;
   deactivatedBy?: string | null;
   deactivatedReason?: string | null;
   phoneVerified: boolean;
