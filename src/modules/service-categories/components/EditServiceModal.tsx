@@ -34,6 +34,20 @@ const EditServiceModal = ({visible, handleCloseButton, modalData, refetchService
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
+    let objectUrl: string | null = null;
+    if (selectedImage instanceof File) {
+      objectUrl = URL.createObjectURL(selectedImage);
+    }
+
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+  }, [selectedImage]);
+
+
+  useEffect(() => {
     if (modalData?.imageUrl) {
       setSelectedImage(modalData.imageUrl);
     }
@@ -212,9 +226,14 @@ const EditServiceModal = ({visible, handleCloseButton, modalData, refetchService
                   <img
                     alt="Selected category"
                     className="w-full h-48 object-center object-cover mt-2"
-                    src={URL.createObjectURL(selectedImage)}
+                    src={
+                      selectedImage instanceof File
+                        ? URL.createObjectURL(selectedImage)
+                        : selectedImage // Use the existing URL directly if not a File
+                    }
                   />
                 )}
+
               </div>
 
               <div>
