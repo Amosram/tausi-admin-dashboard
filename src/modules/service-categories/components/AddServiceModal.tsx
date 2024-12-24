@@ -1,47 +1,68 @@
-import React, { useState } from "react";
-import { useFormik } from "formik";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import uuid from "react-uuid";
-import { storage } from "@/app/firebase";
-import { useToast } from "@/hooks/use-toast";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { useToast } from '@/hooks/use-toast';
+import React, { useMemo, useState } from 'react';
+import Select from "react-select";
+import { useCreateServiceMutation, useGetServiceCategoriesQuery } from '../api/service-category';
+import { min } from 'lodash';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { useCreateServiceCategoryMutation } from "../api/service-category";
-import { Label } from "@/components/ui/label";
+import { useFormik } from 'formik';
+import { storage } from '@/app/firebase';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Services } from '@/models/user';
 
-const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
+const AddServiceModal = ({visible, onClose, refetchServices}) => {
+
   const toast = useToast();
-  const [createServiceCategory, { isLoading }] = useCreateServiceCategoryMutation();
+  const [createService, { isLoading }] = useCreateServiceMutation();
+  const {data: serviceCategory, isLoading: loadingServiceCategory} = useGetServiceCategoriesQuery();
 
   const [percent, setPercent] = useState(0);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const [selectedCategory, setSelectedCategory] = useState<{
+    label: string;
+    value: string;
+  } | null>(null);
+
+  const categoryOptions = useMemo(
+    () => serviceCategory?.data?.map((category) => ({
+      value: category.id,
+      label: category.name,
+    })) || [],
+    [serviceCategory]
+  );
+
 
   const submitForm = async (values: any, resetForm: any) => {
     try {
       const payload = {
         name: values.name,
         description: values.description,
+        minimumPrice: values.minimumPrice,
+        category: selectedCategory?.value,
         imageUrl: values.imageUrl, // Can be null
         imagePath: values.imagePath, // "/docs/user"
       };
 
-      await createServiceCategory(payload).unwrap();
+      await createService(payload).unwrap();
 
       toast.toast({
         title: "Success",
-        description: "Service category created successfully.",
+        description: "Service created successfully.",
         variant: "success",
       });
 
       resetForm();
-      refetchCategories();
+      refetchServices();
       onClose();
     } catch (error) {
       console.error("API submission error:", error);
       toast.toast({
         title: "Error",
-        description: "Failed to create service category.",
+        description: "Failed to create a service.",
         variant: "destructive",
       });
     }
@@ -51,6 +72,8 @@ const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
     initialValues: {
       name: "",
       description: "",
+      minimumPrice: 0,
+      category: "",
       imageUrl: null, // Allow imageUrl to be null
       imagePath: "/docs/user", // Remains constant
     },
@@ -98,7 +121,7 @@ const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
         console.error(error);
         toast.toast({
           title: "Error",
-          description: "An error occurred while creating the category.",
+          description: "An error occurred while creating a service.",
           variant: "destructive",
         });
       }
@@ -115,28 +138,54 @@ const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
           <div className="space-y-4">
             <div>
               <Label htmlFor="name" className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-2">
-                Name
+                                Name
               </Label>
-              <input
+              <Input
                 type="text"
                 id="name"
                 name="name"
-                className="block w-full p-2 text-gray-900 dark:text-gray-300 dark:bg-gray-800 border border-gray-300 rounded-lg bg-card sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full p-2 text-gray-900 dark:text-gray-300 dark:bg-gray-800 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"
                 onChange={formik.handleChange}
                 value={formik.values.name}
               />
             </div>
 
             <div>
-              <Label htmlFor="imageUrl" className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-2">
-                Image
+              <Label htmlFor="minimumPrice" className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-2">
+                    Minimum Price
               </Label>
-              <input
+              <Input
+                type="number"
+                id="minimumPrice"
+                name="minimumPrice"
+                className="block w-full p-2 text-gray-900 dark:text-gray-300 dark:bg-gray-800 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                onChange={formik.handleChange}
+                defaultValue={formik.values.minimumPrice}
+              />
+            </div>
+
+            <div className="mb-4">
+              <Label className="block text-sm font-medium mb-2">Select Category</Label>
+              <Select
+                options={categoryOptions}
+                isLoading={loadingServiceCategory}
+                value={selectedCategory}
+                onChange={setSelectedCategory}
+                placeholder="Search and select a category"
+                isSearchable
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="imageUrl" className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-2">
+                                Image
+              </Label>
+              <Input
                 type="file"
                 accept="image/*"
                 id="imageUrl"
                 name="imageUrl"
-                className="block w-full p-2 text-gray-900 dark:text-gray-300 border border-gray-300 dark:bg-gray-800 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full p-2 text-gray-900 dark:text-gray-300 border border-gray-300 rounded-lg bg-card  dark:bg-gray-800 sm:text-xs focus:ring-blue-500 focus:border-blue-500"
                 onChange={(event) => {
                   setSelectedImage(event.target.files[0]);
                 }}
@@ -154,7 +203,7 @@ const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
               )}
               {selectedImage && (
                 <img
-                  alt="Selected category"
+                  alt="Selected service"
                   className="w-full h-48 object-center object-cover mt-2"
                   src={URL.createObjectURL(selectedImage)}
                 />
@@ -162,14 +211,14 @@ const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
             </div>
 
             <div>
-              <Label htmlFor="description" className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-2">
-                Description
+              <Label htmlFor="description" className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-2 ">
+                                Description
               </Label>
               <Textarea
                 id="description"
                 name="description"
                 rows={4}
-                className="block p-2.5 w-full text-sm text-gray-900 dark:text-gray-300 bg-card dark:bg-gray-800 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                className="block p-2.5 w-full text-sm text-gray-900 dark:text-gray-300 bg-gray-50 rounded-lg border dark:bg-gray-800 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                 onChange={formik.handleChange}
                 value={formik.values.description}
               />
@@ -182,9 +231,9 @@ const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
               onClick={onClose}
               className="w-full dark:hover:bg-red-600"
             >
-              Cancel
+                            Cancel
             </Button>
-            <Button type="submit" className="w-full text-gray-300 dark:hover:bg-orange-600"
+            <Button type="submit" className="w-full dark:hover:bg-blue-600 text-gray-300"
               disabled={isLoading}>
               {isLoading ? "Creating..." : "Create"}
             </Button>
@@ -195,4 +244,4 @@ const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
   );
 };
 
-export default React.memo(AddServiceCategoryModal);
+export default React.memo(AddServiceModal);

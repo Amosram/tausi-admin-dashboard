@@ -146,13 +146,10 @@ const CreateBoothPage: React.FC = () => {
     address: string,
     coordinates: { lat: number; lng: number }
   ) => {
-    console.log("Address in handleAddressSelect:", address);
     form.setValue("locationAddress", address);
     form.setValue("coordinates.x", coordinates.lng); // Set longitude as x
     form.setValue("coordinates.y", coordinates.lat); // Set latitude as y
   };
-
-  console.log(form.getValues("locationAddress"));
 
   return (
     <div className="container mx-auto py-10">

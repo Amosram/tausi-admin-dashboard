@@ -24,12 +24,10 @@ export default function FirebaseConfiguration() {
 
   const handleTestConnection = () => {
     // Implement test connection functionality
-    console.log('Testing Firebase connection with:', config);
   };
 
   const handleSave = () => {
     // Implement save functionality
-    console.log('Saving Firebase configuration:', config);
   };
 
   return (

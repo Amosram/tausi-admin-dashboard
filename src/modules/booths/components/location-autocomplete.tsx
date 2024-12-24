@@ -33,7 +33,6 @@ export const AutocompleteAddress: React.FC<AutocompleteAddressProps> = ({
 
       autocomplete.addListener("place_changed", () => {
         const place = autocomplete.getPlace();
-        console.log("Place:", place);
 
         if (place.geometry) {
           const { lat, lng } = place.geometry.location;
@@ -46,8 +45,6 @@ export const AutocompleteAddress: React.FC<AutocompleteAddressProps> = ({
           });
 
           address = address.trim().replace(/,$/, "");
-
-          console.log("Address:", address);
 
           onAddressSelect(address, { lat: lat(), lng: lng() });
           onChange(address);

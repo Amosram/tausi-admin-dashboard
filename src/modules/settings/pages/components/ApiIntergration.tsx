@@ -15,7 +15,6 @@ export default function ApiIntegrations() {
 
   const handleSave = () => {
     // Implement save functionality
-    console.log('Saving API settings:', { googleMapsApiKey, googleClientId, googleClientSecret });
   };
 
   return (

@@ -24,7 +24,6 @@ export default function GeneralSettings() {
 
   const handleSave = () => {
     // Implement save functionality
-    console.log('Saving general settings:', { appName, logo });
   };
 
   return (

@@ -101,7 +101,6 @@ export const MessagingChatCard = () => {
       setIsDeleting(true); // Set loading state to true
       try {
         const querySnapshot = await getDocs(messagesRef);
-        console.log("Documents to delete:", querySnapshot.docs);
 
         const deletePromises = querySnapshot.docs.map((doc) =>
           deleteDoc(doc.ref)

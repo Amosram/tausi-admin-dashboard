@@ -47,8 +47,6 @@ export const DeleteBoothAssignmentDialog = ({
 
   const handleDeleteAssignment = async (assignmentId) => {
     try {
-      console.log(assignmentId);
-
       await deleteBoothAssignment({
         id: assignmentId,
         deletedReason: deleteReason,
