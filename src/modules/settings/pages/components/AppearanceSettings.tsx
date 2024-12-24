@@ -40,16 +40,7 @@ export default function AppearanceSettings({
   };
 
   const handleSave = () => {
-    console.log('Saving appearance settings:', {
-      theme,
-      sidebarColor,
-      primaryColor,
-      secondaryColor,
-      font,
-      density,
-      useCustomTheme
-    });
-
+    
     // Update global CSS variables for primary and secondary colors
     const root = document.documentElement;
     root.style.setProperty('--primary', primaryColor);

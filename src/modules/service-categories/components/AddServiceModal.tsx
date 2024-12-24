@@ -47,8 +47,6 @@ const AddServiceModal = ({visible, onClose, refetchServices}) => {
         imagePath: values.imagePath, // "/docs/user"
       };
 
-      console.log("Submitting payload to API:", payload);
-
       await createService(payload).unwrap();
 
       toast.toast({

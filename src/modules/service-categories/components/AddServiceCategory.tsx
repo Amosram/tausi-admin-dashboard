@@ -26,8 +26,6 @@ const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
         imagePath: values.imagePath, // "/docs/user"
       };
 
-      console.log("Submitting payload to API:", payload);
-
       await createServiceCategory(payload).unwrap();
 
       toast.toast({

@@ -203,10 +203,10 @@ const ProfessionalDashboard = () => {
     // }
   ];
 
-  const handleRowSelection = (selectedRows: Professional[]) => {
-    console.log('Selected professionals:', selectedRows);
-    // Handle selected rows as needed
-  };
+  // const handleRowSelection = (selectedRows: Professional[]) => {
+  //   console.log('Selected professionals:', selectedRows);
+  //   // Handle selected rows as needed
+  // };
 
   const handleCombinedSearch = (criteria, updateSearchParams = true) => {
     criteria.forEach(({ column, value, operator, timeRange }) => {

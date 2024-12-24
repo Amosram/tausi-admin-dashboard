@@ -366,7 +366,7 @@ const VerificationDetails: React.FC = () => {
                         alt="Portfolio Image"
                         className="w-full h-full object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
                         onClick={() => openLightbox(index)}
-                        onLoad={() => console.log(`Image ${item.id} loaded successfully:`, item.imageUrl)}
+                        // onLoad={() => console.log(`Image ${item.id} loaded successfully:`, item.imageUrl)}
                         onError={() => console.error(`Failed to load image ${item.id}:`, item.imageUrl)}
                       />
                     ))}

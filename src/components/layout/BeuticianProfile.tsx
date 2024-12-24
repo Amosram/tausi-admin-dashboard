@@ -14,7 +14,6 @@ export default function BeauticianProfiles() {
   
   const topRatedData = data?.data || [];
 
-  console.log("topRatedData =======>", topRatedData);
 
   const handleSortChange = (option: string) => {
     setSelectedSort(option);

@@ -79,8 +79,6 @@ const CreateUserPage: React.FC = () => {
         description: `Error Code ${error.data.code}: ${error.data.data.message}`,
         variant: "destructive",
       });
-
-      console.log(error);
     }
   };
 
