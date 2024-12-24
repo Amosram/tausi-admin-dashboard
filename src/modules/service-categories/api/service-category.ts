@@ -70,6 +70,15 @@ export const serviceCategoryApi = createApi({
       }),
       invalidatesTags: ["ServiceCategory"],
     }),
+
+    deleteService: builder.mutation({
+      query: (serviceId: string) => ({
+        url: `/services/${serviceId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Services"],
+    }),
+
     deleteServiceCategory: builder.mutation({
       query: (serviceCategoryId: string) => ({
         url: `/service-categories/${serviceCategoryId}`,
@@ -89,4 +98,5 @@ export const {
   useUpdateServiceMutation,
   useUpdateServiceCategoryMutation,
   useDeleteServiceCategoryMutation,
+  useDeleteServiceMutation,
 } = serviceCategoryApi;

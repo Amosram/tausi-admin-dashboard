@@ -1,23 +1,26 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useGetAllServicesQuery } from "../api/service-category";
+import { useDeleteServiceMutation, useGetAllServicesQuery } from "../api/service-category";
 import Loader from "@/components/layout/Loader";
 import { ColumnDef } from "@tanstack/react-table";
 import type { Services } from "@/models/user";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { MoreVertical } from "lucide-react";
 import TanStackTable from "@/components/ui/Table";
 import { FaPlus } from "react-icons/fa";
 import AddServiceModal from "../components/AddServiceModal";
 import EditServiceModal from "../components/EditServiceModal";
+import { Button } from "@/components/ui/button";
 
 const Services = () => {
 
   const {data, isLoading, isError, refetch} = useGetAllServicesQuery();
-
+  const [deleteService, { isLoading: deleteLoading }] = useDeleteServiceMutation();
   const [selectedService, setSelectedService] = useState<Services | null>(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
 
   const toast = useToast();
 
@@ -29,7 +32,29 @@ const Services = () => {
   const handleEdit = (service: Services) => {
     setSelectedService(service);
     setEditModalVisible(true);
-  }
+  };
+
+  const handleDelete = async () => {
+    if (selectedService) {
+      try {
+        await deleteService(selectedService.id).unwrap();
+        toast.toast({
+          title: 'Success',
+          description: `Service ${selectedService.name} deleted successfully.`,
+          variant: 'success',
+        });
+        refetch();
+      } catch (error) {
+        toast.toast({
+          title: 'Error',
+          description: `Failed to delete service ${selectedService.name}.`,
+          variant: 'destructive',
+        });
+      } finally {
+        setDeleteDialogVisible(false);
+      }
+    }
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -59,6 +84,10 @@ const Services = () => {
               Edit
             </DropdownMenuItem>
             <DropdownMenuItem
+              onClick={() => {
+                setSelectedService(row.original);
+                setDeleteDialogVisible(true);
+              }}
               className="bg-destructive text-white"
             >
               Delete
@@ -96,7 +125,7 @@ const Services = () => {
         )
       }
 
-    {/* CategoryModal for editing an existing category */}
+      {/* CategoryModal for editing an existing category */}
       {editModalVisible && selectedService && (
         <EditServiceModal
           visible={editModalVisible}
@@ -105,6 +134,28 @@ const Services = () => {
           refetchServices={refetch}
         />
       )}
+
+      <Dialog open={deleteDialogVisible} onOpenChange={setDeleteDialogVisible}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-600">
+            Are you sure you want to delete the category <strong>{selectedService?.name}</strong>? This action cannot be undone.
+          </p>
+          <DialogFooter>
+            <Button variant="destructive"
+              className='hover:bg-red-600'
+              onClick={handleDelete}
+              disabled={deleteLoading}>
+              {deleteLoading ? 'Deleting...' : 'Delete'}
+            </Button>
+            <Button className='bg-black dark:text-gray-300 hover:bg-gray-800 dark:hover:bg-card' onClick={() => setDeleteDialogVisible(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
