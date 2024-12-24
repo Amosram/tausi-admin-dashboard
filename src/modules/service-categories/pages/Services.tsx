@@ -99,7 +99,7 @@ const Services = () => {
   ];
 
   const AddServiceButton = {
-    label: "Add Service",
+    label: "Create a Service",
     onClick: handleAdd,
     className: "rounded-3xl",
     icon: <FaPlus size={20} />,

@@ -63,6 +63,7 @@ const ServiceCategories = () => {
     {
       id: 'actions',
       cell: ({ row }) => (
+        // TODO: VIEW SERVICE CATEGORY DETAILS BY ID
         <DropdownMenu>
           <DropdownMenuTrigger className="h-8 w-8 p-0">
             <MoreVertical className="h-4 w-4" />
