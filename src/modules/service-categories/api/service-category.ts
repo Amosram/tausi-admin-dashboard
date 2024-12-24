@@ -17,6 +17,7 @@ export const serviceCategoryApi = createApi({
       providesTags: ["ServiceCategory"],
       keepUnusedDataFor: 60,
     }),
+    
     getServiceCategoryById: builder.query({
       query: (serviceCategoryId: string) => ({
         url: `/service-categories/${serviceCategoryId}`,
@@ -24,19 +25,21 @@ export const serviceCategoryApi = createApi({
       }),
       providesTags: ["ServiceCategory"],
     }),
+
     createServiceCategory: builder.mutation({
       query: (serviceCategory) => ({
         url: "/service-categories",
         method: "POST",
-        body: serviceCategory,
+        data: serviceCategory,
       }),
       invalidatesTags: ["ServiceCategory"],
     }),
+
     updateServiceCategory: builder.mutation({
       query: (serviceCategory) => ({
         url: `/service-categories/${serviceCategory.id}`,
         method: "PATCH",
-        body: serviceCategory,
+        data: serviceCategory,
       }),
       invalidatesTags: ["ServiceCategory"],
     }),

@@ -29,7 +29,7 @@ const CategoryModal = ({ visible, handleCloseButton, modalData, refetchCategorie
       id: modalData?.id || '',
       name: modalData?.name || '',
       description: modalData?.description || '',
-      imageUrl: modalData?.imageUrl || '',
+      imageUrl: modalData?.imageUrl || '' || null,
       imagePath: modalData?.imagePath || `/dashboard/categories/${modalData?.name}-${uuid()}`,
     },
     onSubmit: async (values, { resetForm }) => {
