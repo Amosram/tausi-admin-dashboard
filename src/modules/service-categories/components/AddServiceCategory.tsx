@@ -180,11 +180,11 @@ const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
               type="button"
               variant="destructive"
               onClick={onClose}
-              className="w-full"
+              className="w-full dark:hover:bg-red-600"
             >
               Cancel
             </Button>
-            <Button type="submit" className="w-full"
+            <Button type="submit" className="w-full text-gray-300 dark:hover:bg-orange-600"
               disabled={isLoading}>
               {isLoading ? "Creating..." : "Create"}
             </Button>
