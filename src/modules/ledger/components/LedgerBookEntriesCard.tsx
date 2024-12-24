@@ -1,7 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
-import AddEntryForm from "./AddEntryForm";
 import { PencilIcon, TrashIcon } from "lucide-react";
 import { useGetAllBookEntriesQuery } from "../api/ledgersApi";
 import AddEntryDialog from "./AddEntryForm";
@@ -56,7 +55,7 @@ const LedgerBookEntriesCard: React.FC = () => {
             </Button>
           </DialogTrigger>
           <DialogContent>
-          <AddEntryDialog bookId="01je4rfzbwh7fy2vdehpagnq5s" ownerId="yzh9LYgNOWTU6XGSVSZ2lKWIBVr2" />
+            <AddEntryDialog bookId="01je4rfzbwh7fy2vdehpagnq5s" ownerId="yzh9LYgNOWTU6XGSVSZ2lKWIBVr2" />
           </DialogContent>
         </Dialog>
       </div>

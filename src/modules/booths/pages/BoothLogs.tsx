@@ -87,12 +87,12 @@ const BoothLogs: React.FC = () => {
                     log.action === "update"
                       ? "bg-blue-500"
                       : log.action === "delete"
-                      ? "bg-red-500"
-                      : log.action === "create"
-                      ? "bg-green-500"
-                      : log.action === "assign"
-                      ? "bg-yellow-500"
-                      : "bg-gray-500"
+                        ? "bg-red-500"
+                        : log.action === "create"
+                          ? "bg-green-500"
+                          : log.action === "assign"
+                            ? "bg-yellow-500"
+                            : "bg-gray-500"
                   }`}
                 >
                   <span>{log.action.toUpperCase()}</span>
@@ -100,7 +100,8 @@ const BoothLogs: React.FC = () => {
                     {new Date(log.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                <Button variant="link" className="text-blue-500" onClick={() => setSelectedLog(log)}>
+                <Button variant="link" className="text-blue-500"
+                  onClick={() => setSelectedLog(log)}>
                   View More
                 </Button>
               </div>

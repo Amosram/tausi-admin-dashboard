@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
 import { Frown, MapPin, Star } from 'lucide-react';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { FaChevronDown } from 'react-icons/fa';
-import { useGetProfessionalsQuery } from '@/modules/applications/api/professionalApi';
 import Loader from './Loader';
 import { useNavigate } from 'react-router-dom';
 import { useGetTopRatedBeauticiansQuery } from '@/modules/dashboard/api/dashboardApi';

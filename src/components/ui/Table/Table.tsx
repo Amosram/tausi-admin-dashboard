@@ -158,17 +158,17 @@ const TanStackTable = <T,>({
               {table.getPageCount()}
             </span>
           </p>
-            <select
+          <select
             className="block w-26 bg-gray-800 text-white rounded-md border-0 py-2 pl-3 pr-10 ring-1 ring-inset ring-gray-700 focus:ring-2 focus:ring-orange-600 sm:text-sm sm:leading-6"
             value={table.getState().pagination.pageSize}
             onChange={(e) => table.setPageSize(Number(e.target.value))}
-            >
+          >
             {[10, 20, 30, 50].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
               Show {pageSize}
               </option>
             ))}
-            </select>
+          </select>
         </div>
 
         <div className="flex-1 flex justify-between sm:justify-end ml-3">

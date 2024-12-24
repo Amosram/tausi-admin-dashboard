@@ -114,8 +114,8 @@ export const assignmentDetailsArray = ({
         {beauticianLoading
           ? "Loading Beautician..."
           : beauticianError
-          ? "Error loading beautician"
-          : beautician?.user?.name || "Unknown Beautician"}
+            ? "Error loading beautician"
+            : beautician?.user?.name || "Unknown Beautician"}
       </span>
     ),
   },
@@ -127,8 +127,8 @@ export const assignmentDetailsArray = ({
         {beauticianLoading
           ? "Loading Business..."
           : beauticianError
-          ? "Error loading beautician"
-          : beautician?.businessName || "Unknown Business"}
+            ? "Error loading beautician"
+            : beautician?.businessName || "Unknown Business"}
       </span>
     ),
   },

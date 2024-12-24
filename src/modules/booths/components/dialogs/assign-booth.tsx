@@ -15,7 +15,7 @@ import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { FormInputField } from "@/components/ui/Form/FormInputField";
 import { useAssignBoothMutation, useGetBoothByIdQuery } from "../../api/boothsApi";
-import { Assignment, Booth, BoothAssignmentDetails, CreateBoothAssignmentRequest } from "@/models";
+import { Assignment, CreateBoothAssignmentRequest } from "@/models";
 import {
   useGetProfessionalsQuery,
   useUpdateProfessionalMutation,
@@ -97,10 +97,10 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
         ? assignedBoothResponse.data
         : [assignedBoothResponse?.data];
 
-        const mappedAssignmentsArray: Assignment[] = assignmentsArray.map((item) => ({
-          ...item,
-          booth: booth.data,
-        }));
+      const mappedAssignmentsArray: Assignment[] = assignmentsArray.map((item) => ({
+        ...item,
+        booth: booth.data,
+      }));
 
       await updateProfessional({
         id: formData.beauticianId,

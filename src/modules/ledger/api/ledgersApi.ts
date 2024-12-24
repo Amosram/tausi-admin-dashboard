@@ -1,7 +1,6 @@
-import { ApiResponse, BookCategories, BookDetails, BookEntries, Books, CreateUpdateBookEntry, CreateUpdateLoanBook, LedgerDetails, LedgerDetailsApiResponse, Ledgers, LedgersApiResponse, PaymentModes } from "@/models";
+import { ApiResponse, BookCategories, BookDetails, BookEntries, Books, CreateUpdateBookEntry, CreateUpdateLoanBook, LedgerDetailsApiResponse, Ledgers, PaymentModes } from "@/models";
 import { axiosBaseQuery } from "@/Utils/axios";
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { create } from "domain";
 
 
 export const ledgersApi = createApi({

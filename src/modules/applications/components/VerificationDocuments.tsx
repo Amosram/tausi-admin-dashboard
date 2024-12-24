@@ -1,6 +1,5 @@
 import { VerifiedBeauticians } from "@/models";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 interface VerificationDocumentsProps {
   verificationDocuments: VerifiedBeauticians;
@@ -41,9 +40,9 @@ const VerificationDocuments = ({ verificationDocuments }: VerificationDocumentsP
         // No Documents UI
         <Card className="flex flex-col items-center justify-center space-y-4 p-6 mt-6 rounded-lg">
           <img
-          src="/no-data.png"
-          alt="No Documents Icon"
-          className="h-40 w-40 object-cover"
+            src="/no-data.png"
+            alt="No Documents Icon"
+            className="h-40 w-40 object-cover"
           />
           <p className="text-lg font-semibold text-gray-600">No Verification Documents Attached</p>
         </Card>

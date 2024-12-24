@@ -23,7 +23,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
         <ThemeProvider defaultTheme='dark' themeStorageKey='vite-ui-theme'>
           <I18nextProvider i18n={i18n}>
             <AppWrapper>
-            {children}
+              {children}
             </AppWrapper>
           </I18nextProvider>
         </ThemeProvider>

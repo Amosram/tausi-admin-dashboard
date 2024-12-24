@@ -1,8 +1,6 @@
 import { lazy, useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Coordinates, VerifiedBeauticians } from "@/models";
-import { Avatar } from "@/components/ui/avatar";
-import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import {
   Phone,
   Mail,
@@ -327,7 +325,7 @@ const VerificationDetails: React.FC = () => {
         </div>
       </div>
       {/* Verification Documents */}
-          <VerificationDocuments verificationDocuments={beautician} />
+      <VerificationDocuments verificationDocuments={beautician} />
 
       {/* Tab Layout for Portfolio and Location */}
       <Tabs className="w-full mt-8" defaultValue="location">

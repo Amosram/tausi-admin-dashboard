@@ -2,8 +2,6 @@ import React from 'react';
 import RevenueStats from '../components/RevenueStats';
 import RevenueChart from '@/components/layout/RevenueChart';
 import RevenueCategory from '../components/RevenueCategory';
-import RevenueByLocation from '../components/RevenueByLocation';
-import TopRevenueCategories from '../components/TopRevenueCategories';
 
 const Revenue = () => {
   return (

@@ -36,7 +36,7 @@ export interface ServiceCategory {
   name: string;
   description: string;
   imageUrl: string;
-  imagePath: string;
+  imagePath: string | "/docs/user" | null;
   isDeleted: boolean;
   deletedAt: null;
   createdAt: Date;

@@ -57,20 +57,20 @@ const Filters: React.FC<FiltersProps<Filter>> = ({
       <div className="flex flex-wrap gap-2 mb-4 items-center border-gray-300 border rounded-3xl py-2 px-4 bg-card mt-2">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-300 mr-2">Filters:</span>
         {filters.map((filter) => (
-            <button
+          <button
             key={filter.label}
             onClick={() => onFilterSelect(filter)}
             className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm transition-all duration-200
             ${
-              isFilterActive(filter)
-              ? "bg-primary dark:bg-orange-600 text-white shadow-lg scale-105"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-orange-600"
-            }
+          isFilterActive(filter)
+            ? "bg-primary dark:bg-orange-600 text-white shadow-lg scale-105"
+            : "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-orange-600"
+          }
             `}
-            >
+          >
             {isFilterActive(filter) && <Check size={16} className="mr-1" />}
             {filter.label}
-            </button>
+          </button>
         ))}
       </div>
     </div>

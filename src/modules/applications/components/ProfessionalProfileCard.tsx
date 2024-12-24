@@ -22,7 +22,7 @@ const ProfessionalProfileCard:React.FC<{professional: Professional}> =
             onClick={handleModalToggle} // Toggle modal on click
           >
             <AvatarImage
-            className="rounded-full"
+              className="rounded-full"
               src={professional.user?.profilePictureUrl || "/default-avatar.png"}
               alt={professional.user?.name}
             />

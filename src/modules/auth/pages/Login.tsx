@@ -89,7 +89,8 @@ const Login = () => {
 
       {/* Right side with form */}
       <div className="w-1/2 flex flex-col justify-center items-center bg-card p-12">
-        <img src="/tausi-logo.png" alt="Tausi Logo" className="w-32 mb-8" />
+        <img src="/tausi-logo.png" alt="Tausi Logo"
+          className="w-32 mb-8" />
         <h1 className="text-2xl font-semibold mb-4">Login to Your Account</h1>
         <form onSubmit={formik.handleSubmit} className="flex flex-col w-full max-w-sm">
           <Input

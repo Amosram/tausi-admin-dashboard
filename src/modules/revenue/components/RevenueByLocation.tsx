@@ -40,8 +40,10 @@ const RevenueByLocation: React.FC = () => {
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
           <Legend />
-          <Bar dataKey="incomplete" fill="#1A1A1A" name="Incomplete Orders" barSize={15}/>
-          <Bar dataKey="complete" fill="#FF5733" name="Complete Orders" barSize={15}/>
+          <Bar dataKey="incomplete" fill="#1A1A1A"
+            name="Incomplete Orders" barSize={15}/>
+          <Bar dataKey="complete" fill="#FF5733"
+            name="Complete Orders" barSize={15}/>
         </BarChart>
       </ResponsiveContainer>
     </div>

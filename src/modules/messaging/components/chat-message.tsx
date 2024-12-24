@@ -231,13 +231,13 @@ export const ChatMessage: React.FC<{ message: ChatItemProps }> = ({
           >
             {createdAt instanceof Date
               ? createdAt.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
+                hour: "2-digit",
+                minute: "2-digit",
+              })
               : createdAt.toDate().toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
           </span>
         )}
       </div>

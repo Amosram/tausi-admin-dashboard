@@ -431,6 +431,7 @@ const UserDetails: React.FC = () => {
             {user.isActive ? "Active" : "Inactive"}
           </Badge>
         </div>
+        
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
@@ -448,6 +449,7 @@ const UserDetails: React.FC = () => {
             <UserX size={16} />
             <span>Deactivate User</span>
           </Button>
+
           <Button
             variant="destructive"
             className="flex items-center space-x-2 hover:bg-red-700 hover:text-white"
