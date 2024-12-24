@@ -9,12 +9,14 @@ import { MoreVertical } from "lucide-react";
 import TanStackTable from "@/components/ui/Table";
 import { FaPlus } from "react-icons/fa";
 import AddServiceModal from "../components/AddServiceModal";
+import EditServiceModal from "../components/EditServiceModal";
 
 const Services = () => {
 
   const {data, isLoading, isError, refetch} = useGetAllServicesQuery();
 
   const [selectedService, setSelectedService] = useState<Services | null>(null);
+  const [editModalVisible, setEditModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
 
   const toast = useToast();
@@ -23,6 +25,11 @@ const Services = () => {
     setSelectedService(null);
     setAddModalVisible(true);
   };
+
+  const handleEdit = (service: Services) => {
+    setSelectedService(service);
+    setEditModalVisible(true);
+  }
 
   if (isLoading) {
     return <Loader />;
@@ -40,13 +47,17 @@ const Services = () => {
     {accessorKey: "serviceCategory.name", header: "Service Category"},
     {
       id: 'actions',
-      cell: (row) => (
+      cell: ({row}) => (
         <DropdownMenu>
           <DropdownMenuTrigger>
             <MoreVertical />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleEdit(row.original)}
+            >
+              Edit
+            </DropdownMenuItem>
             <DropdownMenuItem
               className="bg-destructive text-white"
             >
@@ -84,6 +95,17 @@ const Services = () => {
           />
         )
       }
+
+    {/* CategoryModal for editing an existing category */}
+      {editModalVisible && selectedService && (
+        <EditServiceModal
+          visible={editModalVisible}
+          modalData={selectedService}
+          handleCloseButton={() => setEditModalVisible(false)}
+          refetchServices={refetch}
+        />
+      )}
+
     </div>
   );
 };
