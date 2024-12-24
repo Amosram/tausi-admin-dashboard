@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useGetAllServicesQuery } from "../api/service-category";
 import Loader from "@/components/layout/Loader";
@@ -6,12 +7,22 @@ import type { Services } from "@/models/user";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
 import TanStackTable from "@/components/ui/Table";
+import { FaPlus } from "react-icons/fa";
+import AddServiceModal from "../components/AddServiceModal";
 
 const Services = () => {
 
-  const {data, isLoading, isError} = useGetAllServicesQuery();
+  const {data, isLoading, isError, refetch} = useGetAllServicesQuery();
+
+  const [selectedService, setSelectedService] = useState<Services | null>(null);
+  const [addModalVisible, setAddModalVisible] = useState(false);
 
   const toast = useToast();
+
+  const handleAdd = () => {
+    setSelectedService(null);
+    setAddModalVisible(true);
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -47,12 +58,31 @@ const Services = () => {
     }
   ];
 
+  const AddServiceButton = {
+    label: "Add Service",
+    onClick: handleAdd,
+    className: "rounded-3xl",
+    icon: <FaPlus size={20} />,
+  };
+
   return (
     <div className="px-6">
       {data?.data.length > 0 && <TanStackTable
         data={data.data}
         columns={columns}
+        button={AddServiceButton}
       />
+      }
+
+      {/* AddServiceModal for creating a new service */}
+      {
+        addModalVisible && (
+          <AddServiceModal
+            visible={addModalVisible}
+            onClose={() => setAddModalVisible(false)}
+            refetchServices={refetch}
+          />
+        )
       }
     </div>
   );
