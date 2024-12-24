@@ -121,7 +121,7 @@ const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
                 type="text"
                 id="name"
                 name="name"
-                className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full p-2 text-gray-900 dark:text-gray-300 dark:bg-gray-800 border border-gray-300 rounded-lg bg-card sm:text-xs focus:ring-blue-500 focus:border-blue-500"
                 onChange={formik.handleChange}
                 value={formik.values.name}
               />
@@ -136,7 +136,7 @@ const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
                 accept="image/*"
                 id="imageUrl"
                 name="imageUrl"
-                className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full p-2 text-gray-900 dark:text-gray-300 border border-gray-300 dark:bg-gray-800 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"
                 onChange={(event) => {
                   setSelectedImage(event.target.files[0]);
                 }}
@@ -169,7 +169,7 @@ const AddServiceCategoryModal = ({ visible, onClose, refetchCategories }) => {
                 id="description"
                 name="description"
                 rows={4}
-                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                className="block p-2.5 w-full text-sm text-gray-900 dark:text-gray-300 bg-card dark:bg-gray-800 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                 onChange={formik.handleChange}
                 value={formik.values.description}
               />
