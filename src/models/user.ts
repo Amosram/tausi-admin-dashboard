@@ -31,6 +31,21 @@ export interface Service {
   category: string;
 }
 
+export interface Services {
+    id:               string;
+    name:             string;
+    minimumPrice?:    number;
+    // category?:        Category;
+    description:      string;
+    imageUrl:         null | string;
+    imagePath:        string;
+    isDeleted:        boolean;
+    deletedAt:        null;
+    createdAt:        Date;
+    updatedAt:        Date;
+    serviceCategory?: ServiceCategory;
+}
+
 export interface ServiceCategory {
   id: string;
   name: string;
