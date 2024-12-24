@@ -34,6 +34,8 @@ const routeMappings: Record<string, RouteDetails> = {
     backLink: "/professionals",
   },
   "/dashboard/verifications": { title: "Applications" },
+  "/service-categories": { title: "Service Categories" },
+  "/services": { title: "Services List" },
   "/messaging": { title: "Messaging" },
   "/settings": { title: "Settings" },
   "/booths": { title: "Booths" },

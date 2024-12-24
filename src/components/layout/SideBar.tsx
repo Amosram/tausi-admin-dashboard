@@ -1,8 +1,8 @@
-import { IoIosWallet, IoMdSettings } from "react-icons/io";
+import { IoIosWallet, IoMdBriefcase, IoMdSettings } from "react-icons/io";
 import { IoLogoWechat } from "react-icons/io5";
 import { GoHomeFill } from "react-icons/go";
 import { FaShoppingCart, FaUserAlt, } from "react-icons/fa";
-import { RiBookletFill, RiFile4Fill } from "react-icons/ri";
+import { RiBookletFill, RiFile4Fill, RiServiceFill } from "react-icons/ri";
 import { BiCategory } from "react-icons/bi";
 import { FaUserCheck } from "react-icons/fa6";
 import { MdSpa, MdStore } from "react-icons/md";
@@ -119,7 +119,15 @@ const menuItems = [
   { title: "Businesses", icon: <RiBookletFill />, link: "/ledgers" },
   { title: "Booths", icon: <MdStore />, link: "/booths" },
   { title: "Messaging", icon: <IoLogoWechat />, link: "/messaging" },
-  { title: "Service Categories", icon: <BiCategory />, link: "/service-categories" },
+  {
+    title: "Services & Categories",
+    icon: <IoMdBriefcase />,
+    type: "accordion",
+    children: [
+      { title: "Categories", icon: <BiCategory />, link: "/service-categories" },
+      { title: "Services", icon: <RiServiceFill />, link: "/services" },
+    ],
+  },
   { title: "Settings", icon: <IoMdSettings />, link: "/settings" },
 ];
 
