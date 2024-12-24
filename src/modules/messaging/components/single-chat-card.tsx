@@ -109,8 +109,8 @@ export const SingleChatCard: React.FC<SingleChatCardProps> = ({
     try {
       await addDoc(messagesRef, newMessage);
       setMessageInputValue("");
-      setAttachments([]); // Clear attachments after sending
-      if (fileInputRef.current) fileInputRef.current.value = ""; // Reset file input
+      setAttachments([]);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       console.error("Error sending message: ", error);
     }
@@ -129,7 +129,6 @@ export const SingleChatCard: React.FC<SingleChatCardProps> = ({
     newAttachments.splice(index, 1);
     setAttachments(newAttachments);
 
-    // Reset file input if no files left
     if (newAttachments.length === 0 && fileInputRef.current) {
       fileInputRef.current.value = "";
     }

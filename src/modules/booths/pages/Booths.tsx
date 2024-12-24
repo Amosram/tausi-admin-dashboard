@@ -86,7 +86,7 @@ const Booths = () => {
     }
 
     return (
-      <Tabs defaultValue="table" className="w-full px-6">
+      <Tabs defaultValue="table" className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-4">
           <TabsTrigger value="table" className="flex items-center gap-2">
             <Table className="h-4 w-4" /> Table View

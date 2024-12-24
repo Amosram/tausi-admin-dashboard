@@ -14,6 +14,7 @@ import { useActiveComponentContext } from "../../context";
 import { SingleChatCard } from "../single-chat-card";
 import { TausiUser } from "@/models/user";
 import { FaChevronLeft } from "react-icons/fa";
+import Loader from "@/components/layout/Loader";
 
 interface BeauticiansGroupCardProps {
   data: TausiUser[];
@@ -37,14 +38,20 @@ export const BeauticiansGroupCard: React.FC<BeauticiansGroupCardProps> = ({
   );
 
   const filteredBeauticians = useMemo(() => {
-    if (!searchTerm) return beauticians;
+    if (!searchTerm.trim()) return beauticians;
 
+    const lowerCaseSearch = searchTerm.toLowerCase();
     return beauticians.filter(
       (beautician) =>
-        beautician.professional?.businessName &&
+        beautician.name.toLowerCase().includes(lowerCaseSearch) ||
+        beautician.email.toLowerCase().includes(lowerCaseSearch) ||
         beautician.professional?.businessName
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+          ?.toLowerCase()
+          .includes(lowerCaseSearch) ||
+        beautician.professional?.specialization
+          ?.toLowerCase()
+          .includes(lowerCaseSearch) ||
+        beautician.professional?.bio?.toLowerCase().includes(lowerCaseSearch)
     );
   }, [beauticians, searchTerm]);
 
@@ -67,7 +74,7 @@ export const BeauticiansGroupCard: React.FC<BeauticiansGroupCardProps> = ({
   if (isLoading)
     return (
       <Card>
-        <CardContent>Loading...</CardContent>
+        <CardContent><Loader/></CardContent>
       </Card>
     );
   if (error)
