@@ -72,7 +72,7 @@ export const DeleteBoothDialog: React.FC<DeleteBoothDialogProps> = ({
         variant: "default",
       });
 
-      navigate("/booths");
+      navigate("/booths/list");
     } catch (error) {
       toast({
         title: "Delete Failed",
