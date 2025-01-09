@@ -91,8 +91,8 @@ const OngoingOrders = () => {
         {sortedOrders.map((order, index) => (
           <div
             key={index}
-            className="flex justify-between items-center space-x-4"
-            onClick={() => navigate(`/appointments/${order.id}`)}
+            className="flex justify-between items-center space-x-4 cursor-pointer"
+            onClick={() => navigate(`/orders/${order.id}`)}
           >
             {/* Left Section: Icon and Info */}
             <div className="flex items-center space-x-4">
