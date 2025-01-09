@@ -333,11 +333,6 @@ export enum BusinessType {
   Individual = "individual",
 }
 
-export interface Coordinates {
-  x: number;
-  y: number;
-}
-
 export interface User {
   id:                 string;
   name:               string;
