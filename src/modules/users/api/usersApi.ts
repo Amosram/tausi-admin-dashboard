@@ -24,6 +24,7 @@ export const usersApi = createApi({
       }),
       transformResponse: (response: SingleUserApiResponse) => response.data,
       providesTags: ["UserDetails"],
+      keepUnusedDataFor: 0,
     }),
     createUser: builder.mutation<UsersApiResponse, CreateUserRequest>({
       query: (userData) => ({

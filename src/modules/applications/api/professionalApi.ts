@@ -7,7 +7,7 @@ export const professionalApi = createApi({
   reducerPath: 'professionalApi',
   baseQuery: axiosBaseQuery({isAuthorizedApi: true}),
   tagTypes: ['Professionals', 'ProfessionalsDetails', 'VerifiedBeauticians', 'VerifiedBeauticiansDetails'],
-  refetchOnMountOrArgChange:false,
+  refetchOnMountOrArgChange:true,
   endpoints: (builder) => ({
     getProfessionals: builder.query<ApiResponse<Professional[]>, number>({
       query: (limit) => ({
@@ -33,7 +33,8 @@ export const professionalApi = createApi({
         url: `/professionals/${professionalId}`,
         method: "GET",
       }),
-      providesTags: ['ProfessionalsDetails']
+      providesTags: ['ProfessionalsDetails'],
+      keepUnusedDataFor: 0,
     }),
 
     getProfessionalsPorfolio: builder.query<PortfolioApiResponse, string> ({
@@ -41,7 +42,8 @@ export const professionalApi = createApi({
         url: `/professionals/${professionalId}/portfolio`,
         method: "GET",
       }),
-      providesTags: ['ProfessionalsDetails']
+      providesTags: ['ProfessionalsDetails'],
+      keepUnusedDataFor: 0,
     }),
 
     updateProfessional: builder.mutation<ProfessionalApiResponse, Partial<Professional>>({
@@ -50,7 +52,7 @@ export const professionalApi = createApi({
         method: "PATCH",
         data: data,
       }),
-      invalidatesTags: ['ProfessionalsDetails']
+      invalidatesTags: ['ProfessionalsDetails'],
     }),
 
     getVerifiedBeauticians: builder.query<ApiResponse<VerifiedBeauticians[]>, number>({
@@ -59,6 +61,7 @@ export const professionalApi = createApi({
         method: "GET",
       }),
       providesTags: ['VerifiedBeauticians'],
+      keepUnusedDataFor: 0,
     }),
 
     useGetVerifiedBeauticianById: builder.query<VerifiedBeauticiansResponse, string>({
