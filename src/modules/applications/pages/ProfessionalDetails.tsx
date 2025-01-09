@@ -192,13 +192,13 @@ const ServiceProvidedCard: React.FC<{
                 />
                 <div>
                   <CardTitle className="text-xl capitalize mb-2">{service.serviceData.name}</CardTitle>
-                  <CardDescription className="text-lg"> Category: N/A</CardDescription>
+                  {/* <CardDescription className="text-lg"> Category: {service.serviceData.}</CardDescription> */}
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <p className="text-lg mb-2">{service.serviceData.description}</p>
-              <p className="font-medium"><b>Price:</b> KES {service.serviceData.minimumPrice}</p>
+              <p className="font-medium"><b>Price:</b> KES {service.price}</p>
               <p className="font-medium"><b>Duration:</b> {Math.floor(service.duration / 60)} min</p>
               <p className="font-medium mt-1"><b>Last Updated:</b> {new Date(service.serviceData.updatedAt).toLocaleDateString()}</p>
             </CardContent>
