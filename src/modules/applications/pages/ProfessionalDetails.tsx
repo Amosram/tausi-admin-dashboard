@@ -1,5 +1,5 @@
 import { lazy, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Coordinates, Professional } from "@/models";
 import {
   Phone,
@@ -507,7 +507,14 @@ const ProfessionalDetails = () => {
               setCoordinates={(coords) => setCoordinates({ x: coords.lat, y: coords.lng })}
               infoBody={(index) => {
                 const marker = markers[index];
-                return infoBody(marker?.name, marker?.profilePictureUrl, marker?.locationName);
+                return (
+                  <div
+                    onClick={() => window.location.href = `/professionals/${marker.id}`}
+                    className="cursor-pointer"
+                  >
+                    {infoBody(marker?.name, marker?.profilePictureUrl, marker?.locationName)}
+                  </div>
+                );
               }}
             />
           </div>
