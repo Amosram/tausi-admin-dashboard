@@ -18,6 +18,8 @@ const OrdersList: React.FC = () => {
     // professionalId: "Professional ID",
     // clientId: "Client ID",
     locationAddress: "Location Address",
+    amountUpfront: "Upfront Amount",
+    totalPrice: "Total Price"
     // serviceId: "Service ID",
     // id: "Order ID",
   };

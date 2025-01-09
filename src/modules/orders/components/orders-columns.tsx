@@ -69,7 +69,7 @@ export const ordersColumns: ColumnDef<Appointment>[] = [
   {
     id: "appointmentDate",
     accessorKey: "appointmentDate",
-    header: "Order Date",
+    header: "Expected Date",
     cell: ({ row }) => {
       const appointmentDate = row.getValue("appointmentDate") as string;
       const formattedDate = appointmentDate
@@ -105,6 +105,22 @@ export const ordersColumns: ColumnDef<Appointment>[] = [
     ),
   },
   {
+    id: "amountUpfront",
+    accessorKey: "amountUpfront",
+    header: "Upfront Amount",
+    cell: ({ row }) => (
+      <TruncatedCell content={`KSH ${row.getValue("amountUpfront")}`} />
+    ),
+  },
+  {
+    id: "totalPrice",
+    accessorKey: "totalPrice",
+    header: "Total Price",
+    cell: ({ row }) => (
+      <TruncatedCell content={`KSH ${row.getValue("totalPrice")}`} />
+    ),
+  },
+  {
     id: "client.phoneNumber",
     accessorKey: "client.phoneNumber",
     header: "Contact",
@@ -123,6 +139,19 @@ export const ordersColumns: ColumnDef<Appointment>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => getStatusBadge(row.getValue("status")),
+  },
+  {
+    id: "createdAt",
+    accessorKey: "createdAt",
+    header: "Order Date",
+    cell: ({ row }) => {
+      const appointmentDate = row.getValue("createdAt") as string;
+      const formattedDate = appointmentDate
+        ? format(new Date(appointmentDate), "MMM dd, yyyy")
+        : "Invalid date";
+      return <TruncatedCell content={formattedDate} />;
+    },
+    enableSorting: true,
   },
   {
     id: "actions",
