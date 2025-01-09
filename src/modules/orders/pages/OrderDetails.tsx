@@ -201,7 +201,7 @@ const OrderDetails: React.FC = () => {
             <InfoCard
               title="Client Information"
               icon={<User className="h-5 w-5" />}
-              titleLink="/orders"
+              titleLink={`/users/${currentOrder?.clientId}`}
             >
               <div className="flex gap-4">
                 <div
@@ -269,7 +269,7 @@ const OrderDetails: React.FC = () => {
             <InfoCard
               title="Service Provider"
               icon={<User className="h-5 w-5" />}
-              titleLink="/orders"
+              titleLink={`/professionals/${currentOrder?.professionalId}`}
             >
               <div className="flex gap-3">
                 <div
