@@ -21,6 +21,8 @@ const EntriesTable = (props: EntriesTableProps) => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [deleteBookEntry, {isLoading:isDeleting}] = useDeleteBookEntryMutation();
   const toast = useToast();
+
+  const formatter = new Intl.NumberFormat('en-US');
   
   const handleDelete = async () => {
     try {
@@ -138,7 +140,7 @@ const EntriesTable = (props: EntriesTableProps) => {
               <TableCell>
                 <Badge variant={entry.type === "Expense" ? "destructive" : "success"}>{entry.type}</Badge>
               </TableCell>
-              <TableCell>KES {Number(entry.amount).toFixed(2)}</TableCell>
+              <TableCell>KES {formatter.format(Number(Number(entry.amount).toFixed(2)))}</TableCell>
               <TableCell>{entry.bookName}</TableCell>
               <TableCell>{format(new Date(entry.createdAt), "PPpp")}</TableCell>
               <TableCell>{format(new Date(entry.updatedAt), "PPpp")}</TableCell>

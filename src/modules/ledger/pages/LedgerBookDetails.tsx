@@ -31,6 +31,8 @@ const LedgerBookDetails = () => {
   const [minAmount, setMinAmount] = useState('');
   const [maxAmount, setMaxAmount] = useState('');
   const [sortBy, setSortBy] = useState<'createdAt' | 'updatedAt' | 'amount'>('createdAt');
+
+  const formatter = new Intl.NumberFormat('en-US');
   
   const business = data?.data;
 
@@ -166,21 +168,21 @@ const LedgerBookDetails = () => {
                     <p>Updated: {format(new Date(book.updatedAt), "PPpp")}</p>
                     <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mt-3">
                       <Badge className="font-bold text-white p-2 rounded-lg bg-destructive dark:bg-red-600">Total Expense</Badge> <span className="mr-1">KES</span>
-                      {book.bookEntries
+                      {formatter.format(Number(book.bookEntries
                         ? book.bookEntries
                           .filter((entry) => entry.type === "Expense")
                           .reduce((sum, entry) => sum + parseFloat(entry.amount), 0)
                           .toFixed(2)
-                        : 0}
+                        : 0))}
                     </p>
                     <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mt-6">
                       <Badge className="font-bold text-white bg-green-600 p-2 rounded-lg">Total Revenue</Badge> <span className="mr-1">KES</span>
-                      {book.bookEntries
+                      {formatter.format(Number(book.bookEntries
                         ? book.bookEntries
                           .filter((entry) => entry.type === "Revenue")
                           .reduce((sum, entry) => sum + parseFloat(entry.amount), 0)
                           .toFixed(2)
-                        : 0}
+                        : 0))}
                     </p>
                   </AccordionContent>
                 </AccordionItem>
@@ -310,7 +312,7 @@ const LedgerBookDetails = () => {
             </CardHeader>
             <CardContent className="p-4 pt-2 text-center flex-grow flex flex-col justify-center">
               <div className="text-2xl font-bold mb-1 text-red-600">
-                Total Expense: KES {totalExpense.toFixed(2)}
+                Total Expense: KES {formatter.format(Number(totalExpense.toFixed(2)))}
               </div>
               <p className="text-sm font-bold opacity-70 uppercase tracking-wider truncate">
                 Expenses
@@ -327,7 +329,7 @@ const LedgerBookDetails = () => {
             </CardHeader>
             <CardContent className="p-4 pt-2 text-center flex-grow flex flex-col justify-center">
               <div className="text-2xl font-bold mb-1 text-green-600">
-                Total Revenue: KES {totalRevenue.toFixed(2)}
+                Total Revenue: KES {formatter.format(Number(totalRevenue.toFixed(2)))}
               </div>
               <p className="text-sm font-bold opacity-70 uppercase tracking-wider truncate">
                Revenue

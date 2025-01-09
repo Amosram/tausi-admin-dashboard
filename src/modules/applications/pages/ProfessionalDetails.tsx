@@ -169,6 +169,8 @@ const BusinessCard: React.FC<{
   
 );
 
+const formatter = new Intl.NumberFormat('en-US');
+
 // service provided card
 const ServiceProvidedCard: React.FC<{
   professional: Professional;
@@ -198,7 +200,7 @@ const ServiceProvidedCard: React.FC<{
             </CardHeader>
             <CardContent>
               <p className="text-lg mb-2">{service.serviceData.description}</p>
-              <p className="font-medium"><b>Price:</b> KES {service.price}</p>
+              <p className="font-medium"><b>Price:</b> KES {formatter.format(service.price)}</p>
               <p className="font-medium"><b>Duration:</b> {Math.floor(service.duration / 60)} min</p>
               <p className="font-medium mt-1"><b>Last Updated:</b> {new Date(service.serviceData.updatedAt).toLocaleDateString()}</p>
             </CardContent>
