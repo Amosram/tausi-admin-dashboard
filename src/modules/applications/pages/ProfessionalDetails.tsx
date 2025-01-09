@@ -141,15 +141,15 @@ const BusinessCard: React.FC<{
         <div className="grid grid-cols-3 gap-4 my-6 py-6 border-y">
           <div>
             <p className="text-muted-foreground">Completed Orders</p>
-            <p className="text-xl font-semibold text-blue-900 dark:text-gray-300">123</p>
+            <p className="text-xl font-semibold text-blue-900 dark:text-gray-300">__</p>
           </div>
           <div>
             <p className="text-muted-foreground">Cancelled Orders</p>
-            <p className="text-xl font-semibold text-blue-900 dark:text-gray-300">10</p>
+            <p className="text-xl font-semibold text-blue-900 dark:text-gray-300">__</p>
           </div>
           <div>
             <p className="text-muted-foreground">Total Revenue</p>
-            <p className="text-xl font-semibold text-blue-900 dark:text-gray-300">$2,500</p>
+            <p className="text-xl font-semibold text-blue-900 dark:text-gray-300">__</p>
           </div>
         </div>
       
