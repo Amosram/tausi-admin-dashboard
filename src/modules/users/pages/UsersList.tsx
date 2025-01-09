@@ -12,10 +12,15 @@ const Users: React.FC = () => {
   const maxRetries = 3;
 
   const usersData =
-    data?.map((item) => ({
-      ...item,
-      role: item.sessionData?.userTypeSession,
-    })) || [];
+    data
+      ?.map((item) => ({
+        ...item,
+        role: item.sessionData?.userTypeSession,
+      }))
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      ) || [];
 
   React.useEffect(() => {
     if (error) {
