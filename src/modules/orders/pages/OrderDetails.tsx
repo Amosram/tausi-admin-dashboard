@@ -269,7 +269,7 @@ const OrderDetails: React.FC = () => {
             <InfoCard
               title="Service Provider"
               icon={<User className="h-5 w-5" />}
-              titleLink={`/professionals/${currentOrder?.professionalId}`}
+              titleLink="/orders"
             >
               <div className="flex gap-3">
                 <div
@@ -278,9 +278,11 @@ const OrderDetails: React.FC = () => {
                   <img
                     src={currentOrder.professional?.user?.profilePictureUrl}
                     alt={currentOrder.professional?.user?.name}
+                    className="object-cover w-full h-full rounded-lg"
                   />
                 </div>
                 <div className="space-y-4">
+                  {/* Provider Details */}
                   <div className="grid grid-cols-3 gap-4 py-4">
                     <InfoField
                       label="Business Name"
@@ -300,6 +302,8 @@ const OrderDetails: React.FC = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Appointment Totals */}
                   <div className="grid grid-cols-3 gap-4 py-4 border-t border-muted-foreground">
                     {appointmentTotalsLoading ? (
                       <p>Loading...</p>
@@ -321,8 +325,11 @@ const OrderDetails: React.FC = () => {
                         />
                       ))
                     )}
+                    {/* Total Revenue (Completed Orders) */}
                     <div>
-                      <p className="text-sm text-gray-500">Total Revenue</p>
+                      <p className="text-sm text-gray-500">
+                        Total Revenue (Completed)
+                      </p>
                       <div className="flex items-center gap-2">
                         <FaMoneyBill className="text-green-500" />
                         <p className="font-medium truncate">
@@ -331,16 +338,46 @@ const OrderDetails: React.FC = () => {
                             : appointmentTotalsError
                             ? "Error"
                             : `KES ${new Intl.NumberFormat("en-US").format(
-                                appointmentTotalsTotal?.data.reduce(
-                                  (sum, item) => sum + item.totalAmount,
-                                  0
-                                ) || 0
+                                appointmentTotalsTotal?.data
+                                  .filter((item) => item.status === "completed")
+                                  .reduce(
+                                    (sum, item) => sum + item.totalAmount,
+                                    0
+                                  ) || 0
+                              )}`}
+                        </p>
+                      </div>
+                    </div>
+                    {/* Total Expected (Pending & Scheduled) */}
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Total Expected (Pending & Scheduled)
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <FaMoneyBill className="text-yellow-500" />
+                        <p className="font-medium truncate">
+                          {appointmentTotalsLoading
+                            ? "Loading..."
+                            : appointmentTotalsError
+                            ? "Error"
+                            : `KES ${new Intl.NumberFormat("en-US").format(
+                                appointmentTotalsTotal?.data
+                                  .filter(
+                                    (item) =>
+                                      item.status === "pending" ||
+                                      item.status === "scheduled"
+                                  )
+                                  .reduce(
+                                    (sum, item) => sum + item.totalAmount,
+                                    0
+                                  ) || 0
                               )}`}
                         </p>
                       </div>
                     </div>
                   </div>
 
+                  {/* Provider Contact Details */}
                   <div className="grid grid-cols-3 gap-4 py-4 border-t border-muted-foreground">
                     <InfoField
                       label="Provider Phone"
