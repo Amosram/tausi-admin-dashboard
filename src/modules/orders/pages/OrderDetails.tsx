@@ -16,7 +16,10 @@ import {
 import { FaMoneyBill, FaStar, FaUser } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useGetOrderByIdQuery } from "../api/ordersApi";
+import {
+  useGetAppointmentTotalsQuery,
+  useGetOrderByIdQuery,
+} from "../api/ordersApi";
 import { BiCategory } from "react-icons/bi";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 
@@ -131,6 +134,15 @@ const OrderDetails: React.FC = () => {
   }, [error, toast]);
 
   const currentOrder = data?.data;
+  const beauticianId = currentOrder?.professionalId;
+
+  const {
+    data: appointmentTotalsTotal,
+    isLoading: appointmentTotalsLoading,
+    error: appointmentTotalsError,
+  } = useGetAppointmentTotalsQuery({
+    beauticianId,
+  });
 
   if (isLoading) return <Loader />;
   if (error) return <div>Error: Unable to load orders.</div>;
@@ -289,16 +301,46 @@ const OrderDetails: React.FC = () => {
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-4 py-4 border-t border-muted-foreground">
-                    <InfoField label="Completed Orders" value="_____" />
-                    <InfoField label="Cancelled Orders" value="_____" />
+                    {appointmentTotalsLoading ? (
+                      <p>Loading...</p>
+                    ) : appointmentTotalsError ? (
+                      <p>Error loading data</p>
+                    ) : (
+                      appointmentTotalsTotal?.data.map((item) => (
+                        <InfoField
+                          key={item.status}
+                          label={`${
+                            item.status.charAt(0).toUpperCase() +
+                            item.status.slice(1)
+                          } Orders`}
+                          value={`${
+                            item.totalAppointments
+                          } (Total: ${new Intl.NumberFormat("en-US").format(
+                            item.totalAmount
+                          )} KES)`}
+                        />
+                      ))
+                    )}
                     <div>
                       <p className="text-sm text-gray-500">Total Revenue</p>
                       <div className="flex items-center gap-2">
                         <FaMoneyBill className="text-green-500" />
-                        <p className="font-medium truncate">KES ____</p>
+                        <p className="font-medium truncate">
+                          {appointmentTotalsLoading
+                            ? "Loading..."
+                            : appointmentTotalsError
+                            ? "Error"
+                            : `KES ${new Intl.NumberFormat("en-US").format(
+                                appointmentTotalsTotal?.data.reduce(
+                                  (sum, item) => sum + item.totalAmount,
+                                  0
+                                ) || 0
+                              )}`}
+                        </p>
                       </div>
                     </div>
                   </div>
+
                   <div className="grid grid-cols-3 gap-4 py-4 border-t border-muted-foreground">
                     <InfoField
                       label="Provider Phone"
@@ -325,8 +367,7 @@ const OrderDetails: React.FC = () => {
                 </div>
               </div>
             </InfoCard>
-
-            {/* Payment Information Card */}
+            ; ;{/* Payment Information Card */}
             <InfoCard
               title="Payment Information"
               icon={<DollarSign className="h-5 w-5" />}
@@ -385,9 +426,7 @@ const OrderDetails: React.FC = () => {
                     }
                     className="w-full h-full rounded-lg object-cover"
                   />
-                  <div
-                    className="absolute inset-0 bg-black/30 flex items-center justify-center h-0 group-hover:h-full transition-all duration-300 rounded-lg overflow-hidden"
-                  >
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center h-0 group-hover:h-full transition-all duration-300 rounded-lg overflow-hidden">
                     <p className="text-white z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       View Full Image
                     </p>
@@ -488,9 +527,7 @@ const OrderDetails: React.FC = () => {
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogOverlay className="bg-black/50 fixed inset-0 z-40" />
-        <DialogContent
-          className="fixed z-50 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg w-[90vw] max-w-lg"
-        >
+        <DialogContent className="fixed z-50 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg w-[90vw] max-w-lg">
           <div className="flex justify-center items-center h-[400px]">
             <img
               src={currentOrder.service?.serviceData?.imageUrl}

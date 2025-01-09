@@ -15,6 +15,18 @@ export interface GetOrdersByBoothIdApiResponse {
   data: Appointment[];
 }
 
+export interface GetTotalsApiResponse {
+  statusCode: string;
+  message: string;
+  code: number;
+  data: Array<{
+    status: string;
+    totalAppointments: number;
+    totalAmount: number;
+    [key: string]: any; // For any additional fields
+  }>;
+}
+
 export const ordersApi = createApi({
   reducerPath: "ordersApi",
   baseQuery: axiosBaseQuery({ isAuthorizedApi: true }),
@@ -50,7 +62,7 @@ export const ordersApi = createApi({
       query: ({ searchCriteria, limit = 8000 }) => {
         // Ensure the limit is validated and defaulted
         const validatedLimit = limit > 0 ? limit : 8000;
-    
+
         return {
           url: `/appointments/search?limit=${validatedLimit}`,
           method: "POST",
@@ -61,6 +73,26 @@ export const ordersApi = createApi({
       },
       invalidatesTags: ["Orders"],
     }),
+    getAppointmentTotals: builder.query<GetTotalsApiResponse, {
+      beauticianId?: string;
+      date?: string;
+      startDate?: string;
+      endDate?: string;
+    }>({
+      query: ({ beauticianId, date, startDate, endDate }) => {
+        const params = new URLSearchParams();
+        if (beauticianId) params.append("beauticianId", beauticianId);
+        if (date) params.append("date", date);
+        if (startDate) params.append("startDate", startDate);
+        if (endDate) params.append("endDate", endDate);
+
+        return {
+          url: `/appointments/query/totals?${params.toString()}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Orders"],
+    }),
   }),
 });
 
@@ -69,4 +101,5 @@ export const {
   useGetOrderByIdQuery,
   useGetOrderByBoothIdQuery,
   useSearchOrdersMutation,
+  useGetAppointmentTotalsQuery,
 } = ordersApi;
