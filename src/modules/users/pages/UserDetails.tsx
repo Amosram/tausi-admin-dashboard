@@ -444,7 +444,7 @@ const UserDetails: React.FC = () => {
           <Button
             variant="light"
             className="flex items-center space-x-2"
-            onClick={() => setDialogOpen(true)}
+            onClick={() => setIsDeactivateDialogOpen(true)}
           >
             <UserX size={16} />
             <span>Deactivate User</span>
