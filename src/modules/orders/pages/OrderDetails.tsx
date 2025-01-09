@@ -146,10 +146,10 @@ const OrderDetails: React.FC = () => {
             >
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
-                  <InfoField
+                  {/* <InfoField
                     label="Category"
                     value={currentOrder.service.category}
-                  />
+                  /> */}
                   <InfoField
                     label="Order Status"
                     value={<StatusBadge status={currentOrder.status} />}
