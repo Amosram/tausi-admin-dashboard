@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import Loader from "@/components/layout/Loader";
@@ -15,10 +15,10 @@ import {
 } from "lucide-react";
 import { FaMoneyBill, FaStar, FaUser } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import { IoChatboxEllipsesSharp } from "react-icons/io5";
 import { useToast } from "@/hooks/use-toast";
 import { useGetOrderByIdQuery } from "../api/ordersApi";
 import { BiCategory } from "react-icons/bi";
+import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 
 interface InfoCardProps {
   title: string;
@@ -117,6 +117,7 @@ const InfoField: React.FC<InfoFieldProps> = ({ label, value }) => (
 const OrderDetails: React.FC = () => {
   const { toast } = useToast();
   const { orderId } = useParams();
+  const [isOpen, setIsOpen] = useState(false);
 
   const { data, isLoading, error } = useGetOrderByIdQuery(orderId!);
 
@@ -299,7 +300,10 @@ const OrderDetails: React.FC = () => {
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-4 py-4 border-t border-muted-foreground">
-                    <InfoField label="Provider Phone" value={currentOrder.professional?.user?.phoneNumber} />
+                    <InfoField
+                      label="Provider Phone"
+                      value={currentOrder.professional?.user?.phoneNumber}
+                    />
                     <InfoField
                       label="Provider Email"
                       value={currentOrder.professional?.user?.email}
@@ -362,11 +366,78 @@ const OrderDetails: React.FC = () => {
           </div>
         </div>
 
-        <div className="w-full">
+        <div className="w-full flex lg:flex-row flex-col gap-4">
+          <InfoCard
+            title="Service Details"
+            icon={<BiCategory className="h-5 w-5" />}
+          >
+            {/* Image Section */}
+            <div className="w-full h-14 mb-4">
+              {currentOrder.service?.serviceData?.imageUrl ? (
+                <div
+                  className="relative group h-14 cursor-pointer"
+                  onClick={() => setIsOpen(true)}
+                >
+                  <img
+                    src={currentOrder.service?.serviceData?.imageUrl}
+                    alt={
+                      currentOrder.service?.serviceData?.name || "Service Image"
+                    }
+                    className="w-full h-full rounded-lg object-cover"
+                  />
+                  <div
+                    className="absolute inset-0 bg-black/30 flex items-center justify-center h-0 group-hover:h-full transition-all duration-300 rounded-lg overflow-hidden"
+                  >
+                    <p className="text-white z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      View Full Image
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
+                  <span>No Image</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col w-full">
+              {/* Service Details */}
+              <div className="grid grid-cols-3 gap-6 border-b border-gray-300 pt-2 pb-4">
+                <InfoField
+                  label="Service Name"
+                  value={currentOrder.service?.serviceData?.name || "N/A"}
+                />
+                <InfoField
+                  label="Description"
+                  value={
+                    currentOrder.service?.serviceData?.description || "N/A"
+                  }
+                />
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-500">Minimum Price</p>
+                  <p className="text-sm text-gray-700">{`KES ${
+                    currentOrder.service?.serviceData?.minimumPrice || 0
+                  }`}</p>
+                </div>
+              </div>
+
+              {/* Additional Details */}
+              <div className="pt-4">
+                <InfoField
+                  label="Last Updated"
+                  value={
+                    new Date(
+                      currentOrder.service?.serviceData?.updatedAt
+                    ).toLocaleDateString() || "N/A"
+                  }
+                />
+              </div>
+            </div>
+          </InfoCard>
+
           <InfoCard
             title="Service Category"
             icon={<BiCategory className="h-5 w-5" />}
-            titleLink="/services"
           >
             <div className="flex gap-4">
               <div
@@ -378,11 +449,11 @@ const OrderDetails: React.FC = () => {
                 <div className="grid grid-cols-3 gap-6 border-b border-gray-300 pt-2 pb-4">
                   <InfoField
                     label="Category Name"
-                    value={currentOrder.service.category.name}
+                    value={currentOrder.service?.category?.name}
                   />
                   <InfoField
                     label="Category Description"
-                    value={currentOrder.service.category.description}
+                    value={currentOrder.service?.category?.description}
                   />
                   <div className="space-y-2">
                     <p className="text-sm text-gray-500">Minimum Price</p>
@@ -414,6 +485,21 @@ const OrderDetails: React.FC = () => {
           </InfoCard>
         )}
       </div>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogOverlay className="bg-black/50 fixed inset-0 z-40" />
+        <DialogContent
+          className="fixed z-50 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg w-[90vw] max-w-lg"
+        >
+          <div className="flex justify-center items-center h-[400px]">
+            <img
+              src={currentOrder.service?.serviceData?.imageUrl}
+              alt={currentOrder.service?.serviceData?.name || "Service Image"}
+              className="max-h-full object-contain rounded-lg"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
