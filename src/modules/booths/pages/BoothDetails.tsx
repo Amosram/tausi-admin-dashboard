@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Trash2,
-  Edit,
-} from "lucide-react";
+import { Trash2, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -45,8 +42,7 @@ const BoothDetails: React.FC = () => {
     skip: !boothId,
   });
 
-  const [assignBooth, { isLoading: isAssigning }] =
-    useAssignBoothMutation();
+  const [assignBooth, { isLoading: isAssigning }] = useAssignBoothMutation();
 
   // Incase polling is needed
   // const {
@@ -115,6 +111,14 @@ const BoothDetails: React.FC = () => {
             <Trash2 className="mr-2 h-4 w-4" /> Delete
           </Button>
         </div>
+      </div>
+
+      <div className="w-full flex px-4">
+        <img
+          src={currentBooth.imageUrl}
+          alt="Booth Image"
+          className="h-40 object-cover w-full"
+        />
       </div>
 
       <div className="flex w-full gap-4 flex-col lg:flex-row">

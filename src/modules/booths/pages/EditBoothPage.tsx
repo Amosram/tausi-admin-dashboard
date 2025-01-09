@@ -19,6 +19,18 @@ import {
 } from "@/components/ui/dialog";
 import Maps from "@/components/ui/maps";
 import Loader from "@/components/layout/Loader";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { storage } from "@/app/firebase";
+import { AutocompleteAddress } from "../components/location-autocomplete";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radioGroup";
+import { Label } from "@/components/ui/label";
+
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 const boothFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -40,8 +52,8 @@ const boothFormSchema = z.object({
   occupancyStatus: z.enum(["empty", "occupied"], {
     required_error: "Please select the occupancy status",
   }),
+  imageUrl: z.string().optional(),
   imagePath: z.string().optional(),
-  imageUrl: z.string().url("Invalid URL").optional(),
   coordinates: z.object({
     x: z.number().min(-180).max(180, "Longitude must be between -180 and 180"),
     y: z.number().min(-90).max(90, "Latitude must be between -90 and 90"),
@@ -55,6 +67,10 @@ const EditBoothPage: React.FC = () => {
   const { boothId } = useParams<{ boothId: string }>();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadMethod, setUploadMethod] = useState<"file" | "url">("file");
+  const [isUploading, setIsUploading] = useState(false);
 
   const {
     data: boothData,
@@ -73,12 +89,69 @@ const EditBoothPage: React.FC = () => {
       name: "",
       locationAddress: "",
       occupancyStatus: "empty",
-      imagePath: "",
-      imageUrl: "",
+      imagePath: "/booths",
       coordinates: { x: 0, y: 0 },
       isActive: true,
     },
   });
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedImage(event.target.files[0]);
+      // Clear URL field when file is selected
+      form.setValue("imageUrl", "");
+    }
+  };
+
+  const deleteOldImage = async (imagePath?: string) => {
+    if (imagePath) {
+      try {
+        const imageRef = ref(storage, imagePath);
+        await deleteObject(imageRef);
+      } catch (error) {
+        console.error("Error deleting old image:", error);
+      }
+    }
+  };
+
+  const uploadImage = async (file: File): Promise<string> => {
+    setIsUploading(true);
+    const storageRef = ref(storage, `/booths/${file.name}-${Date.now()}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setUploadProgress(progress);
+        },
+        (error) => {
+          setIsUploading(false);
+          console.error("Upload error:", error);
+          reject(error);
+        },
+        async () => {
+          try {
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            setIsUploading(false);
+            resolve(url);
+          } catch (error) {
+            setIsUploading(false);
+            reject(error);
+          }
+        }
+      );
+    });
+  };
+
+  const getSubmitButtonText = () => {
+    if (isUpdating) return "Updating Booth...";
+    if (isUploading) return `Uploading Image (${uploadProgress}%)...`;
+    return "Update Booth";
+  };
 
   useEffect(() => {
     if (boothData?.data) {
@@ -89,7 +162,6 @@ const EditBoothPage: React.FC = () => {
         numberOfBeauticians: booth.numberOfBeauticians,
         numberOfStations: booth.numberOfStations,
         occupancyStatus: booth.occupancyStatus as "empty" | "occupied",
-        imagePath: booth.imagePath || "",
         imageUrl: booth.imageUrl || "",
         coordinates: {
           x: booth.coordinates.x,
@@ -101,6 +173,13 @@ const EditBoothPage: React.FC = () => {
   }, [boothData, form]);
 
   const onSubmit = async (formData: BoothFormValues) => {
+    let imageUrl = formData.imageUrl;
+
+    if (selectedImage) {
+      await deleteOldImage(imageUrl);
+      imageUrl = await uploadImage(selectedImage);
+    }
+
     try {
       if (!boothId) throw new Error("Booth ID is required");
 
@@ -112,8 +191,7 @@ const EditBoothPage: React.FC = () => {
           numberOfBeauticians: formData.numberOfBeauticians,
           numberOfStations: formData.numberOfStations,
           occupancyStatus: formData.occupancyStatus,
-          imagePath: formData.imagePath,
-          imageUrl: formData.imageUrl,
+          imageUrl: imageUrl,
           coordinates: {
             x: formData.coordinates.x,
             y: formData.coordinates.y,
@@ -123,7 +201,9 @@ const EditBoothPage: React.FC = () => {
         },
       };
 
-      const response: BoothsApiResponse<Booth> = await updateBooth(boothData).unwrap();
+      const response: BoothsApiResponse<Booth> = await updateBooth(
+        boothData
+      ).unwrap();
 
       toast({
         title: "Success",
@@ -145,10 +225,38 @@ const EditBoothPage: React.FC = () => {
     }
   };
 
-  const handleCoordinatesSelect = (coordinates: Coordinates) => {
-    form.setValue("coordinates.x", coordinates.x);
-    form.setValue("coordinates.y", coordinates.y);
+  const handleCoordinatesSelect = async (coordinates: Coordinates) => {
+    form.setValue("coordinates.x", coordinates.x); // Set x
+    form.setValue("coordinates.y", coordinates.y); // Set y
+
+    try {
+      // Reverse geocode to get the address
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.y},${coordinates.x}&key=${API_KEY}`
+      );
+      const data = await response.json();
+
+      if (data.status === "OK" && data.results.length > 0) {
+        const address = data.results[0].formatted_address;
+        form.setValue("locationAddress", address);
+      } else {
+        console.error("Geocoding failed:", data.status, data.error_message);
+      }
+    } catch (error) {
+      console.error("Failed to fetch address:", error);
+    }
+
     setIsCoordinateModalOpen(false);
+  };
+
+  const handleAddressSelect = (
+    address: string,
+    coordinates: { lat: number; lng: number }
+  ) => {
+    console.log("Address in handleAddressSelect:", address);
+    form.setValue("locationAddress", address);
+    form.setValue("coordinates.x", coordinates.lng); // Set longitude as x
+    form.setValue("coordinates.y", coordinates.lat); // Set latitude as y
   };
 
   if (isBoothLoading) {
@@ -181,13 +289,6 @@ const EditBoothPage: React.FC = () => {
 
               <FormInputField
                 form={form}
-                name="locationAddress"
-                label="Location Address"
-                placeholder="Enter booth location"
-              />
-
-              <FormInputField
-                form={form}
                 name="numberOfBeauticians"
                 label="Number of Beauticians"
                 placeholder="e.g 1"
@@ -204,31 +305,90 @@ const EditBoothPage: React.FC = () => {
                 description="Number of stations in this booth"
               />
 
-              <FormInputField
-                form={form}
-                name="occupancyStatus"
-                label="Occupancy Status"
-                type="select"
-                options={[
-                  { label: "Empty", value: "empty" },
-                  { label: "Occupied", value: "occupied" },
-                ]}
-              />
+              <div className="space-y-4">
+                <Label className="text-base font-semibold">
+                  Image Upload Method
+                </Label>
+                <RadioGroup
+                  defaultValue="file"
+                  value={uploadMethod}
+                  onValueChange={(value: "file" | "url") => {
+                    setUploadMethod(value);
+                    // Clear the other field when switching
+                    if (value === "file") {
+                      form.setValue("imageUrl", "");
+                    } else {
+                      setSelectedImage(null);
+                      setUploadProgress(0);
+                    }
+                  }}
+                  className="grid grid-cols-2 gap-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="file" id="file" />
+                    <Label htmlFor="file">Upload Local File</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="url" id="url" />
+                    <Label htmlFor="url">Use Image URL</Label>
+                  </div>
+                </RadioGroup>
 
-              <FormInputField
-                form={form}
-                name="imagePath"
-                label="Image Path"
-                placeholder="/path/to/image.jpg"
-                description="Optional: Path to the booth's image on the server"
-              />
+                {uploadMethod === "file" ? (
+                  <div className="space-y-2">
+                    <Label>Upload Image</Label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="block w-full p-2 text-gray-900 dark:text-gray-300 border border-gray-300 dark:bg-gray-800 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    {uploadProgress > 0 && (
+                      <div className="flex space-x-2 w-full mt-2">
+                        <div className="bg-gray-200 rounded-full h-1 w-full">
+                          <div
+                            className="bg-blue-600 h-1 rounded-full"
+                            style={{ width: `${uploadProgress}%` }}
+                          />
+                        </div>
+                        <p className="text-xs font-normal text-blue-600">
+                          {uploadProgress}%
+                        </p>
+                      </div>
+                    )}
+                    {selectedImage && (
+                      <img
+                        alt="Selected booth"
+                        className="w-full h-48 object-center object-cover mt-2"
+                        src={URL.createObjectURL(selectedImage)}
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <FormInputField
+                      form={form}
+                      name="imageUrl"
+                      label="Image URL"
+                      placeholder="https://example.com/image.jpg"
+                      description="Enter the URL of an existing image"
+                    />
+                  </div>
+                )}
 
-              <FormInputField
-                form={form}
-                name="imageUrl"
-                label="Image URL"
-                placeholder="https://example.com/booth.jpg"
-                description="Optional: URL to the booth's image"
+                {boothData?.data?.imageUrl && (
+                  <img
+                    alt="Selected booth"
+                    className="w-full h-48 object-center object-cover mt-2"
+                    src={boothData?.data?.imageUrl}
+                  />
+                )}
+              </div>
+
+              <AutocompleteAddress
+                value={form.watch("locationAddress")}
+                onChange={(value) => form.setValue("locationAddress", value)}
+                onAddressSelect={handleAddressSelect}
               />
 
               <div className="grid grid-cols-2 gap-4">
@@ -268,9 +428,11 @@ const EditBoothPage: React.FC = () => {
                   Cancel
                 </Button>
                 <Button
-                  className=" dark:bg-orange-600 dark:hover:bg-green-800 dark:text-gray-300"
-                  type="submit" disabled={isUpdating}>
-                  {isUpdating ? "Updating..." : "Update Booth"}
+                  type="submit"
+                  disabled={isUpdating || isUploading}
+                  className="min-w-[200px]"
+                >
+                  {getSubmitButtonText()}
                 </Button>
               </div>
             </form>

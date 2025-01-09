@@ -123,6 +123,18 @@ export interface Professional {
   
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  imagePath: string;
+  isDeleted: boolean;
+  deletedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Service {
   id: string;
   price: number;
@@ -138,7 +150,7 @@ export interface Service {
   imagePath: string | null;
   imageUrl: string | null;
   name: string | null;
-  category: string;
+  category: Category | null;
   serviceData: {
     id:           string;
     name:         string;

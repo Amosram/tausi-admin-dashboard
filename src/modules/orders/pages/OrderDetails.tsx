@@ -13,11 +13,12 @@ import {
   DollarSign,
   Info,
 } from "lucide-react";
-import { FaMoneyBill, FaStar } from "react-icons/fa";
+import { FaMoneyBill, FaStar, FaUser } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { IoChatboxEllipsesSharp } from "react-icons/io5";
 import { useToast } from "@/hooks/use-toast";
 import { useGetOrderByIdQuery } from "../api/ordersApi";
+import { BiCategory } from "react-icons/bi";
 
 interface InfoCardProps {
   title: string;
@@ -146,10 +147,10 @@ const OrderDetails: React.FC = () => {
             >
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
-                  {/* <InfoField
+                  <InfoField
                     label="Category"
-                    value={currentOrder.service.category}
-                  /> */}
+                    value={currentOrder.service.category.name}
+                  />
                   <InfoField
                     label="Order Status"
                     value={<StatusBadge status={currentOrder.status} />}
@@ -240,7 +241,7 @@ const OrderDetails: React.FC = () => {
                         asChild
                       >
                         <Link to={`/users/${currentOrder.client.id}`}>
-                          <IoChatboxEllipsesSharp className="text-white" />
+                          <FaUser className="text-white" />
                         </Link>
                       </Button>
                     </div>
@@ -261,7 +262,10 @@ const OrderDetails: React.FC = () => {
                 <div
                   className={`md:w-16 md:h-14 w-12 h-8 bg-blue-500 rounded-lg flex items-center justify-center mb-4`}
                 >
-                  <div className="md:w-8 md:h-8 w-4 h-4 bg-white rounded-full"></div>
+                  <img
+                    src={currentOrder.professional?.user?.profilePictureUrl}
+                    alt={currentOrder.professional?.user?.name}
+                  />
                 </div>
                 <div className="space-y-4">
                   <div className="grid grid-cols-3 gap-4 py-4">
@@ -295,10 +299,10 @@ const OrderDetails: React.FC = () => {
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-4 py-4 border-t border-muted-foreground">
-                    <InfoField label="Provider Phone" value="+254 11 111 111" />
+                    <InfoField label="Provider Phone" value={currentOrder.professional?.user?.phoneNumber} />
                     <InfoField
                       label="Provider Email"
-                      value="johndoe@gmail.com"
+                      value={currentOrder.professional?.user?.email}
                     />
                     <div className="flex justify-center items-center">
                       <Button
@@ -306,8 +310,10 @@ const OrderDetails: React.FC = () => {
                         className="p-4 rounded-full bg-blue-500"
                         asChild
                       >
-                        <Link to={`/professionals/${currentOrder.professionalId}`}>
-                          <IoChatboxEllipsesSharp className="text-white" />
+                        <Link
+                          to={`/professionals/${currentOrder.professionalId}`}
+                        >
+                          <FaUser className="text-white" />
                         </Link>
                       </Button>
                     </div>
@@ -354,6 +360,38 @@ const OrderDetails: React.FC = () => {
               </div>
             </InfoCard>
           </div>
+        </div>
+
+        <div className="w-full">
+          <InfoCard
+            title="Service Category"
+            icon={<BiCategory className="h-5 w-5" />}
+            titleLink="/services"
+          >
+            <div className="flex gap-4">
+              <div
+                className={`md:w-16 md:h-14 w-12 h-8 bg-green-500 rounded-lg flex items-center justify-center mb-4`}
+              >
+                <div className="md:w-8 md:h-8 w-4 h-4 bg-white rounded-full"></div>
+              </div>
+              <div className="flex flex-col w-full">
+                <div className="grid grid-cols-3 gap-6 border-b border-gray-300 pt-2 pb-4">
+                  <InfoField
+                    label="Category Name"
+                    value={currentOrder.service.category.name}
+                  />
+                  <InfoField
+                    label="Category Description"
+                    value={currentOrder.service.category.description}
+                  />
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-500">Minimum Price</p>
+                    <p className="text-sm text-gray-700">{`KES ${currentOrder.service.serviceData.minimumPrice}`}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </InfoCard>
         </div>
 
         {/* Additional Information Card */}
