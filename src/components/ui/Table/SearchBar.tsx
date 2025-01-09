@@ -54,7 +54,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     else setSelectedColumn(undefined);
 
     setSearchValue(q || "");
-    setSearchOperator(operator || "");
+    setSearchOperator(operator || "ilike");
     setTimeRange(range || undefined);
   }, [searchParams, columns]);
 
@@ -101,7 +101,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           {/* Operator Selector */}
           <Select
             value={searchOperator}
-            onValueChange={(value) => setSearchOperator(value || "")}
+            onValueChange={(value) => setSearchOperator(value || "ilike")}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select Operator" />
