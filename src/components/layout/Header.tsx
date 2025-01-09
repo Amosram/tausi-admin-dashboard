@@ -11,6 +11,7 @@ import { auth } from "@/app/firebase";
 import { DoorOpen, Moon, Settings, Sun } from "lucide-react";
 import { useTheme } from "@/providers/theme-provider";
 import { useAppDispatch } from "@/redux/hooks";
+import { signOut } from 'firebase/auth';
 import { clearLocalState, signOutUser } from "@/redux/reducers/userSlice";
 
 interface RouteDetails {
@@ -119,10 +120,17 @@ const Header = () => {
 
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    dispatch(signOutUser());
-    dispatch(clearLocalState());
-    navigate("/auth/login");
+  const handleLogout = async () => {
+    try {
+      await signOut(auth).then(()=> {
+        dispatch(signOutUser());
+        dispatch(clearLocalState());
+        console.log("User signed out successfully");
+        navigate("/auth/login");
+      })
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
   };
 
   const {theme, setTheme} = useTheme();
