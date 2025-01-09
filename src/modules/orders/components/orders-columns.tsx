@@ -88,14 +88,14 @@ export const ordersColumns: ColumnDef<Appointment>[] = [
     ),
     enableSorting: true,
   },
-  {
-    id: "service.category",
-    accessorKey: "service.category",
-    header: "Category",
-    cell: ({ row }) => (
-      <TruncatedCell content={row.getValue("service.category")} />
-    ),
-  },
+  // {
+  //   id: "service.category",
+  //   accessorKey: "service.category",
+  //   header: "Category",
+  //   cell: ({ row }) => (
+  //     <TruncatedCell content={row.getValue("service.category")} />
+  //   ),
+  // },
   {
     id: "locationAddress",
     accessorKey: "locationAddress",
