@@ -415,7 +415,7 @@ const OrderDetails: React.FC = () => {
                 />
                 <div className="space-y-2">
                   <p className="text-sm text-gray-500">Minimum Price</p>
-                  <p className="text-sm text-gray-700">{`KES ${
+                  <p className="text-sm dark:text-white">{`KES ${
                     currentOrder.service?.serviceData?.minimumPrice || 0
                   }`}</p>
                 </div>
@@ -457,7 +457,7 @@ const OrderDetails: React.FC = () => {
                   />
                   <div className="space-y-2">
                     <p className="text-sm text-gray-500">Minimum Price</p>
-                    <p className="text-sm text-gray-700">{`KES ${currentOrder.service.serviceData.minimumPrice}`}</p>
+                    <p className="text-sm text-gray-700 dark:text-white">{`KES ${currentOrder.service.serviceData.minimumPrice}`}</p>
                   </div>
                 </div>
               </div>
