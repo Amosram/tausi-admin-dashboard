@@ -1,4 +1,4 @@
-import { lazy, useState } from "react";
+import { lazy, useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Coordinates, Professional } from "@/models";
 import {
@@ -251,11 +251,11 @@ const ProfessionalDetails = () => {
   const professional = data?.data;
 
   // using the map component
-  const [coordinates, setCoordinates] = useState<Coordinates>(professional?.coordinates || { x: -1.286389, y: 36.817223 });
+  const coordinates = useMemo(() => professional?.coordinates || { x: 0, y: 0 }, [professional]);
   
   const {data: beauticianNearby, isLoading:isBeauticianNearbyLoading, isError:isBeauticianNearbyError} = useGetBeauticianNearbyQuery({
-    latitude: coordinates.x.toString(),
-    longitude: coordinates.y.toString(),
+    latitude: coordinates.y.toString(),
+    longitude: coordinates.x.toString(),
     limit: 10,
   });
   
@@ -504,7 +504,7 @@ const ProfessionalDetails = () => {
           <div className="md:col-span-3 grid-cols-3">
             <Maps
               coordinates={markers}
-              setCoordinates={(coords) => setCoordinates({ x: coords.lat, y: coords.lng })}
+              setCoordinates={(coords) => console.log('Coordinates updated: ', coords)}
               infoBody={(index) => {
                 const marker = markers[index];
                 return (
