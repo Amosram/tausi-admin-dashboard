@@ -74,8 +74,8 @@ export const professionalApi = createApi({
 
     updateverifiedBeauticians: builder.mutation<VerifiedBeauticiansResponse, Partial<VerifiedBeauticians>>({
       query: (data) => ({
-        url: `/professionals/${data.id}`,
-        method: "PATCH",
+        url: `/dashboard/verifications/${data.id}`,
+        method: "POST",
         data: data,
       }),
       invalidatesTags: ['VerifiedBeauticiansDetails'],
