@@ -11,14 +11,12 @@ interface MarkerProps {
 
 const Marker: React.FC<MarkerProps> = ({ coordinates, setCoordinates, infoBody, onMarkerClick }) => {
   const [infoIndex, setInfoIndex] = useState<number | null>(null);
-  const markerRefs = useRef<(google.maps.marker.AdvancedMarkerElement | null)[]>(
-    []
-  );
+  const markerRefs = useRef<(google.maps.marker.AdvancedMarkerElement | null)[]>([]);
 
   return (
     <>
       {coordinates.map((coord, index) => (
-        <React.Fragment key={`${coord.lat}-${coord.lng}`}>
+        <React.Fragment key={`${coord.lat}-${coord.lng}-${index}`}>
           <AdvancedMarker
             ref={(el) => (markerRefs.current[index] = el)}
             position={coord}
@@ -45,7 +43,7 @@ const Marker: React.FC<MarkerProps> = ({ coordinates, setCoordinates, infoBody, 
               maxWidth={200}
               onCloseClick={() => setInfoIndex(null)}
             >
-              {infoBody? infoBody(index) : <div>Info Window</div> }
+              {infoBody ? infoBody(index) : <div>Info Window</div>}
             </InfoWindow>
           )}
         </React.Fragment>
