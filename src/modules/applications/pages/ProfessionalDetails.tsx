@@ -24,6 +24,7 @@ import DeactivateDialog from "../components/DeactivateDialog";
 import { toast } from "@/hooks/use-toast";
 import BoothAssignmentCard from "../components/BoothAssignmentCard";
 import ProfessionalProfileCard from "../components/ProfessionalProfileCard";
+import BusinessCard from "../components/BusinessCard";
 
 const Maps = lazy(() => import("@/components/ui/maps"));
 
@@ -101,72 +102,6 @@ const ProfessionalDetailsCard: React.FC<{
       </div>
     </CardContent>
   </Card>
-);
-
-// business card
-
-const BusinessCard: React.FC<{
-  professional: Professional;
-}> = ({professional}) => (
-  <Card>
-    <CardHeader className="flex flex-row items-start gap-4">
-      <div className="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center">
-        <div className="w-8 h-8 relative">
-          <div className="absolute inset-0 bg-white rounded-full" />
-          <div className="absolute bottom-0 right-0 w-4 h-4 bg-yellow-300 rounded-full" />
-          <div className="absolute top-0 right-0 w-4 h-4 bg-green-500 rounded-full" />
-        </div>
-      </div>
-      <div className="flex-1">
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="text-2xl mb-1">Service Provider</CardTitle>
-            <div className="space-y-1">
-              <div>
-                <span className="text-muted-foreground capitalize">{professional.user.name}</span>
-                <p className="text-lg font-semibold text-blue-900 dark:text-blue-400">{professional.businessName}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Provider Location</span>
-                <p className="text-lg font-semibold text-blue-900 dark:text-blue-400">{professional.locationAddress}</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Star className="w-5 h-5 fill-red-500 text-red-500" />
-            <span className="text-2xl">{professional.rating}</span>
-          </div>
-        </div>
-        {/*TODO: FETCH THE DATA FROM THE API  */}
-        <div className="grid grid-cols-3 gap-4 my-6 py-6 border-y">
-          <div>
-            <p className="text-muted-foreground">Completed Orders</p>
-            <p className="text-xl font-semibold text-blue-900 dark:text-gray-300">__</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Cancelled Orders</p>
-            <p className="text-xl font-semibold text-blue-900 dark:text-gray-300">__</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Total Revenue</p>
-            <p className="text-xl font-semibold text-blue-900 dark:text-gray-300">__</p>
-          </div>
-        </div>
-      
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-muted-foreground">Provider Phone</p>
-            <p className="text-lg font-semibold text-blue-900 dark:text-gray-300">{professional.user.phoneNumber}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Provider Email;</p>
-            <p className="text-lg font-semibold text-blue-900 dark:text-gray-300">{professional.user.email}</p>
-          </div>
-        </div>
-      </div>
-    </CardHeader>
-  </Card>
-  
 );
 
 const formatter = new Intl.NumberFormat('en-US');
