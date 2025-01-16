@@ -36,4 +36,4 @@ jobs:
             firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TAUSI_APP }}
             channelId: staging
             projectId: tausi-app
-            expires: 300d
+            expires: 30d
