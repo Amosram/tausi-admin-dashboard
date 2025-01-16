@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useAppDispatch } from "@/redux/hooks";
 import { setUser } from "@/redux/reducers/userSlice";
 import { TausiUser } from "@/models/user";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { auth } from "@/app/firebase";
 
 const validationSchema = yup.object({
   email: yup.string().email("Enter a valid email").required("Required"),
@@ -30,7 +31,6 @@ const Login = () => {
     validationSchema,
     
     onSubmit: async (values) => {
-      const auth = getAuth();
       try {
         const userCredential = await signInWithEmailAndPassword(
           auth,

@@ -7,7 +7,7 @@ import type { Services } from "@/models/user";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { MoreVertical } from "lucide-react";
-import TanStackTable from "@/components/ui/Table";
+import TanStackTable from "@/components/ui/Table/index";
 import { FaPlus } from "react-icons/fa";
 import AddServiceModal from "../components/AddServiceModal";
 import EditServiceModal from "../components/EditServiceModal";
