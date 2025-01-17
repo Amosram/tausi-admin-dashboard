@@ -54,22 +54,22 @@ export const BoothsTable = ({ booths }: BoothsTableProps) => {
           finalFilteredData = finalFilteredData.filter(
             (booth) =>
               booth.occupancyStatus === "occupied" &&
-                booth.assignments.length === booth.numberOfStations
+                (booth.assignments?.length ?? 0) === booth.numberOfStations
           );
           break;
         case "partially-occupied":
           finalFilteredData = finalFilteredData.filter(
             (booth) =>
               booth.occupancyStatus === "occupied" &&
-                booth.assignments.length > 0 &&
-                booth.assignments.length < booth.numberOfStations
+                (booth.assignments?.length ?? 0) > 0 &&
+                (booth.assignments?.length ?? 0) < booth.numberOfStations
           );
           break;
         case "empty":
           finalFilteredData = finalFilteredData.filter(
             (booth) =>
               booth.occupancyStatus === "empty" ||
-                booth.assignments.length === 0
+                (booth.assignments?.length ?? 0) === 0
           );
           break;
         default:
@@ -79,7 +79,7 @@ export const BoothsTable = ({ booths }: BoothsTableProps) => {
 
       setFilteredData(finalFilteredData);
     }
-  }, [location.search, timeFilteredData]);
+  }, [location.search, booths]);
 
   const AddBoothButton = {
     label: "Create Booth",
