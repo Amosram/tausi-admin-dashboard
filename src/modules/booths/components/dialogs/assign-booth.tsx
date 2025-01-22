@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -14,12 +14,16 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { FormInputField } from "@/components/ui/Form/FormInputField";
-import { useAssignBoothMutation, useGetBoothByIdQuery } from "../../api/boothsApi";
+import {
+  useAssignBoothMutation,
+  useGetBoothByIdQuery,
+} from "../../api/boothsApi";
 import { Assignment, CreateBoothAssignmentRequest } from "@/models";
 import {
   useGetProfessionalsQuery,
   useUpdateProfessionalMutation,
 } from "@/modules/applications/api/professionalApi";
+import { DebouncedInput } from "@/components/ui/DebounceInput";
 
 const boothAssignmentSchema = z
   .object({
@@ -65,11 +69,18 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
 
   const { data: professionalData, isLoading: isProfessionalsLoading } =
     useGetProfessionalsQuery(100);
-  const {data: booth} = useGetBoothByIdQuery(boothId);
+  const { data: booth } = useGetBoothByIdQuery(boothId);
 
   const [updateProfessional, { isLoading }] = useUpdateProfessionalMutation();
 
   const professional = professionalData?.data || [];
+
+  const [searchTerm, setSearchTerm] = useState(""); // State for the search term
+
+  // Filter professionals based on search term
+  const filteredProfessionals = professional.filter((p) =>
+    p.businessName?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const form = useForm<BoothAssignmentFormValues>({
     resolver: zodResolver(boothAssignmentSchema),
@@ -97,10 +108,12 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
         ? assignedBoothResponse.data
         : [assignedBoothResponse?.data];
 
-      const mappedAssignmentsArray: Assignment[] = assignmentsArray.map((item) => ({
-        ...item,
-        booth: booth.data,
-      }));
+      const mappedAssignmentsArray: Assignment[] = assignmentsArray.map(
+        (item) => ({
+          ...item,
+          booth: booth.data,
+        })
+      );
 
       await updateProfessional({
         id: formData.beauticianId,
@@ -127,6 +140,55 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
     }
   };
 
+  const SearchableSelect = ({ options, value, onChange, placeholder }) => {
+    const [searchTerm, setSearchTerm] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+
+    const filteredOptions = options.filter((option) =>
+      option.label.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return (
+      <div className="relative">
+        <h1 className="text-sm mb-3">Beautician</h1>
+        <div
+          className="border rounded-md cursor-pointer p-2"
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          {value
+            ? options.find((o) => o.value === value)?.label || placeholder
+            : placeholder}
+        </div>
+
+        {isOpen && (
+          <div className="absolute z-10 mt-1 w-full bg-secondary text-black border rounded-md shadow-lg">
+            <DebouncedInput
+              value={searchTerm}
+              onChange={(value) => setSearchTerm(value as string)}
+              className="w-full p-2 border-b"
+              placeholder="Search..."
+            />
+            <ul className="max-h-60 overflow-auto">
+              {filteredOptions.map((option) => (
+                <li
+                  key={option.value}
+                  className="cursor-pointer p-2 hover:bg-gray-200"
+                  onClick={() => {
+                    onChange(option.value);
+                    setIsOpen(false);
+                    setSearchTerm("");
+                  }}
+                >
+                  {option.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -135,17 +197,15 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormInputField
-              form={form}
-              name="beauticianId"
-              label="Beautician"
-              type="select"
+            <SearchableSelect
               options={
-                professional?.map((professional) => ({
-                  label: `${professional.businessName}`,
-                  value: professional.id,
+                professional?.map((p) => ({
+                  label: p.businessName || "Unknown",
+                  value: p.id,
                 })) || []
               }
+              value={form.watch("beauticianId")}
+              onChange={(value) => form.setValue("beauticianId", value)}
               placeholder="Select a beautician"
             />
 
