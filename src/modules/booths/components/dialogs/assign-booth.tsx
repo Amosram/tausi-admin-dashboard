@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -14,16 +14,11 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { FormInputField } from "@/components/ui/Form/FormInputField";
-import {
-  useAssignBoothMutation,
-  useGetBoothByIdQuery,
-} from "../../api/boothsApi";
-import { Assignment, CreateBoothAssignmentRequest } from "@/models";
-import {
-  useGetProfessionalsQuery,
-  useUpdateProfessionalMutation,
-} from "@/modules/applications/api/professionalApi";
+import { useSearchProfessionalsMutation, useUpdateProfessionalMutation } from "@/modules/applications/api/professionalApi";
 import { DebouncedInput } from "@/components/ui/DebounceInput";
+import { useAssignBoothMutation, useGetBoothByIdQuery } from "../../api/boothsApi";
+import { SearchCriteriaType } from "@/hooks/useSearch";
+import { Assignment } from "@/models";
 
 const boothAssignmentSchema = z
   .object({
@@ -66,21 +61,73 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
   isAssigning,
 }) => {
   const { toast } = useToast();
+  const [searchProfessionals, { data: searchResults, isLoading }] =
+    useSearchProfessionalsMutation();
 
-  const { data: professionalData, isLoading: isProfessionalsLoading } =
-    useGetProfessionalsQuery(100);
   const { data: booth } = useGetBoothByIdQuery(boothId);
 
-  const [updateProfessional, { isLoading }] = useUpdateProfessionalMutation();
+  const [updateProfessional] = useUpdateProfessionalMutation();
 
-  const professional = professionalData?.data || [];
+  const [searchTerm, setSearchTerm] = useState("");
+  const [professionals, setProfessionals] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState("");
 
-  const [searchTerm, setSearchTerm] = useState(""); // State for the search term
+  const fetchDefaultProfessionals = async () => {
+    const defaultCriteria: SearchCriteriaType[] = [
+      {
+        field: "createdAt",
+        operator: "between",
+        value: [
+          new Date(
+            new Date().setFullYear(new Date().getFullYear() - 50)
+          ).toISOString(),
+          new Date().toISOString(),
+        ],
+      },
+    ];
 
-  // Filter professionals based on search term
-  const filteredProfessionals = professional.filter((p) =>
-    p.businessName?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    const response = await searchProfessionals({
+      searchCriteria: defaultCriteria,
+    }).unwrap();
+
+    setProfessionals(response.data || []);
+  };
+
+  useEffect(() => {
+    if (searchTerm) {
+      const dynamicCriteria: SearchCriteriaType[] = [
+        {
+          field: "businessName",
+          operator: "ilike",
+          value: searchTerm,
+        },
+      ];
+
+      searchProfessionals({ searchCriteria: dynamicCriteria })
+        .unwrap()
+        .then((response) => setProfessionals(response.data || []));
+    } else {
+      fetchDefaultProfessionals();
+    }
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        event.target instanceof HTMLElement &&
+        !event.target.closest(".dropdown-container")
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   const form = useForm<BoothAssignmentFormValues>({
     resolver: zodResolver(boothAssignmentSchema),
@@ -95,7 +142,7 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
 
   const onSubmit = async (formData: BoothAssignmentFormValues) => {
     try {
-      const assignmentData: CreateBoothAssignmentRequest = {
+      const assignmentData = {
         boothId,
         beauticianId: formData.beauticianId,
         startDate: new Date(formData.startDate).toISOString(),
@@ -127,66 +174,12 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
 
       onOpenChange(false);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-
       toast({
         title: "Failed to assign booth",
-        description: `Error: ${errorMessage}`,
+        description: `Error: ${error.message || "Something went wrong"}`,
         variant: "destructive",
       });
-
-      console.error("Booth assignment error:", error);
     }
-  };
-
-  const SearchableSelect = ({ options, value, onChange, placeholder }) => {
-    const [searchTerm, setSearchTerm] = useState("");
-    const [isOpen, setIsOpen] = useState(false);
-
-    const filteredOptions = options.filter((option) =>
-      option.label.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    return (
-      <div className="relative">
-        <h1 className="text-sm mb-3">Beautician</h1>
-        <div
-          className="border rounded-md cursor-pointer p-2"
-          onClick={() => setIsOpen((prev) => !prev)}
-        >
-          {value
-            ? options.find((o) => o.value === value)?.label || placeholder
-            : placeholder}
-        </div>
-
-        {isOpen && (
-          <div className="absolute z-10 mt-1 w-full bg-secondary text-black border rounded-md shadow-lg">
-            <DebouncedInput
-              value={searchTerm}
-              onChange={(value) => setSearchTerm(value as string)}
-              className="w-full p-2 border-b"
-              placeholder="Search..."
-            />
-            <ul className="max-h-60 overflow-auto">
-              {filteredOptions.map((option) => (
-                <li
-                  key={option.value}
-                  className="cursor-pointer p-2 hover:bg-gray-200"
-                  onClick={() => {
-                    onChange(option.value);
-                    setIsOpen(false);
-                    setSearchTerm("");
-                  }}
-                >
-                  {option.label}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    );
   };
 
   return (
@@ -197,24 +190,66 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <SearchableSelect
-              options={
-                professional?.map((p) => ({
-                  label: p.businessName || "Unknown",
-                  value: p.id,
-                })) || []
-              }
-              value={form.watch("beauticianId")}
-              onChange={(value) => form.setValue("beauticianId", value)}
-              placeholder="Select a beautician"
-            />
+            <div className="relative text-black">
+              {/* Search Input */}
+              <DebouncedInput
+                value={selectedValue || searchTerm} // Show the selected value or the search term
+                onChange={(value) => {
+                  if (!selectedValue) {
+                    setSearchTerm(value as string);
+                    setIsDropdownOpen(true); // Open dropdown only when no value is selected
+                  }
+                }}
+                placeholder="Search Beauticians..."
+                className="w-full p-2 border rounded text-black"
+                disabled={!!selectedValue} // Disable input when a value is selected
+              />
+
+              {/* Clear Button */}
+              {selectedValue && (
+                <button
+                  onClick={() => {
+                    setSelectedValue(""); // Clear the selected value
+                    setSearchTerm(""); // Reset search term
+                    setIsDropdownOpen(false); // Close dropdown
+                  }}
+                  className="absolute top-1/2 right-2 transform -translate-y-1/2 text-gray-500 hover:text-black"
+                >
+                  Clear
+                </button>
+              )}
+
+              {/* Dropdown for Search Results */}
+              {isDropdownOpen && professionals.length > 0 && (
+                <ul className="absolute mt-2 bg-white border rounded w-full max-h-48 overflow-y-auto z-10">
+                  {professionals.map((p) => (
+                    <li
+                      key={p.id}
+                      className="p-2 hover:bg-gray-200 cursor-pointer"
+                      onClick={() => {
+                        // Set the selected beautician's ID in the form
+                        form.setValue("beauticianId", p.id, {
+                          shouldValidate: true,
+                        });
+
+                        // Set the selected value and stop further search
+                        setSelectedValue(p.businessName || "");
+                        setSearchTerm(""); // Clear search term to stop queries
+                        setIsDropdownOpen(false); // Close dropdown
+                      }}
+                    >
+                      {p.businessName || "Unknown"}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
 
             <FormInputField
               form={form}
               name="startDate"
               label="Start Date"
               type="date"
-              description="Date when the booth assignment begins"
             />
 
             <FormInputField
@@ -222,23 +257,17 @@ export const AssignBoothDialog: React.FC<AssignBoothDialogProps> = ({
               name="endDate"
               label="End Date"
               type="date"
-              description="Date when the booth assignment ends"
             />
 
             <DialogFooter>
               <Button
-                className="dark:bg-black dark:hover:bg-card"
-                type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
+                disabled={isAssigning}
               >
                 Cancel
               </Button>
-              <Button
-                className="dark:text-gray-300 dark:bg-orange-600 dark:hover:bg-green-800"
-                type="submit"
-                disabled={isAssigning || isProfessionalsLoading}
-              >
+              <Button type="submit" disabled={isAssigning}>
                 {isAssigning ? "Assigning..." : "Assign Booth"}
               </Button>
             </DialogFooter>

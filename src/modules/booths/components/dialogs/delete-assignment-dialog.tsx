@@ -72,9 +72,9 @@ export const DeleteBoothAssignmentDialog = ({
       <Dialog open={isDeleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Booth</DialogTitle>
+            <DialogTitle>Delete Booth Assignment</DialogTitle>
             <DialogDescription>
-              Provide a reason for deleting this booth
+              Provide a reason for deleting this assignment
             </DialogDescription>
           </DialogHeader>
 
@@ -118,13 +118,13 @@ export const DeleteBoothAssignmentDialog = ({
             </AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              booth.
+              Assignment.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => handleDeleteAssignment(assignment.id)}
+              onClick={() => handleDeleteAssignment(assignment?.id)}
               disabled={isLoading}
             >
               {isLoading ? "Deleting..." : "Confirm Delete"}
