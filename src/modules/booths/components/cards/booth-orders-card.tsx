@@ -69,7 +69,7 @@ const BoothOrdersCard: React.FC<BoothOrdersCardProps> = ({ boothId }) => {
                   </p>
                   <p className="text-gray-600 dark:text-gray-400">
                     Amount:{" "}
-                    <span className="font-medium">${order.totalPrice}</span>
+                    <span className="font-medium">KES {order.totalPrice}</span>
                   </p>
 
                   <p className="text-gray-600 dark:text-gray-400">
@@ -118,9 +118,6 @@ const BoothOrdersCard: React.FC<BoothOrdersCardProps> = ({ boothId }) => {
                 <DialogTitle>Order Details</DialogTitle>
               </DialogHeader>
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="text-gray-500 font-medium">Appointment ID</div>
-                <div className="text-gray-700">{selectedOrder.id}</div>
-
                 <div className="text-gray-500 font-medium">
                   Appointment Date
                 </div>
@@ -132,7 +129,7 @@ const BoothOrdersCard: React.FC<BoothOrdersCardProps> = ({ boothId }) => {
                 <div className="text-gray-700">{selectedOrder.status}</div>
 
                 <div className="text-gray-500 font-medium">Total Price</div>
-                <div className="text-gray-700">${selectedOrder.totalPrice}</div>
+                <div className="text-gray-700">KES {selectedOrder.totalPrice}</div>
 
                 <div className="text-gray-500 font-medium">Paid</div>
                 <div className="text-gray-700">
@@ -143,6 +140,9 @@ const BoothOrdersCard: React.FC<BoothOrdersCardProps> = ({ boothId }) => {
                 <div className="text-gray-700">
                   {new Date(selectedOrder.createdAt).toLocaleString()}
                 </div>
+
+                <div className="text-gray-500 font-medium">Location</div>
+                <div className="text-gray-700">{selectedOrder.locationAddress}</div>
 
                 {selectedOrder.deletedAt && (
                   <>

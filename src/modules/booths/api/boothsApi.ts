@@ -14,6 +14,7 @@ export const boothsApi = createApi({
   baseQuery: axiosBaseQuery({ isAuthorizedApi: true }),
   tagTypes: ["Booths", "BoothDetails", "BoothAssignments"],
   refetchOnMountOrArgChange: true,
+  keepUnusedDataFor: 0,
   endpoints: (builder) => ({
     getBooths: builder.query<BoothsApiResponse<Booth[]>, void>({
       query: () => ({
