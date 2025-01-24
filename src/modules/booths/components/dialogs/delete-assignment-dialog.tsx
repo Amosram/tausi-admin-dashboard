@@ -31,12 +31,14 @@ interface DeleteBoothAssignmentDialogProps {
   ) => void;
   assignment: BoothAssignmentDetails;
   boothId: string;
+  onOpenChange?: (value: boolean) => void;
 }
 
 export const DeleteBoothAssignmentDialog = ({
   isDeleteDialogOpen,
   setDeleteDialogOpen,
   assignment,
+  onOpenChange,
 }: DeleteBoothAssignmentDialogProps) => {
   const { toast } = useToast();
   const [deleteReason, setDeleteReason] = useState("");
@@ -58,6 +60,9 @@ export const DeleteBoothAssignmentDialog = ({
         variant: "success",
       });
       setDeleteDialogOpen(false);
+      if (onOpenChange) {
+        onOpenChange(false);
+      }
     } catch (error) {
       toast({
         title: "Failed to delete",

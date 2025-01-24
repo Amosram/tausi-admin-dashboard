@@ -108,6 +108,7 @@ const BoothsAssignments = () => {
         setDeleteDialogOpen={setTerminateDialogOpen}
         assignment={selectedAssignment}
         boothId={boothId}
+        onOpenChange={() => setSelectedAssignment(null)}
       />
     </div>
   );
