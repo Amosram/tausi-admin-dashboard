@@ -73,7 +73,7 @@ const BoothOrdersCard: React.FC<BoothOrdersCardProps> = ({ boothId }) => {
                   </p>
 
                   <p className="text-gray-600 dark:text-gray-400">
-                    Amount Upfront: ${order.amountUpfront}
+                    Amount Upfront: KES {order.amountUpfront}
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 items-end">

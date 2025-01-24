@@ -7,6 +7,7 @@ import {
   CreateBoothAssignmentRequest,
   CreateBoothPayload,
 } from "@/models";
+import { BoothAvailabilityResponseNew } from "../types";
 
 export const boothsApi = createApi({
   reducerPath: "boothsApi",
@@ -80,13 +81,30 @@ export const boothsApi = createApi({
         invalidatesTags: ["Booths"],
       }
     ),
-    deleteBoothAssignment: builder.mutation<void, { id: string; deletedReason?: string }>({
-      query: ({id, deletedReason}) => ({
+    deleteBoothAssignment: builder.mutation<
+      void,
+      { id: string; deletedReason?: string }
+    >({
+      query: ({ id, deletedReason }) => ({
         url: `/booth-assignments/${id}`,
         method: "DELETE",
         data: { deletedReason },
       }),
       invalidatesTags: ["BoothAssignments", "BoothDetails", "BoothAssignments"],
+    }),
+    getBoothAvailability: builder.query<
+      BoothAvailabilityResponseNew,
+      { boothId: string; startTime: string; endTime: string }
+    >({
+      query: ({ boothId, startTime, endTime }) => ({
+        url: `/booths/availability/${boothId}`,
+        method: "GET",
+        params: {
+          startTime,
+          endTime,
+        },
+      }),
+      providesTags: ["BoothDetails"],
     }),
   }),
 });
@@ -100,4 +118,5 @@ export const {
   useAssignBoothMutation,
   useGetBoothAssignmentsQuery,
   useDeleteBoothAssignmentMutation,
+  useGetBoothAvailabilityQuery,
 } = boothsApi;
