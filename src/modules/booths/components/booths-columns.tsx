@@ -10,6 +10,7 @@ import {
 import { MoreVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Booth } from "@/models";
+import { useGetBoothAssignmentsQuery } from "../api/boothsApi";
 
 const TruncatedCell = ({ content }: { content: string | null | undefined }) => {
   if (!content) return <span>-</span>;
@@ -19,6 +20,18 @@ const TruncatedCell = ({ content }: { content: string | null | undefined }) => {
     </span>
   );
 };
+
+const TotalAssignmentsCell: React.FC<{ boothId: string }> = ({ boothId }) => {
+  const { data, isLoading } = useGetBoothAssignmentsQuery(boothId);
+
+  if (isLoading) {
+    return <span>Loading...</span>;
+  }
+
+  const totalAssignments = data?.data ? data.data.length : 0;
+  return <span>{totalAssignments}</span>;
+};
+
 
 export const boothColumns: ColumnDef<Booth>[] = [
   {
@@ -67,6 +80,11 @@ export const boothColumns: ColumnDef<Booth>[] = [
     cell: ({ row }) => (
       <TruncatedCell content={row.getValue("numberOfBeauticians")} />
     ),
+  },
+  {
+    id: "totalAssignments",
+    header: "Total Assignments",
+    cell: ({ row }) => <TotalAssignmentsCell boothId={row.original.id} />,
   },
   {
     id: "isActive",
