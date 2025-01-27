@@ -7,7 +7,7 @@ import {
   CreateBoothAssignmentRequest,
   CreateBoothPayload,
 } from "@/models";
-import { BoothAvailabilityResponseNew } from "../types";
+import { BoothAssignmentResponseNew, BoothAvailabilityResponseNew } from "../types";
 
 export const boothsApi = createApi({
   reducerPath: "boothsApi",
@@ -63,6 +63,14 @@ export const boothsApi = createApi({
         data: assignmentRequest,
       }),
       invalidatesTags: ["BoothDetails", "BoothAssignments"],
+    }),
+    getAssignment: builder.query<BoothAssignmentResponseNew, string>({
+      query: (assignmentId) => ({
+        url: `/booth-assignments/${assignmentId}`,
+        method: "GET",
+      }),
+      providesTags: ["BoothAssignments"],
+      keepUnusedDataFor: 0,
     }),
     getBoothAssignments: builder.query<BoothAssignmentResponse, string>({
       query: (boothId) => ({
@@ -120,4 +128,5 @@ export const {
   useGetBoothAssignmentsQuery,
   useDeleteBoothAssignmentMutation,
   useGetBoothAvailabilityQuery,
+  useGetAssignmentQuery
 } = boothsApi;

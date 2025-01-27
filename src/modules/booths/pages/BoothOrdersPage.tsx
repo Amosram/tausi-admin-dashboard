@@ -11,11 +11,13 @@ import { Appointment } from "@/models";
 import { useGetOrderByBoothIdQuery } from "@/modules/orders/api/ordersApi";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { BoothOrdersTable } from "../components/booths-orders-table";
+import { HiArrowLeft } from "react-icons/hi";
 
 const BoothOrdersPage = () => {
   const { boothId } = useParams();
   const { data, error, isLoading } = useGetOrderByBoothIdQuery(boothId);
-  const [selectedOrder, setSelectedOrder] = useState<Appointment>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Appointment | null>(null);
 
   if (error) {
     return (
@@ -35,55 +37,23 @@ const BoothOrdersPage = () => {
     );
   }
 
-  const ordersData: Appointment[] = data?.data;
+  const ordersData: Appointment[] = data?.data || [];
 
   return (
     <>
       <div className="p-6">
         <Link
           to={`/booths/${boothId}`}
-          className="w-full items-center flex flex-col p-4 hover:underline text-blue-500"
+          className="flex items-center text-blue-500 hover:underline text-lg font-semibold"
         >
+          <HiArrowLeft className="mr-2" />
           Go Back
         </Link>
-        {ordersData.map((order) => (
-          <div
-            key={order.id}
-            className="p-4 border border-gray-300 bg-white rounded-lg shadow-sm mb-4 transition-shadow duration-200 flex justify-between items-center"
-          >
-            <div>
-              <p className="font-semibold text-gray-800 mb-2">
-                Order ID: {order.id}
-              </p>
-              <p className="text-gray-600">
-                Amount: <span className="font-medium">KES {order.totalPrice}</span>
-              </p>
-
-              <p className="text-gray-600">
-                Amount Upfront: KES {order.amountUpfront}
-              </p>
-            </div>
-            <div className="flex flex-col gap-2 items-end">
-              <p className="flex items-center gap-2 mt-2">
-                <span
-                  className={`inline-block px-2 py-1 rounded text-sm font-medium text-white ${
-                    order.isPaid ? "bg-green-500" : "bg-red-500"
-                  }`}
-                >
-                  {order.isPaid ? "Paid" : "Not Paid"}
-                </span>
-              </p>
-              <Button
-                onClick={() => setSelectedOrder(order)}
-                variant="link"
-                className="inline-block mt-4 text-blue-600 hover:underline px-0"
-              >
-                View Details
-              </Button>
-            </div>
-          </div>
-        ))}
+        <div className="mt-6">
+          <BoothOrdersTable orders={ordersData} onRowClick={setSelectedOrder} />
+        </div>
       </div>
+
       {selectedOrder && (
         <Dialog
           open={!!selectedOrder}
@@ -106,7 +76,9 @@ const BoothOrdersPage = () => {
               <div className="text-gray-700">{selectedOrder.status}</div>
 
               <div className="text-gray-500 font-medium">Total Price</div>
-              <div className="text-gray-700">KES {selectedOrder.totalPrice}</div>
+              <div className="text-gray-700">
+                KES {selectedOrder.totalPrice}
+              </div>
 
               <div className="text-gray-500 font-medium">Paid</div>
               <div className="text-gray-700">
