@@ -22,7 +22,7 @@ export const BoothOrdersTable = React.memo(({ orders, onRowClick }: OrdersTableP
   const rowsPerPage = 10;
 
   const table = useReactTable({
-    data: orders, // ✅ Sorting is applied to all orders first
+    data: orders,
     columns: boothOrderColumns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -30,7 +30,6 @@ export const BoothOrdersTable = React.memo(({ orders, onRowClick }: OrdersTableP
     state: { sorting },
   });
 
-  // ✅ Use useMemo for paginated results to avoid re-computation on each render
   const paginatedOrders = useMemo(() => {
     return table.getRowModel().rows.slice(
       (currentPage - 1) * rowsPerPage,
