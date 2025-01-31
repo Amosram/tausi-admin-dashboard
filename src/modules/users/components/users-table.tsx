@@ -111,11 +111,14 @@ export const UsersTable = ({ users }: UsersTableProps) => {
     icon: <FaPlus size={20} />,
   };
 
+  const totalItemsReturned = filteredData.length || 0;
+
   return (
     <div className="p-6">
       <div className="md:px-4 px-1 my-4 flex gap-3 md:flex-row md:justify-between flex-col items-center">
-        <div className="flex">
+        <div className="flex flex-col">
           <TableFilters filters={usersFilters} queryParam="filter" />
+          <h1 className="text-gray-500 mt-5 text-sm">Total Items: <strong>{totalItemsReturned}</strong></h1>
         </div>
         <TimeFilter
           queryParam="timeFilter"
