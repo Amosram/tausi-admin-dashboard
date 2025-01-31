@@ -72,13 +72,14 @@ export const BoothsAssignmentCard: React.FC<BoothsAssignmentCardProps> = ({
     )
     .slice(0, 2);
 
+    const assignmentsLength = currentBooth?.assignments.length || 0;
+
   return (
     <Card className="flex-1 flex flex-col border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
       <CardHeader className="bg-gray-50 dark:bg-gray-800 p-4 border-b">
         <CardTitle className="flex justify-between">
           <div className="flex items-center gap-3">
-            <MapPin className="h-5 w-5" />
-            Assignments
+            Total Assignments: {assignmentsLength}
           </div>
           <button
             onClick={handleRefresh}
