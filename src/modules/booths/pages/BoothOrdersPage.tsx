@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Appointment } from "@/models";
 import { useGetOrderByBoothIdQuery } from "@/modules/orders/api/ordersApi";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { BoothOrdersTable } from "../components/booths-orders-table";
 import { HiArrowLeft } from "react-icons/hi";
@@ -18,6 +18,10 @@ const BoothOrdersPage = () => {
   const { boothId } = useParams();
   const { data, error, isLoading } = useGetOrderByBoothIdQuery(boothId);
   const [selectedOrder, setSelectedOrder] = useState<Appointment | null>(null);
+
+  const handleRowClick = useCallback((order: Appointment) => {
+    setSelectedOrder(order);
+  }, []);
 
   if (error) {
     return (
@@ -50,7 +54,7 @@ const BoothOrdersPage = () => {
           Go Back
         </Link>
         <div className="mt-6">
-          <BoothOrdersTable orders={ordersData} onRowClick={setSelectedOrder} />
+          <BoothOrdersTable orders={ordersData} onRowClick={handleRowClick} />
         </div>
       </div>
 

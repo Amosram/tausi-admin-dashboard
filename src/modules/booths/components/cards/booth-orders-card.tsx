@@ -96,7 +96,7 @@ const BoothOrdersCard: React.FC<BoothOrdersCardProps> = ({ boothId }) => {
                 </div>
               </div>
             ))}
-            <Button>
+            <Button asChild>
               <Link to={`/booths/${boothId}/orders`}>View More</Link>
             </Button>
           </>
