@@ -7,8 +7,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { boothOrderColumns } from "./booth-order-columns";
-import React, { useState } from "react";
-import { ArrowUpDown, List } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { ArrowUp, ArrowDown, ArrowUpDown, List } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface OrdersTableProps {
@@ -21,28 +21,29 @@ export const BoothOrdersTable = React.memo(({ orders, onRowClick }: OrdersTableP
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
 
-  const totalPages = Math.ceil(orders.length / rowsPerPage);
-
-  const paginatedOrders = orders.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
-
   const table = useReactTable({
-    data: paginatedOrders,
+    data: orders, // ✅ Sorting is applied to all orders first
     columns: boothOrderColumns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
-    state: {
-      sorting,
-    },
+    state: { sorting },
   });
+
+  // ✅ Use useMemo for paginated results to avoid re-computation on each render
+  const paginatedOrders = useMemo(() => {
+    return table.getRowModel().rows.slice(
+      (currentPage - 1) * rowsPerPage,
+      currentPage * rowsPerPage
+    );
+  }, [table.getRowModel().rows, currentPage]);
+
+  const totalPages = Math.ceil(table.getRowModel().rows.length / rowsPerPage);
 
   return (
     <div className="w-full">
       <div className="flex justify-between mb-4 items-center">
-        <div></div> {/* Placeholder to balance alignment */}
+        <div></div>
         <Link
           to="/orders/list"
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-primary dark:text-gray-300 dark:hover:text-white"
@@ -78,7 +79,13 @@ export const BoothOrdersTable = React.memo(({ orders, onRowClick }: OrdersTableP
                           header.getContext()
                         )}
                         {header.column.getCanSort() && (
-                          <ArrowUpDown className="h-4 w-4" />
+                          header.column.getIsSorted() === "asc" ? (
+                            <ArrowUp className="h-4 w-4" />
+                          ) : header.column.getIsSorted() === "desc" ? (
+                            <ArrowDown className="h-4 w-4" />
+                          ) : (
+                            <ArrowUpDown className="h-4 w-4" />
+                          )
                         )}
                       </div>
                     )}
@@ -88,7 +95,7 @@ export const BoothOrdersTable = React.memo(({ orders, onRowClick }: OrdersTableP
             ))}
           </thead>
           <tbody className="bg-white dark:bg-card divide-y divide-gray-200">
-            {table.getRowModel().rows.map((row, index) => (
+            {paginatedOrders.map((row, index) => (
               <tr
                 key={row.id}
                 className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
