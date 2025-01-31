@@ -109,7 +109,7 @@ const BoothOrdersPage = () => {
               </div>
             </div>
 
-            <Button className="mt-4">
+            <Button className="mt-4" asChild>
               <Link to={`/orders/${selectedOrder.id}`}>View Order</Link>
             </Button>
           </DialogContent>
