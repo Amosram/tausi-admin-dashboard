@@ -7,7 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { boothOrderColumns } from "./booth-order-columns";
-import { useState } from "react";
+import React, { useState } from "react";
 import { ArrowUpDown, List } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -16,7 +16,7 @@ interface OrdersTableProps {
   onRowClick?: (order: Appointment) => void;
 }
 
-export const BoothOrdersTable = ({ orders, onRowClick }: OrdersTableProps) => {
+export const BoothOrdersTable = React.memo(({ orders, onRowClick }: OrdersTableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
@@ -128,4 +128,4 @@ export const BoothOrdersTable = ({ orders, onRowClick }: OrdersTableProps) => {
       </div>
     </div>
   );
-};
+});

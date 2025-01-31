@@ -50,7 +50,7 @@ const BoothOrdersCard: React.FC<BoothOrdersCardProps> = ({ boothId }) => {
   return (
     <Card className="w-full flex-1">
       <CardHeader>
-        <CardTitle className="text-lg font-bold">Latest Booth Orders</CardTitle>
+        <CardTitle className="text-lg font-bold">Total Booth Orders: {ordersData.length || 0}</CardTitle>
         <CardDescription className="text-sm text-gray-500 dark:text-gray-300">
           Overview of recent orders
         </CardDescription>
@@ -96,7 +96,7 @@ const BoothOrdersCard: React.FC<BoothOrdersCardProps> = ({ boothId }) => {
                 </div>
               </div>
             ))}
-            <Button>
+            <Button asChild>
               <Link to={`/booths/${boothId}/orders`}>View More</Link>
             </Button>
           </>

@@ -190,6 +190,9 @@ export interface Appointment {
   latitude: number;
   longitude: number;
   additionalInfo: string;
+  isBooth: boolean | null;
+  boothId: string | null;
+  booth: Booth | null;
   coordinates: Coordinates;
   client: Client;
   professional: Professional;

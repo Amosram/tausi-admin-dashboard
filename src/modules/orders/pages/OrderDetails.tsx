@@ -194,6 +194,34 @@ const OrderDetails: React.FC = () => {
                     value={`${currentOrder.appointmentStartTime} - ${currentOrder.appointmentEndTime}`}
                   />
                 </div>
+                {currentOrder.isBooth && currentOrder.booth && (
+                  <div className="flex items-center space-x-4 border-t border-gray-400">
+                    {/* Booth Image */}
+                    {currentOrder.booth.imageUrl && (
+                      <img
+                        src={currentOrder.booth.imageUrl}
+                        alt={`${currentOrder.booth.name || "Booth"} Image`}
+                        className="h-16 w-16 rounded-lg object-cover shadow"
+                      />
+                    )}
+
+                    {/* Booth Details */}
+                    <div className="flex flex-col items-start mt-5">
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        {currentOrder.booth.name || "Booth"}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {currentOrder.booth.locationAddress ||
+                          "No location provided"}
+                      </p>
+                      <Button asChild variant="link" className="mt-2">
+                        <Link to={`/booths/${currentOrder.boothId}`}>
+                          View Details
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </InfoCard>
 

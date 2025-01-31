@@ -141,6 +141,24 @@ export const ordersColumns: ColumnDef<Appointment>[] = [
     cell: ({ row }) => getStatusBadge(row.getValue("status")),
   },
   {
+    id: "isBooth",
+    accessorKey: "isBooth",
+    header: "Booth Order?",
+    cell: ({ row }) => {
+      const isBooth = row.getValue("isBooth") as boolean;
+      return isBooth ? (
+        <Badge className="bg-green-100 text-green-800 border border-green-400 font-medium px-2 py-1 rounded w-10">
+          Yes
+        </Badge>
+      ) : (
+        <Badge className="bg-red-100 text-red-800 border border-red-400 font-medium px-2 py-1 rounded w-10">
+          No
+        </Badge>
+      );
+    },
+  },
+  
+  {
     id: "createdAt",
     accessorKey: "createdAt",
     header: "Order Date",
