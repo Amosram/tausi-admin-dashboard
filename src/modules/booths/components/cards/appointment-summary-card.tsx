@@ -258,7 +258,7 @@ export const AppointmentsSummaryCard = ({
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Revenue</span>
                     <span className="text-xl font-bold text-gray-900">
-                      ${appointment.totalAmount.toLocaleString()}
+                      KSH {appointment.totalAmount.toLocaleString()}
                     </span>
                   </div>
                 </div>
