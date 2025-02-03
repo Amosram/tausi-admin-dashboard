@@ -23,6 +23,9 @@ import { BoothsMaintenanceCard } from "../components/cards/booths-maintenance-ca
 import BoothsLogsCard from "../components/cards/booths-logs-card";
 import { boothDetails } from "../constants";
 import BoothOrdersCard from "../components/cards/booth-orders-card";
+import { useGetAppointmentTotalsQuery } from "@/modules/orders/api/ordersApi";
+import { format } from "date-fns";
+import { AppointmentsSummaryCard } from "../components/cards/appointment-summary-card";
 
 const BoothDetails: React.FC = () => {
   const { boothId } = useParams<{ boothId: string }>();
@@ -42,6 +45,76 @@ const BoothDetails: React.FC = () => {
     skip: !boothId,
   });
 
+  const currentBooth = boothData?.data;
+  const [coordinates, setCoordinates] = useState<Coordinates>(
+    currentBooth?.coordinates || DEFAULT_LOCATION
+  );
+
+  const [activeTab, setActiveTab] = useState("range"); // Default: Range selection
+  const [dateFilter, setDateFilter] = useState("all-time"); // Default: All Time
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
+  const [date, setDate] = useState<string | null>(null);
+
+  // Helper function to calculate date ranges
+  const getDateRange = (filter: string) => {
+    const today = new Date();
+    switch (filter) {
+      case "1-week":
+        return {
+          start: format(
+            new Date(today.setDate(today.getDate() - 7)),
+            "yyyy-MM-dd"
+          ),
+          end: format(new Date(), "yyyy-MM-dd"),
+        };
+      case "1-month":
+        return {
+          start: format(
+            new Date(today.setMonth(today.getMonth() - 1)),
+            "yyyy-MM-dd"
+          ),
+          end: format(new Date(), "yyyy-MM-dd"),
+        };
+      case "6-months":
+        return {
+          start: format(
+            new Date(today.setMonth(today.getMonth() - 6)),
+            "yyyy-MM-dd"
+          ),
+          end: format(new Date(), "yyyy-MM-dd"),
+        };
+      case "1-year":
+        return {
+          start: format(
+            new Date(today.setFullYear(today.getFullYear() - 1)),
+            "yyyy-MM-dd"
+          ),
+          end: format(new Date(), "yyyy-MM-dd"),
+        };
+      case "10-years":
+        return {
+          start: format(
+            new Date(today.setFullYear(today.getFullYear() - 10)),
+            "yyyy-MM-dd"
+          ),
+          end: format(new Date(), "yyyy-MM-dd"),
+        };
+      default:
+        return { start: null, end: null };
+    }
+  };
+
+  const selectedRange = getDateRange(dateFilter);
+
+  const { data: appointmentTotalsData, isLoading: isAppointmentsLoading } =
+    useGetAppointmentTotalsQuery({
+      boothId,
+      startDate: selectedRange.start || startDate || undefined,
+      endDate: selectedRange.end || endDate || undefined,
+      date: date || undefined,
+    });
+
   const [assignBooth, { isLoading: isAssigning }] = useAssignBoothMutation();
 
   // Incase polling is needed
@@ -53,11 +126,6 @@ const BoothDetails: React.FC = () => {
   //   pollingInterval: 50000, // 5 seconds
   //   enabled: true // You can toggle this based on user preference or app state
   // });
-
-  const currentBooth = boothData?.data;
-  const [coordinates, setCoordinates] = useState<Coordinates>(
-    currentBooth?.coordinates || DEFAULT_LOCATION
-  );
 
   if (isError || !boothId) {
     return <DummyBoothDetails />;
@@ -169,6 +237,23 @@ const BoothDetails: React.FC = () => {
       <div className="flex w-full gap-4 flex-col lg:flex-row">
         <BoothsLogsCard currentBoothLogs={currentBooth.logs} />
         <BoothOrdersCard boothId={currentBooth.id} />
+      </div>
+
+      <div className="mt-8">
+        <AppointmentsSummaryCard
+          isAppointmentsLoading={isAppointmentsLoading}
+          appointmentTotalsData={appointmentTotalsData}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          dateFilter={dateFilter}
+          setDateFilter={setDateFilter}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          date={date}
+          setDate={setDate}
+        />
       </div>
 
       <div className="mt-8">

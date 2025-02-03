@@ -79,13 +79,15 @@ export const ordersApi = createApi({
       date?: string;
       startDate?: string;
       endDate?: string;
+      boothId?: string;
     }>({
-      query: ({ beauticianId, date, startDate, endDate }) => {
+      query: ({ beauticianId, date, startDate, endDate, boothId }) => {
         const params = new URLSearchParams();
         if (beauticianId) params.append("beauticianId", beauticianId);
         if (date) params.append("date", date);
         if (startDate) params.append("startDate", startDate);
         if (endDate) params.append("endDate", endDate);
+        if (boothId) params.append("boothId", boothId);
 
         return {
           url: `/appointments/query/totals?${params.toString()}`,
