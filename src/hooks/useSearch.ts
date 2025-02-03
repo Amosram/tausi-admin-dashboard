@@ -430,6 +430,24 @@ export const searchPresets = {
         value: "scheduled",
         operator: "eq" as SearchOperator,
       },
+      {
+        label: "Arrived",
+        column: "status",
+        value: "arrived",
+        operator: "eq" as SearchOperator,
+      },
+      {
+        label: "Booth Orders",
+        column: "isBooth",
+        value: true,
+        operator: "eq" as SearchOperator,
+      },
+      {
+        label: "Non-Booth Orders",
+        column: "isBooth",
+        value: true,
+        operator: "ne" as SearchOperator,
+      },
     ],
   },
   applications:{
