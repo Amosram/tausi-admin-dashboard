@@ -76,6 +76,8 @@ const TanStackTable = <T,>({
 
   const defaultColumn = "status";
 
+  const TotalItems = data.length || 0;
+
   const table = useReactTable({
     data,
     columns,
@@ -311,6 +313,7 @@ const TanStackTable = <T,>({
       <div className="overflow-auto">
         <div className="inline-block min-w-full p-1">
           <div className="flex flex-col">
+          <h1 className="text-gray-500 mt-5 text-sm">Total Items: <strong>{TotalItems}</strong></h1>
             <div className="flex justify-between items-center gap-1 mt-3 mb-2">
               {showGlobalFilter ? (
                 <>
