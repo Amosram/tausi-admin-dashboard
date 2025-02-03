@@ -23,6 +23,8 @@ export interface GetTotalsApiResponse {
     status: string;
     totalAppointments: number;
     totalAmount: number;
+    totalAmountUpfront: number;
+    totalBeauticianEarnings: number;
     [key: string]: any; // For any additional fields
   }>;
 }

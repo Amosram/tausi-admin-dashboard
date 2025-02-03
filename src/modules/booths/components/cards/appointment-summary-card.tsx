@@ -50,6 +50,8 @@ export const AppointmentsSummaryCard = ({
       status: string;
       totalAppointments: number;
       totalAmount: number;
+      totalAmountUpfront: number;
+      totalBeauticianEarnings: number;
     }>;
   };
   activeTab: string;
@@ -256,9 +258,21 @@ export const AppointmentsSummaryCard = ({
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Revenue</span>
+                    <span className="text-gray-600">Revenue from Booth</span>
                     <span className="text-xl font-bold text-gray-900">
-                      KSH {appointment.totalAmount.toLocaleString()}
+                      KSH {appointment.totalAmountUpfront}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Beautician Revenue</span>
+                    <span className="text-md font-bold text-gray-900">
+                      KSH {appointment.totalBeauticianEarnings}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Total Amount</span>
+                    <span className="text-md font-bold text-gray-900">
+                      KSH {appointment.totalAmount}
                     </span>
                   </div>
                 </div>
