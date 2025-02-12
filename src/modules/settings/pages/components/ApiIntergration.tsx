@@ -60,8 +60,8 @@ export default function ApiIntegrations() {
             type="password"
           />
         </div>
-        <div className="flex justify-center">
-          <Button onClick={handleSave} className="w-[50%] bg-green-600">Save Changes</Button>
+        <div className="flex justify-start">
+          <Button onClick={handleSave} className="w-[35%] bg-green-600">Save Changes</Button>
         </div>
       </CardContent>
     </Card>
