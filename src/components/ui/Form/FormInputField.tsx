@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface SelectOption {
+export interface SelectOption {
   label: string;
   value: string;
 }
