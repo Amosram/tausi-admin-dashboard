@@ -1,10 +1,10 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { useForm, FormProvider } from "react-hook-form";
-import { FormInputField } from "../Form/FormInputField";
-import type { SelectOption } from "../Form/FormInputField";
+import { FormInputField} from "../Form/FormInputField";
+import { SelectOption } from "../Form/FormInputField";
 
-// Mock form component for testing
+
 const TestForm = ({ options = [] }: { type: string; options?: SelectOption[] }) => {
   const form = useForm({ defaultValues: { testField: "" } });
 
@@ -67,7 +67,7 @@ it("renders a number input correctly", () => {
 });
 
 it("renders a description if provided", () => {
-  render(<TestForm description="This is a description" />);
+  render(<TestForm type="text" />);
 });
 
 it("renders an error message if validation fails", () => {

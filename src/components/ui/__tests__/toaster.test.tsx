@@ -3,7 +3,6 @@ import { describe, it, expect, vi } from "vitest";
 import { Toaster } from "../toaster";
 import { useToast } from "@/hooks/use-toast";
 
-// Mock the `useToast` hook
 vi.mock("@/hooks/use-toast", () => ({
   useToast: vi.fn(),
 }));

@@ -26,12 +26,14 @@ describe("Directions Component", () => {
     localStorage.setItem("location_lat", "1.2345");
     localStorage.setItem("location_lon", "2.3456");
 
-    (useMap as unknown as vi.fn).mockReturnValue({});
-    (useMapsLibrary as unknown as vi.fn).mockReturnValue({
-      DirectionsService: google.maps.DirectionsService,
-      DirectionsRenderer: google.maps.DirectionsRenderer,
-    });
-
+    vi.mock("@vis.gl/react-google-maps", () => ({
+      useMap: vi.fn(() => ({})),
+      useMapsLibrary: vi.fn(() => ({
+        DirectionsService: google.maps.DirectionsService,
+        DirectionsRenderer: google.maps.DirectionsRenderer,
+      })),
+    }));
+    
     mockRoute = vi.fn(() =>
       Promise.resolve({
         routes: [{ legs: [{}] }],
