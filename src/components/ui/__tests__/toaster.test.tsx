@@ -9,11 +9,13 @@ vi.mock("@/hooks/use-toast", () => ({
 
 describe("Toaster Component", () => {
   it("renders multiple toasts correctly", () => {
-    useToast.mockReturnValue({
+    vi.mocked(useToast).mockReturnValue({
       toasts: [
         { id: "1", title: "Toast 1", description: "This is toast 1" },
         { id: "2", title: "Toast 2", description: "This is toast 2" },
       ],
+      toast: undefined,
+      dismiss: undefined
     });
 
     render(<Toaster />);
@@ -25,10 +27,12 @@ describe("Toaster Component", () => {
   });
 
   it("closes a toast when the close button is clicked", async () => {
-    useToast.mockReturnValue({
+    vi.mocked(useToast).mockReturnValue({
       toasts: [
-        { id: "1", title: "Toast 1", description: "This is toast 1" },
+        { id: "1", title: "Toast 1", description: "This is toast 1" }
       ],
+      dismiss: vi.fn(),
+      toast: undefined
     });
 
     render(<Toaster />);
