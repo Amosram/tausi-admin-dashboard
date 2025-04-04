@@ -41,7 +41,6 @@ export const ordersApi = createApi({
         url: `/appointments?limit=${limit}`,
         method: "GET",
       }),
-      providesTags: ["Orders"],
       keepUnusedDataFor: 0,
     }),
     getOrderById: builder.query<AppointmentsApiResponse, string>({

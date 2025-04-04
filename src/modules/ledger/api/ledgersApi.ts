@@ -49,7 +49,7 @@ export const ledgersApi = createApi({
       invalidatesTags: ['Ledgers']
     }),
 
-    createLoanBook: builder.mutation<Ledgers, CreateUpdateLoanBook>({
+    createLoanBook: builder.mutation<ApiResponse<Ledgers>, CreateUpdateLoanBook>({
       query: (data) => ({
         url: "/ledgers/books",
         method: "POST",
@@ -58,7 +58,7 @@ export const ledgersApi = createApi({
       invalidatesTags: ["Ledgers"]
     }),
 
-    updateLoanBook: builder.mutation<Ledgers, Partial<Ledgers>>({
+    updateLoanBook: builder.mutation<ApiResponse<Ledgers>, Partial<Ledgers>>({
       query:(data) => ({
         url: `/ledgers/books/{id}`,
         method: "PATCH",
@@ -67,7 +67,7 @@ export const ledgersApi = createApi({
       invalidatesTags: ["Ledgers"]
     }),
 
-    deleteLoanBook: builder.mutation<void, string>({
+    deleteLoanBook: builder.mutation<ApiResponse<Ledgers>, string>({
       query: (id) => ({
         url: `/ledgers/books/${id}`,
         method: "DELETE"
@@ -83,7 +83,7 @@ export const ledgersApi = createApi({
       providesTags: ['Books']
     }),
 
-    createBookEntry: builder.mutation<BookEntries, CreateUpdateBookEntry>({
+    createBookEntry: builder.mutation<ApiResponse<BookEntries>, CreateUpdateBookEntry>({
       query: (data) => ({
         url: "/books/records",
         method: "POST",
@@ -92,7 +92,7 @@ export const ledgersApi = createApi({
       invalidatesTags: ['Books']
     }),
 
-    deleteBookEntry: builder.mutation<void, string>({
+    deleteBookEntry: builder.mutation<ApiResponse<BookEntries>, string>({
       query: (id) => ({
         url: `/books/records/${id}`,
         method: "DELETE"

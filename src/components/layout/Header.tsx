@@ -10,7 +10,7 @@ import { SidebarTrigger } from "../ui/sidebar";
 import { auth } from "@/app/firebase";
 import { DoorOpen, Moon, Settings, Sun } from "lucide-react";
 import { useTheme } from "@/providers/theme-provider";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { signOut } from 'firebase/auth';
 import { clearLocalState, signOutUser } from "@/redux/reducers/userSlice";
 
@@ -139,7 +139,7 @@ const Header = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
-
+  const user = useAppSelector(state => state.user.user);
 
   return (
     <header className="sticky top-0 border-b z-30 flex justify-between w-full shadow-sm px-4 py-6 bg-card text-card-foreground transition-colors duration-300">
@@ -205,7 +205,7 @@ const Header = () => {
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-700 dark:text-gray-300">{auth.currentUser?.displayName}</span>
+              <span className="text-gray-700 dark:text-gray-300">{auth.currentUser?.displayName || user?.name}</span>
               <span className="text-gray-500 text-sm dark:text-gray-300">Admin</span>
             </div>
             <DropdownMenu>

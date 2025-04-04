@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 import { DashboardAnalyticsResponse, DashboardAnalyticsData, Last } from '@/models'; // Adjust path if necessary
 import Loader from './Loader';
+import { GenericResponse } from '@/constants/types';
 
 const OrdersChart = () => {
   const [timeRange, setTimeRange] = useState('last_7_days'); // Default to 'last_7_days'
@@ -22,8 +23,8 @@ const OrdersChart = () => {
 
   if (isError) return <div>Error fetching data</div>;
 
-  const analyticsData = data as DashboardAnalyticsResponse | undefined;
-  const ordersData: DashboardAnalyticsData['orders'] | undefined = analyticsData.data.data.orders;
+  const analyticsData = data as GenericResponse<DashboardAnalyticsData> | undefined;
+  const ordersData: DashboardAnalyticsData['orders'] | undefined = analyticsData.data.orders;
 
   // Helper Functions
   const formatLast7Days = (data: Last[]) => {

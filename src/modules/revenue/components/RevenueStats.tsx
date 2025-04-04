@@ -10,10 +10,11 @@ const RevenueStats = () => {
     useGetDashboardAnalyticsQuery('revenue');
 
   if (isRevenueDataLoading) return <Loader />;
-  if (isRevenueDataError || !revenueData?.data?.data.metrics) return <div>Error fetching data</div>;
+  if (isRevenueDataError || !revenueData?.data?.metrics) return <div>Error fetching data</div>;
+
 
   // Extract metrics and convert to number
-  const metrics = revenueData.data.data.metrics;
+  const metrics = revenueData.data.metrics;
   const revenueMetrics = [
     { period: 'Today', amount: Number(metrics.today) },
     { period: 'Last 7 Days', amount: Number(metrics.last_7_days) },

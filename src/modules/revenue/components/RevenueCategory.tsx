@@ -27,7 +27,7 @@ const RevenueCategory: React.FC = () => {
 
   useEffect(() => {
     if (data) {
-      const categoriesRevenue: CategoriesRevenue = data.data.data.categoriesRevenue;
+      const categoriesRevenue: CategoriesRevenue = data.data.categoriesRevenue;
       const selectedCategoryData = categoriesRevenue[category] || [];
       setCategoryData(selectedCategoryData);
     }

@@ -13,16 +13,18 @@ const DashBoard: React.FC = () => {
 
   const { data, isLoading, isError } = useGetDashboardAnalyticsQuery('dashboard');
 
+  
+
   if (isLoading) return <Loader />;
 
   if (isError) return <Frown className='justify-center' size={60}/>;
 
   const formatter = new Intl.NumberFormat('en-US');
 
-  const allOrders = data.data.data.metrics.allOrders;
-  const appUsers = formatter.format(data.data.data.metrics.totalCLients);
-  const revenue = formatter.format(data.data.data.metrics.totalRevenue);
-  const applications = formatter.format(data.data.data.metrics.totalProfessionals);
+  const allOrders = data.data.metrics.allOrders;
+  const appUsers = formatter.format(data.data.metrics.totalCLients);
+  const revenue = formatter.format(data.data.metrics.totalRevenue);
+  const applications = formatter.format(data.data.metrics.totalProfessionals);
 
   
   return (

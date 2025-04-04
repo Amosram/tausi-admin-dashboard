@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { browserLocalPersistence, browserSessionPersistence, setPersistence, signInWithEmailAndPassword } from "firebase/auth";
 import { useAppDispatch } from "@/redux/hooks";
 import { setUser } from "@/redux/reducers/userSlice";
 import { TausiUser } from "@/models/user";
@@ -32,44 +32,47 @@ const Login = () => {
     
     onSubmit: async (values) => {
       try {
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          values.email,
-          values.password
-        );
-
-        const firebaseUser = userCredential.user;
-        const accessToken = await firebaseUser.getIdToken(); // Get Firebase access token
-
-        const tausiUser: TausiUser = {
-          id: firebaseUser.uid,
-          name: firebaseUser.displayName || "",
-          email: firebaseUser.email || "",
-          createdAt: new Date(),
-          deactivatedAt: null,
-          deactivatedBy: null,
-          deactivatedReason: null,
-          deletedAt: null,
-          deletedReason: null,
-          emailVerified: false,
-          fcmToken: "",
-          isActive: false,
-          isDeleted: false,
-          latitude: "",
-          locationAddress: "",
-          longitude: "",
-          phoneNumber: "",
-          phoneVerified: false,
-          profilePicturePath: "",
-          profilePictureUrl: "",
-          updatedAt: undefined,
-          sessionData: undefined,
-          professional: undefined
-        };
-
-        // Dispatch user and access token
-        dispatch(setUser({ user: tausiUser, accessToken, refreshToken: "" }));
-        navigate("/");
+        setPersistence(auth, browserSessionPersistence).then(async () => {
+          const userCredential = await signInWithEmailAndPassword(
+            auth,
+            values.email,
+            values.password
+          );
+  
+          const firebaseUser = userCredential.user;
+          const accessToken = await firebaseUser.getIdToken(); // Get Firebase access token
+  
+          const tausiUser: TausiUser = {
+            id: firebaseUser.uid,
+            name: firebaseUser.displayName || "",
+            email: firebaseUser.email || "",
+            createdAt: new Date(),
+            deactivatedAt: null,
+            deactivatedBy: null,
+            deactivatedReason: null,
+            deletedAt: null,
+            deletedReason: null,
+            emailVerified: false,
+            fcmToken: "",
+            isActive: false,
+            isDeleted: false,
+            latitude: "",
+            locationAddress: "",
+            longitude: "",
+            phoneNumber: "",
+            phoneVerified: false,
+            profilePicturePath: "",
+            profilePictureUrl: "",
+            updatedAt: undefined,
+            sessionData: undefined,
+            professional: undefined
+          };
+  
+          // Dispatch user and access token
+          dispatch(setUser({ user: tausiUser, accessToken, refreshToken: "" }));
+          navigate("/");
+        })
+        
       } catch (error: any) {
         console.error("Login failed", error);
       }

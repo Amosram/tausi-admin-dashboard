@@ -3,6 +3,7 @@ import { useGetDashboardAnalyticsQuery } from '@/modules/dashboard/api/dashboard
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid } from 'recharts';
 import Loader from './Loader';
+import { GenericResponse } from '@/constants/types';
 
 
 // Custom tooltip component
@@ -36,8 +37,8 @@ const RevenueChart: React.FC = () => {
 
   if (isError) return <div>Error fetching data</div>;
 
-  const revenueAnalyticsData = data as DashboardAnalyticsResponse | undefined;
-  const revenueData: DashboardAnalyticsData['revenue'] | undefined = revenueAnalyticsData.data.data.revenue;
+  const revenueAnalyticsData = data as GenericResponse<DashboardAnalyticsData> | undefined;
+  const revenueData: DashboardAnalyticsData['revenue'] | undefined = revenueAnalyticsData.data.revenue;
 
   // Helper Function
   const formatLast7Days = (data: Last[]) => {

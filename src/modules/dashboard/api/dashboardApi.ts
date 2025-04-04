@@ -1,4 +1,5 @@
-import {DashboardAnalyticsResponse, TopRatedBeauticianResponse  } from "@/models";
+import { GenericResponse } from "@/constants/types";
+import {DashboardAnalyticsData, TopRatedBeauticianResponse  } from "@/models";
 import { axiosBaseQuery } from "@/Utils/axios";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
@@ -10,7 +11,7 @@ export const dashboardApi = createApi({
   baseQuery: axiosBaseQuery({ isAuthorizedApi: true }),
   refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
-    getDashboardAnalytics: builder.query<DashboardAnalyticsResponse, AnalysisPage>({
+    getDashboardAnalytics: builder.query<GenericResponse<DashboardAnalyticsData>, AnalysisPage>({
       query: (page) => ({
         url: `/analytics/${page}`,
         method: "GET",
