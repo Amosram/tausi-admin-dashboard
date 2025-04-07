@@ -82,7 +82,8 @@ const Header = () => {
     "/messaging": "Messaging",
     "/settings": "Settings",
     "/users/create-user": "Create User",
-    "/ledgers/create-loan":"Create Loan"
+    "/ledgers/create-loan": "Create Loan",
+    "/admin-management": "Admin Management"
   };
 
   const getTitle = () => {

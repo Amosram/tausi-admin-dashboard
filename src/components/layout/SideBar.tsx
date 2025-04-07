@@ -29,6 +29,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { FaUsersCog } from "react-icons/fa";
 
 const SidebarAccordion = ({ title, icon, children, isOpen, onLinkClick  }) => {
   const { pathname } = useLocation();
@@ -129,6 +130,7 @@ const menuItems = [
     ],
   },
   { title: "Settings", icon: <IoMdSettings />, link: "/settings" },
+  { title: "Admins", icon: <FaUsersCog />, link: "/admin-management" },
 ];
 
 const SideBar = () => {

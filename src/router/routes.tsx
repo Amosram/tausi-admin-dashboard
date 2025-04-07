@@ -1,4 +1,3 @@
- 
 import React, { lazy, Suspense } from "react";
 import Layout from "@/components/layout";
 import { Outlet, RouteObject } from "react-router-dom";
@@ -38,6 +37,7 @@ const BoothLogsLazy = lazy(() => import('@/modules/booths/pages/BoothLogs'));
 const BoothOrdersPageLazy = lazy(() => import('@/modules/booths/pages/BoothOrdersPage'));
 const ServiceCategoriesLazy = lazy(() => import('@/modules/service-categories'));
 const ServicesLazy = lazy(() => import('@/modules/service-categories/pages/Services'));
+const AdminManagementLazy = lazy(() => import('@/modules/settings/pages/AdminManagement'));
 
 export const routes: RouteObject[] = [
   {
@@ -313,6 +313,14 @@ export const routes: RouteObject[] = [
         element: (
           <Suspense fallback={<Loader />}>
             <ServicesLazy />
+          </Suspense>
+        )
+      },
+      {
+        path: "/admin-management",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <AdminManagementLazy />
           </Suspense>
         )
       }
