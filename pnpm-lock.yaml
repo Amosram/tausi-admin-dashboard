@@ -80,6 +80,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^2.2.7
         version: 2.6.0(react-redux@9.2.0(@types/react@18.3.18)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
+      '@sentry/react':
+        specifier: ^9.11.0
+        version: 9.11.0(react@18.3.1)
       '@tanstack/match-sorter-utils':
         specifier: ^8.19.4
         version: 8.19.4
@@ -1795,6 +1798,36 @@ packages:
     resolution: {integrity: sha512-U0FaE5O1BCpZSeE6gBl3c5ObhePQSfk9vDRToMmTkbhCOgW4jqvtS5LGyQ76L1fH8sM0keRp4uDTsbjiUyjk0g==}
     cpu: [x64]
     os: [win32]
+
+  '@sentry-internal/browser-utils@9.11.0':
+    resolution: {integrity: sha512-XS71kRf7lw5St/Jc9G2Viy1cKgqGoPHqUAykXEtFt38JVXdf1TY/dSbKv/PAgNqMvC1xvdTsN0HF/81o7DNUEA==}
+    engines: {node: '>=18'}
+
+  '@sentry-internal/feedback@9.11.0':
+    resolution: {integrity: sha512-50KiRmrF1Ldr+KoRawqcCYVk7TAVP8K/I81Jk9YWwlp1+Pu1ArpYDmTNCLXTgoyiyO38aHefKGZJX6AKFuSsUQ==}
+    engines: {node: '>=18'}
+
+  '@sentry-internal/replay-canvas@9.11.0':
+    resolution: {integrity: sha512-ZcRg8TWfF0ucjK2i+4TY/blRNJ7YKrgMpx19pFj6eCOJ1K8geSkAFPIfDHcQEwIU1ZTN+HiCwx0JvTI9YZxjfg==}
+    engines: {node: '>=18'}
+
+  '@sentry-internal/replay@9.11.0':
+    resolution: {integrity: sha512-0k24h58O/2VQw1dwT/zQiWvUzLNQxpxbrVN/MYPT7czSEhI+1bX8fxMHXZORl2JqhetImMXzxH3XkuHQPEqQMg==}
+    engines: {node: '>=18'}
+
+  '@sentry/browser@9.11.0':
+    resolution: {integrity: sha512-DSDj8wQJoiLqqOcntl+7phjd8l8KN9A0vaV7mZNHWbrHU3MVwXqTyLyERRLC6wi0t7F5kqczqa3xLmKjK/fMZg==}
+    engines: {node: '>=18'}
+
+  '@sentry/core@9.11.0':
+    resolution: {integrity: sha512-qfb4ahGZubbrNh1MnbEqyHFp87rIwQIZapyQLCaYpudXrP1biEpLOV3mMDvDJWCdX460hoOwQ3SkwipV3We/7w==}
+    engines: {node: '>=18'}
+
+  '@sentry/react@9.11.0':
+    resolution: {integrity: sha512-sH/3KnDsLxBFRoxPyIpab7OewkfStdZQQwgpfv8R0yDKpGg4lU7KdTccryFvWL123UpHC7ydPWjdcfC8YV/EPQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: ^16.14.0 || 17.x || 18.x || 19.x
 
   '@stylistic/eslint-plugin-js@2.13.0':
     resolution: {integrity: sha512-GPPDK4+fcbsQD58a3abbng2Dx+jBoxM5cnYjBM4T24WFZRZdlNSKvR19TxP8CPevzMOodQ9QVzNeqWvMXzfJRA==}
@@ -5899,6 +5932,41 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.34.8':
     optional: true
+
+  '@sentry-internal/browser-utils@9.11.0':
+    dependencies:
+      '@sentry/core': 9.11.0
+
+  '@sentry-internal/feedback@9.11.0':
+    dependencies:
+      '@sentry/core': 9.11.0
+
+  '@sentry-internal/replay-canvas@9.11.0':
+    dependencies:
+      '@sentry-internal/replay': 9.11.0
+      '@sentry/core': 9.11.0
+
+  '@sentry-internal/replay@9.11.0':
+    dependencies:
+      '@sentry-internal/browser-utils': 9.11.0
+      '@sentry/core': 9.11.0
+
+  '@sentry/browser@9.11.0':
+    dependencies:
+      '@sentry-internal/browser-utils': 9.11.0
+      '@sentry-internal/feedback': 9.11.0
+      '@sentry-internal/replay': 9.11.0
+      '@sentry-internal/replay-canvas': 9.11.0
+      '@sentry/core': 9.11.0
+
+  '@sentry/core@9.11.0': {}
+
+  '@sentry/react@9.11.0(react@18.3.1)':
+    dependencies:
+      '@sentry/browser': 9.11.0
+      '@sentry/core': 9.11.0
+      hoist-non-react-statics: 3.3.2
+      react: 18.3.1
 
   '@stylistic/eslint-plugin-js@2.13.0(eslint@9.21.0(jiti@1.21.7))':
     dependencies:
