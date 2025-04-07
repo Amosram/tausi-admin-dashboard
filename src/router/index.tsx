@@ -17,6 +17,7 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
+
 const Router = () => {
   const sentryCreateBrowserRouter = Sentry.wrapCreateBrowserRouterV6(
     createBrowserRouter,
