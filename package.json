@@ -9,11 +9,11 @@
     "url": "git+https://github.com/tausi-app/tausi-admin-dashboard.git"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "cross-env NODE_ENV=development vite",
+    "build": "cross-env NODE_ENV=production tsc -b && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "preview": "vite preview",
+    "preview": "cross-env NODE_ENV=production vite preview",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -90,6 +90,7 @@
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/github": "^11.0.1",
     "@semantic-release/release-notes-generator": "^14.0.3",
+    "@sentry/vite-plugin": "^3.3.1",
     "@stylistic/eslint-plugin-js": "^2.10.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@types/node": "^22.2.0",
@@ -100,6 +101,7 @@
     "@vitest/coverage-v8": "2.1.9",
     "autoprefixer": "^10.4.20",
     "babel-plugin-react-compiler": "19.0.0-beta-e993439-20250405",
+    "cross-env": "^7.0.3",
     "eslint": "^9.8.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-compiler": "19.0.0-beta-e993439-20250405",

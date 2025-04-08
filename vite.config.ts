@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 const ReactCompilerConfig = {
   target: '18'
@@ -15,7 +16,16 @@ export default defineConfig({
           ["react-compiler", ReactCompilerConfig],
         ]
       }
-    })
+    }),
+    // Put this after all the plugins
+    process.env.NODE_ENV === 'production' && sentryVitePlugin({
+      org: 'tausi-app',
+      project: 'tausi-admin-dashboard',
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      sourcemaps: {
+        filesToDeleteAfterUpload: ['./dist/assets/*.map']
+      }
+    }),
   ],
   resolve: {
     alias: {
@@ -23,7 +33,7 @@ export default defineConfig({
     },
   },
   build: {
-    sourcemap: false,
+    sourcemap: true,
     chunkSizeWarningLimit: 2000,
   },
 });

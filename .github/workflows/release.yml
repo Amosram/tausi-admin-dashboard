@@ -40,7 +40,6 @@ jobs:
 
       - name: Build the project
         run: pnpm build
-      
         
 
       - name: Create a release
@@ -64,16 +63,6 @@ jobs:
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Create Sentry release
-        uses: getsentry/action-release@v3
-        with:
-          release: ${{ steps.create-release.outputs.new_release_version }}
-          release_prefix: 'v'
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
