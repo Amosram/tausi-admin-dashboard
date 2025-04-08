@@ -1,0 +1,609 @@
+import React, { ReactNode, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { format } from "date-fns";
+import Loader from "@/components/layout/Loader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Calendar,
+  User,
+  DollarSign,
+  Info,
+} from "lucide-react";
+import { FaMoneyBill, FaStar, FaUser } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import {
+  useGetAppointmentTotalsQuery,
+  useGetOrderByIdQuery,
+} from "../api/ordersApi";
+import { BiCategory } from "react-icons/bi";
+import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+
+interface InfoCardProps {
+  title: string;
+  icon: ReactNode;
+  children: ReactNode;
+  titleLink?: string;
+}
+
+const InfoCard: React.FC<InfoCardProps> = ({
+  title,
+  icon,
+  children,
+  titleLink,
+}) => (
+  <Card className="flex-1">
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2">
+        {icon}
+        {titleLink ? (
+          <Link to={titleLink} className="hover:underline hover:text-primary">
+            {title}
+          </Link>
+        ) : (
+          title
+        )}
+      </CardTitle>
+    </CardHeader>
+    <CardContent>{children}</CardContent>
+  </Card>
+);
+
+interface StatusBadgeProps {
+  status: string;
+  variant?: "default" | "payment";
+}
+
+const StatusBadge: React.FC<StatusBadgeProps> = ({
+  status,
+  variant = "default",
+}) => {
+  const getStatusColor = (status: string, variant: string) => {
+    if (variant === "payment") {
+      return status === "Paid"
+        ? "bg-transparent border border-green-500 text-green-500"
+        : "bg-transparent border border-blue-500 text-blue-500";
+    }
+
+    const statusColors = {
+      completed: "bg-transparent border-2 border-green-500 text-green-500",
+      pending: "bg-transparent border-2 border-blue-500 text-blue-500",
+      cancelled: "bg-transparent border-2 border-red-500 text-red-500",
+    };
+
+    const lowercaseStatus = status.toLowerCase();
+    return (
+      statusColors[lowercaseStatus] ||
+      "bg-transparent border-2 border-gray-500 text-gray-500"
+    );
+  };
+
+  return (
+    <Badge className={`${getStatusColor(status, variant)} text-sm px-3 py-1`}>
+      {status}
+    </Badge>
+  );
+};
+
+interface ContactInfoProps {
+  icon: ReactNode;
+  value: string;
+}
+
+const ContactInfo: React.FC<ContactInfoProps> = ({ icon, value }) => (
+  <div className="flex items-center gap-2">
+    {icon}
+    <p className="font-medium truncate">{value}</p>
+  </div>
+);
+
+interface InfoFieldProps {
+  label: string;
+  value: string | ReactNode;
+}
+
+const InfoField: React.FC<InfoFieldProps> = ({ label, value }) => (
+  <div>
+    <p className="text-sm text-gray-500">{label}</p>
+    {typeof value === "string" ? (
+      <p className="font-medium truncate">{value}</p>
+    ) : (
+      value
+    )}
+  </div>
+);
+
+const OrderDetails: React.FC = () => {
+  const { toast } = useToast();
+  const { orderId } = useParams();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const { data, isLoading, error } = useGetOrderByIdQuery(orderId!);
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Error fetching data",
+        description: "Failed to load orders. Please try again later.",
+      });
+    }
+  }, [error, toast]);
+
+  const currentOrder = data?.data;
+  const beauticianId = currentOrder?.professionalId;
+
+  const {
+    data: appointmentTotalsTotal,
+    isLoading: appointmentTotalsLoading,
+    error: appointmentTotalsError,
+  } = useGetAppointmentTotalsQuery({
+    beauticianId,
+  });
+
+  if (isLoading) return <Loader />;
+  if (error) return <div>Error: Unable to load orders.</div>;
+  if (!currentOrder) return <div className="p-4">No order found</div>;
+
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex flex-col gap-3">
+        <div className="flex lg:flex-row flex-col gap-4">
+          <div className="flex flex-col gap-3 lg:w-1/2 items-stretch">
+            {/* Order Information Card */}
+            <InfoCard
+              title="Order Information"
+              icon={<Calendar className="h-5 w-5" />}
+            >
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <InfoField
+                    label="Category"
+                    value={currentOrder.service.category.name}
+                  />
+                  <InfoField
+                    label="Order Status"
+                    value={<StatusBadge status={currentOrder.status} />}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <InfoField
+                    label="Location"
+                    value={
+                      <ContactInfo
+                        icon={<MapPin className="h-4 w-4 mt-1 text-gray-400" />}
+                        value={currentOrder.locationAddress}
+                      />
+                    }
+                  />
+                  <InfoField label="Order ID" value={currentOrder.id} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <InfoField
+                    label="Date"
+                    value={format(
+                      new Date(currentOrder.appointmentDate),
+                      "PPP"
+                    )}
+                  />
+                  <InfoField
+                    label="Time"
+                    value={`${currentOrder.appointmentStartTime} - ${currentOrder.appointmentEndTime}`}
+                  />
+                </div>
+                {currentOrder.isBooth && currentOrder.booth && (
+                  <div className="flex items-center space-x-4 border-t border-gray-400">
+                    {/* Booth Image */}
+                    {currentOrder.booth.imageUrl && (
+                      <img
+                        src={currentOrder.booth.imageUrl}
+                        alt={`${currentOrder.booth.name || "Booth"} Image`}
+                        className="h-16 w-16 rounded-lg object-cover shadow"
+                      />
+                    )}
+
+                    {/* Booth Details */}
+                    <div className="flex flex-col items-start mt-5">
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        {currentOrder.booth.name || "Booth"}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {currentOrder.booth.locationAddress ||
+                          "No location provided"}
+                      </p>
+                      <Button asChild variant="link" className="mt-2">
+                        <Link to={`/booths/${currentOrder.boothId}`}>
+                          View Details
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </InfoCard>
+
+            {/* Client Information Card */}
+            <InfoCard
+              title="Client Information"
+              icon={<User className="h-5 w-5" />}
+              titleLink={`/users/${currentOrder?.clientId}`}
+            >
+              <div className="flex gap-4">
+                <div
+                  className={`md:w-16 md:h-14 w-12 h-8 bg-blue-500 rounded-lg flex items-center justify-center mb-4`}
+                >
+                  <div className="md:w-8 md:h-8 w-4 h-4 bg-white rounded-full"></div>
+                </div>
+                <div className="flex flex-col w-full">
+                  <div className="grid grid-cols-2 gap-6 border-b border-gray-300 pt-2 pb-4">
+                    <InfoField
+                      label="Client Name"
+                      value={currentOrder.client.name}
+                    />
+                    {currentOrder.bookingForGroup && (
+                      <InfoField
+                        label="Group Size"
+                        value={`${currentOrder.numberOfClients} people`}
+                      />
+                    )}
+                    <InfoField
+                      label="Client Location"
+                      value={currentOrder.client.locationAddress}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-6 border-b border-gray-300 py-4">
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-500">Client Phone</p>
+                      <ContactInfo
+                        icon={<Phone className="h-4 w-4 text-gray-400" />}
+                        value={currentOrder.client.phoneNumber}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-500">Client Email</p>
+                      {currentOrder.client.email && (
+                        <ContactInfo
+                          icon={<Mail className="h-4 w-4 text-gray-400" />}
+                          value={currentOrder.client.email}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4 pt-4 pb-2">
+                    <InfoField label="Orders Made" value="____" />
+                    <InfoField label="Total Expenses" value="KES ____" />
+                    <div className="flex justify-center items-center">
+                      <Button
+                        size="icon"
+                        className="p-4 rounded-full bg-primary"
+                        asChild
+                      >
+                        <Link to={`/users/${currentOrder.client.id}`}>
+                          <FaUser className="text-white" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </InfoCard>
+          </div>
+
+          <div className="flex flex-col gap-3 lg:w-1/2 items-stretch">
+            {/* Service Provider Card */}
+            <InfoCard
+              title="Service Provider"
+              icon={<User className="h-5 w-5" />}
+              titleLink="/orders"
+            >
+              <div className="flex gap-3">
+                <div
+                  className={`md:w-16 md:h-14 w-12 h-8 bg-blue-500 rounded-lg flex items-center justify-center mb-4`}
+                >
+                  <img
+                    src={currentOrder.professional?.user?.profilePictureUrl}
+                    alt={currentOrder.professional?.user?.name}
+                    className="object-cover w-full h-full rounded-lg"
+                  />
+                </div>
+                <div className="space-y-4">
+                  {/* Provider Details */}
+                  <div className="grid grid-cols-3 gap-4 py-4">
+                    <InfoField
+                      label="Business Name"
+                      value={currentOrder.professional.businessName}
+                    />
+                    <InfoField
+                      label="Provider Location"
+                      value={currentOrder.professional.locationAddress}
+                    />
+                    <div>
+                      <p className="text-sm text-gray-500">Rating</p>
+                      <div className="flex items-center gap-2">
+                        <FaStar className="text-primary" />
+                        <p className="font-medium truncate">
+                          {currentOrder.professional.rating}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Appointment Totals */}
+                  <div className="grid grid-cols-3 gap-4 py-4 border-t border-muted-foreground">
+                    {appointmentTotalsLoading ? (
+                      <p>Loading...</p>
+                    ) : appointmentTotalsError ? (
+                      <p>Error loading data</p>
+                    ) : (
+                      appointmentTotalsTotal?.data.map((item) => (
+                        <InfoField
+                          key={item.status}
+                          label={`${
+                            item.status.charAt(0).toUpperCase() +
+                            item.status.slice(1)
+                          } Orders`}
+                          value={`${
+                            item.totalAppointments
+                          } (Total: ${new Intl.NumberFormat("en-US").format(
+                            item.totalAmount
+                          )} KES)`}
+                        />
+                      ))
+                    )}
+                    {/* Total Revenue (Completed Orders) */}
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Total Revenue (Completed)
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <FaMoneyBill className="text-green-500" />
+                        <p className="font-medium truncate">
+                          {appointmentTotalsLoading
+                            ? "Loading..."
+                            : appointmentTotalsError
+                            ? "Error"
+                            : `KES ${new Intl.NumberFormat("en-US").format(
+                                appointmentTotalsTotal?.data
+                                  .filter((item) => item.status === "completed")
+                                  .reduce(
+                                    (sum, item) => sum + item.totalAmount,
+                                    0
+                                  ) || 0
+                              )}`}
+                        </p>
+                      </div>
+                    </div>
+                    {/* Total Expected (Pending & Scheduled) */}
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Total Expected (Pending & Scheduled)
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <FaMoneyBill className="text-yellow-500" />
+                        <p className="font-medium truncate">
+                          {appointmentTotalsLoading
+                            ? "Loading..."
+                            : appointmentTotalsError
+                            ? "Error"
+                            : `KES ${new Intl.NumberFormat("en-US").format(
+                                appointmentTotalsTotal?.data
+                                  .filter(
+                                    (item) =>
+                                      item.status === "pending" ||
+                                      item.status === "scheduled"
+                                  )
+                                  .reduce(
+                                    (sum, item) => sum + item.totalAmount,
+                                    0
+                                  ) || 0
+                              )}`}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Provider Contact Details */}
+                  <div className="grid grid-cols-3 gap-4 py-4 border-t border-muted-foreground">
+                    <InfoField
+                      label="Provider Phone"
+                      value={currentOrder.professional?.user?.phoneNumber}
+                    />
+                    <InfoField
+                      label="Provider Email"
+                      value={currentOrder.professional?.user?.email}
+                    />
+                    <div className="flex justify-center items-center">
+                      <Button
+                        size="icon"
+                        className="p-4 rounded-full bg-blue-500"
+                        asChild
+                      >
+                        <Link
+                          to={`/professionals/${currentOrder.professionalId}`}
+                        >
+                          <FaUser className="text-white" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </InfoCard>
+            ; ;{/* Payment Information Card */}
+            <InfoCard
+              title="Payment Information"
+              icon={<DollarSign className="h-5 w-5" />}
+            >
+              <div className="flex lg:flex-row flex-col lg:items-center gap-6">
+                <div className="flex gap-6">
+                  <InfoField
+                    label="Total Amount"
+                    value={`KES ${currentOrder.totalPrice}`}
+                  />
+                  <InfoField
+                    label="Payment Status"
+                    value={
+                      <StatusBadge
+                        status={currentOrder.isPaid ? "Paid" : "Pending"}
+                        variant="payment"
+                      />
+                    }
+                  />
+                </div>
+                {currentOrder.amountUpfront > 0 && (
+                  <div className="flex gap-6 items-center">
+                    <InfoField
+                      label="Booking Amount"
+                      value={`KES ${currentOrder.amountUpfront}`}
+                    />
+                    <InfoField
+                      label="Balance"
+                      value={`KES ${
+                        currentOrder.totalPrice - currentOrder.amountUpfront
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+            </InfoCard>
+          </div>
+        </div>
+
+        <div className="w-full flex lg:flex-row flex-col gap-4">
+          <InfoCard
+            title="Service Details"
+            icon={<BiCategory className="h-5 w-5" />}
+          >
+            {/* Image Section */}
+            <div className="w-full h-14 mb-4">
+              {currentOrder.service?.serviceData?.imageUrl ? (
+                <div
+                  className="relative group h-14 cursor-pointer"
+                  onClick={() => setIsOpen(true)}
+                >
+                  <img
+                    src={currentOrder.service?.serviceData?.imageUrl}
+                    alt={
+                      currentOrder.service?.serviceData?.name || "Service Image"
+                    }
+                    className="w-full h-full rounded-lg object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center h-0 group-hover:h-full transition-all duration-300 rounded-lg overflow-hidden">
+                    <p className="text-white z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      View Full Image
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
+                  <span>No Image</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col w-full">
+              {/* Service Details */}
+              <div className="grid grid-cols-3 gap-6 border-b border-gray-300 pt-2 pb-4">
+                <InfoField
+                  label="Service Name"
+                  value={currentOrder.service?.serviceData?.name || "N/A"}
+                />
+                <InfoField
+                  label="Description"
+                  value={
+                    currentOrder.service?.serviceData?.description || "N/A"
+                  }
+                />
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-500">Minimum Price</p>
+                  <p className="text-sm dark:text-white">{`KES ${
+                    currentOrder.service?.serviceData?.minimumPrice || 0
+                  }`}</p>
+                </div>
+              </div>
+
+              {/* Additional Details */}
+              <div className="pt-4">
+                <InfoField
+                  label="Last Updated"
+                  value={
+                    new Date(
+                      currentOrder.service?.serviceData?.updatedAt
+                    ).toLocaleDateString() || "N/A"
+                  }
+                />
+              </div>
+            </div>
+          </InfoCard>
+
+          <InfoCard
+            title="Service Category"
+            icon={<BiCategory className="h-5 w-5" />}
+          >
+            <div className="flex gap-4">
+              <div
+                className={`md:w-16 md:h-14 w-12 h-8 bg-green-500 rounded-lg flex items-center justify-center mb-4`}
+              >
+                <div className="md:w-8 md:h-8 w-4 h-4 bg-white rounded-full"></div>
+              </div>
+              <div className="flex flex-col w-full">
+                <div className="grid grid-cols-3 gap-6 border-b border-gray-300 pt-2 pb-4">
+                  <InfoField
+                    label="Category Name"
+                    value={currentOrder.service?.category?.name}
+                  />
+                  <InfoField
+                    label="Category Description"
+                    value={currentOrder.service?.category?.description}
+                  />
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-500">Minimum Price</p>
+                    <p className="text-sm text-gray-700 dark:text-white">{`KES ${currentOrder.service.serviceData.minimumPrice}`}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </InfoCard>
+        </div>
+
+        {/* Additional Information Card */}
+        {(currentOrder.additionalInfo || currentOrder.appointmentDetails) && (
+          <InfoCard
+            title="Additional Information"
+            icon={<Info className="h-5 w-5" />}
+          >
+            <div className="grid md:grid-cols-2 gap-6">
+              {currentOrder.additionalInfo && (
+                <InfoField label="Notes" value={currentOrder.additionalInfo} />
+              )}
+              {currentOrder.appointmentDetails && (
+                <InfoField
+                  label="Appointment Details"
+                  value={currentOrder.appointmentDetails}
+                />
+              )}
+            </div>
+          </InfoCard>
+        )}
+      </div>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogOverlay className="bg-black/50 fixed inset-0 z-40" />
+        <DialogContent className="fixed z-50 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg w-[90vw] max-w-lg">
+          <div className="flex justify-center items-center h-[400px]">
+            <img
+              src={currentOrder.service?.serviceData?.imageUrl}
+              alt={currentOrder.service?.serviceData?.name || "Service Image"}
+              className="max-h-full object-contain rounded-lg"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default OrderDetails;
