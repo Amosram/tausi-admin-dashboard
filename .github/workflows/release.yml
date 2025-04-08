@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - production
+      - main
       - release/*
 env:
   CI: true
@@ -19,6 +19,9 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Use Node.js 22.x
@@ -40,27 +43,15 @@ jobs:
 
       - name: Build the project
         run: pnpm build
-        
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create a release
         id: create-release
         uses: cycjimmy/semantic-release-action@v4
-        with:
-          extra_plugins: |
-            @semantic-release/changelog
-            @semantic-release/github
-            @semantic-release/release-notes-generator
-            @semantic-release/commit-analyzer 
-          branches: |
-            [
-              {
-                "name": "main",
-                "prerelease": true
-              },
-              {
-                "name": "release/*" 
-              }
-            ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
