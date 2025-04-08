@@ -6,6 +6,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import stylisticJs from '@stylistic/eslint-plugin-js'
 import pluginReact from 'eslint-plugin-react';
 import unusedImports from "eslint-plugin-unused-imports";
+import reactCompiler from 'eslint-plugin-react-compiler'
 
 // export default [
 //   {files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"]},
@@ -38,9 +39,11 @@ export default tseslint.config({
     '@stylistic/js': stylisticJs,
     react: pluginReact,
     "unused-imports": unusedImports,
+    'react-compiler': reactCompiler
   },
   rules: {
     ...reactHooks.configs.recommended.rules,
+    'react-compiler/react-compiler': 'error',
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
