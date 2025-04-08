@@ -3,6 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "description": "Tausi Admin Dashboard",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tausi-app/tausi-admin-dashboard.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -79,6 +84,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/github": "^11.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.3",
     "@stylistic/eslint-plugin-js": "^2.10.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@types/node": "^22.2.0",
@@ -96,6 +105,7 @@
     "globals": "^15.9.0",
     "jsdom": "^26.0.0",
     "postcss": "^8.4.41",
+    "semantic-release": "^24.2.3",
     "tailwindcss": "^3.4.9",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.0",
