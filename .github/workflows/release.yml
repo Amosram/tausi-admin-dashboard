@@ -8,6 +8,14 @@ on:
     branches:
       - main
       - release/*
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+  packages: write
+  actions: write
+ 
 env:
   CI: true
   VITE_API_URL: ${{ vars.VITE_API_URL }}
