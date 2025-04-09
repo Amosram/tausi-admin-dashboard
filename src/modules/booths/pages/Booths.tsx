@@ -54,6 +54,24 @@ const Booths = () => {
       );
     }
 
+    if (!booths.length) {
+      return (
+        <div className="flex flex-col items-center justify-center h-64 p-4 text-center">
+          <AlertCircle className="h-12 w-12 text-yellow-500 mb-4" />
+          <h2 className="text-xl font-semibold mb-2">No Booths Found</h2>
+          <p className="text-muted-foreground mb-4">
+            There are currently no booths in the system. Create one to get started.
+          </p>
+          <button
+            onClick={() => navigate("/create-booth")}
+            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition"
+          >
+            Create Booth
+          </button>
+        </div>
+      );
+    }
+
     if (error && retryCount >= maxRetries && !booths.length) {
       return (
         <div className="flex flex-col items-center justify-center h-64 p-4 text-center">
@@ -69,18 +87,6 @@ const Booths = () => {
           >
             Retry
           </button>
-        </div>
-      );
-    }
-
-    if (!booths.length) {
-      return (
-        <div className="flex flex-col items-center justify-center h-64 p-4 text-center">
-          <AlertCircle className="h-12 w-12 text-yellow-500 mb-4" />
-          <h2 className="text-xl font-semibold mb-2">No Booths Found</h2>
-          <p className="text-muted-foreground">
-            There are currently no booths in the system.
-          </p>
         </div>
       );
     }
