@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { API_URL } from "@/Utils/constants";
 import { useEffect } from "react";
 import { checkIfUserIsAdmin } from "@/app/firebase/adminService";
+import { auth } from "@/app/firebase";
 
 const AuthenticatedComponent = () => {
   const { user, accessToken } = useAppSelector((state) => state.user);
@@ -19,6 +20,7 @@ const AuthenticatedComponent = () => {
         dispatch(signOutUser());
         return navigate("/auth/login", { replace: true });
       }
+
 
       // Whitelist for the specific admin email - skip all checks
       if (user.email === "tausi-admin@tausiapp.com") {
