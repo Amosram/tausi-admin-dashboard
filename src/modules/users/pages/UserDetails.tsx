@@ -240,11 +240,13 @@ const DeactivationDetailsCard: React.FC<{
 
 const UserDetails: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
-  const { data: user, isLoading, isError } = useGetUserByIdQuery(userId || "");
+  const { data: apiResponse, isLoading, isError } = useGetUserByIdQuery(userId || "");
   const [updateUser] = useUpdateUserMutation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [signedInUser] = useAuthState(auth);
+
+  const user = apiResponse?.data;
 
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isAlertOpen, setAlertOpen] = useState(false);

@@ -2,6 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { axiosBaseQuery } from "../../../Utils/axios";
 import { TausiUser, TausiUserDetails } from "@/models/user";
 import { CreateUserRequest, SingleUserApiResponse, UsersApiResponse } from "../types";
+import { GenericResponse } from "@/constants/types";
 
 export const usersApi = createApi({
   reducerPath: "usersApi",
@@ -9,7 +10,7 @@ export const usersApi = createApi({
   tagTypes: ["Users", "UserDetails"],
   refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
-    getUsers: builder.query<TausiUser[], number>({
+    getUsers: builder.query<GenericResponse<TausiUser[]>, number>({
       query: (limit) => ({
         url: `/users?limit=${limit}`,
         method: "GET",
@@ -17,16 +18,21 @@ export const usersApi = createApi({
       providesTags: ["Users"],
       keepUnusedDataFor: 0,
     }),
-    getUserById: builder.query<TausiUserDetails, string>({
+    getUserById: builder.query<GenericResponse<TausiUserDetails>, string>({
       query: (userId) => ({
         url: `/users/${userId}`,
         method: "GET",
       }),
-      transformResponse: (response: SingleUserApiResponse) => response.data,
+      transformResponse: (response: SingleUserApiResponse): GenericResponse<TausiUserDetails> => ({
+        data: response.data,
+        message: response.message,
+        statusCode: response.statusCode as any,
+        code: response.code
+      }),
       providesTags: ["UserDetails"],
       keepUnusedDataFor: 0,
     }),
-    createUser: builder.mutation<UsersApiResponse, CreateUserRequest>({
+    createUser: builder.mutation<GenericResponse<TausiUserDetails>, CreateUserRequest>({
       query: (userData) => ({
         url: "/users",
         method: "POST",
