@@ -14,8 +14,9 @@ const Users: React.FC = () => {
   const [retryCount, setRetryCount] = React.useState(0);
   const maxRetries = 3;
 
+  
   const usersData =
-    data
+    data?.data
       ?.map((item) => ({
         ...item,
         role: item.sessionData?.userTypeSession,

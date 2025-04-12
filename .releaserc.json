@@ -1,12 +1,12 @@
 {
     "$schema": "https://json.schemastore.org/semantic-release.json",
     "branches": [
+        "main",
+        "release/v2",
         {
-            "name": "main",
+            "name": "next",
+            "channel": "next",
             "prerelease": true
-        },
-        {
-            "name": "release/*" 
         }
     ],
     "plugins": [
