@@ -271,6 +271,8 @@ const VerifiedBeuticans: React.FC = () => {
     return <div>Error loading Verified Beauticians</div>;
   }
 
+  console.log("data", data);
+
 
   return (
     <>
