@@ -34,11 +34,11 @@ export const MessagingChatCard = () => {
   const [messagesSnapshot] = useCollection(messagesQuery);
 
   const beauticians =
-    users?.filter(
+    users?.data?.filter(
       (user: TausiUser) => user.sessionData?.userTypeSession === "professional"
     ) || [];
   const clients =
-    users?.filter(
+    users?.data?.filter(
       (user: TausiUser) => user.sessionData?.userTypeSession === "client"
     ) || [];
 
