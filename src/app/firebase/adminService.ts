@@ -185,8 +185,30 @@ export const checkUserExists = async (email: string): Promise<{ exists: boolean,
   }
 };
 
+// Helper function to calculate search relevance score
+const getSearchRelevanceScore = (user: User, searchTerm: string): number => {
+  let score = 0;
+  
+  // Exact matches get highest score
+  if (user.email.toLowerCase() === searchTerm) score += 100;
+  if (user.name.toLowerCase() === searchTerm) score += 100;
+  if (user.phoneNumber.toLowerCase() === searchTerm) score += 100;
+  
+  // Prefix matches get medium score
+  if (user.email.toLowerCase().startsWith(searchTerm)) score += 50;
+  if (user.name.toLowerCase().startsWith(searchTerm)) score += 50;
+  if (user.phoneNumber.toLowerCase().startsWith(searchTerm)) score += 50;
+  
+  // Contains matches get lowest score
+  if (user.email.toLowerCase().includes(searchTerm)) score += 25;
+  if (user.name.toLowerCase().includes(searchTerm)) score += 25;
+  if (user.phoneNumber.toLowerCase().includes(searchTerm)) score += 25;
+  
+  return score;
+};
+
 // Get list of users who are not admins
-export const getNonAdminUsers = async (searchTerm: string = "", maxResults: number = 20): Promise<User[]> => {
+export const getNonAdminUsers = async (searchTerm: string = "", maxResults: number = 50): Promise<User[]> => {
   try {
     // Get current admin IDs for filtering
     const adminIds = new Set<string>();
@@ -195,38 +217,92 @@ export const getNonAdminUsers = async (searchTerm: string = "", maxResults: numb
     
     // Get users from the users collection
     const usersRef = collection(firestore, "users");
-    let q = query(usersRef, limit(maxResults));
     
-    // Apply search if provided
-    if (searchTerm) {
-      // In a real implementation, this would use a more sophisticated search
-      // like Firestore's array-contains or a dedicated search service
-      q = query(usersRef,
-        where("email", ">=", searchTerm),
-        where("email", "<=", searchTerm + "\uf8ff"),
-        limit(maxResults)
+    // Normalize search term
+    const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+    
+    // Create compound queries for different fields
+    const queries = [];
+    
+    if (normalizedSearchTerm) {
+      // Search by email
+      queries.push(
+        query(usersRef,
+          where("email", ">=", normalizedSearchTerm),
+          where("email", "<=", normalizedSearchTerm + "\uf8ff"),
+          limit(maxResults)
+        )
+      );
+      
+      // Search by name
+      queries.push(
+        query(usersRef,
+          where("name", ">=", normalizedSearchTerm),
+          where("name", "<=", normalizedSearchTerm + "\uf8ff"),
+          limit(maxResults)
+        )
+      );
+      
+      // Search by phone number
+      queries.push(
+        query(usersRef,
+          where("phoneNumber", ">=", normalizedSearchTerm),
+          where("phoneNumber", "<=", normalizedSearchTerm + "\uf8ff"),
+          limit(maxResults)
+        )
+      );
+    } else {
+      // If no search term, just get latest users
+      queries.push(
+        query(usersRef,
+          limit(maxResults)
+        )
       );
     }
     
-    const querySnapshot = await getDocs(q);
+    // Execute all queries in parallel
+    const querySnapshots = await Promise.all(
+      queries.map(q => getDocs(q))
+    );
     
-    const users: User[] = [];
-    querySnapshot.forEach(doc => {
-      const data = doc.data();
-      
-      // Skip users who are already admins
-      if (!adminIds.has(doc.id)) {
-        users.push({
-          id: doc.id,
-          name: data.name || data.displayName || "",
-          email: data.email || "",
-          phoneNumber: data.phoneNumber || "",
-          isAdmin: false
-        });
-      }
+    // Combine and deduplicate results
+    const userMap = new Map<string, User>();
+    
+    querySnapshots.forEach(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        const data = doc.data() as {
+          name?: string;
+          displayName?: string;
+          email?: string;
+          phoneNumber?: string;
+        };
+        
+        // Skip users who are already admins
+        if (!adminIds.has(doc.id) && !userMap.has(doc.id)) {
+          userMap.set(doc.id, {
+            id: doc.id,
+            name: data.name || data.displayName || "",
+            email: data.email || "",
+            phoneNumber: data.phoneNumber || "",
+            isAdmin: false
+          });
+        }
+      });
     });
     
-    return users;
+    // Convert to array and sort by relevance
+    const users = Array.from(userMap.values());
+    
+    if (normalizedSearchTerm) {
+      // Sort results by relevance
+      users.sort((a, b) => {
+        const aScore = getSearchRelevanceScore(a, normalizedSearchTerm);
+        const bScore = getSearchRelevanceScore(b, normalizedSearchTerm);
+        return bScore - aScore;
+      });
+    }
+    
+    return users.slice(0, maxResults);
   } catch (error) {
     console.error("Error fetching non-admin users:", error);
     return [];

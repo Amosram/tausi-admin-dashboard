@@ -12,7 +12,7 @@ const Users: React.FC = () => {
   const maxRetries = 3;
 
   const usersData =
-    data.data
+    data?.data
       ?.map((item) => ({
         ...item,
         role: item.sessionData?.userTypeSession,
