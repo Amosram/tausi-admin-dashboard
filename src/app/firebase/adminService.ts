@@ -208,7 +208,7 @@ const getSearchRelevanceScore = (user: User, searchTerm: string): number => {
 };
 
 // Get list of users who are not admins
-export const getNonAdminUsers = async (searchTerm: string = "", maxResults: number = 20): Promise<User[]> => {
+export const getNonAdminUsers = async (searchTerm: string = "", maxResults: number = 50): Promise<User[]> => {
   try {
     // Get current admin IDs for filtering
     const adminIds = new Set<string>();
