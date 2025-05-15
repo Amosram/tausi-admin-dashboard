@@ -11,11 +11,11 @@ const ReactCompilerConfig = {
 export default defineConfig({
   plugins: [
     react({
-      babel: {
-        plugins: [
-          ["react-compiler", ReactCompilerConfig],
-        ]
-      }
+      // babel: {
+      //   plugins: [
+      //     ["react-compiler", ReactCompilerConfig],
+      //   ]
+      // }
     }),
     // Put this after all the plugins
     process.env.NODE_ENV === 'production' && sentryVitePlugin({
