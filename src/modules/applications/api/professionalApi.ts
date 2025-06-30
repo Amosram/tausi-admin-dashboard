@@ -11,7 +11,7 @@ export const professionalApi = createApi({
   endpoints: (builder) => ({
     getProfessionals: builder.query<ApiResponse<Professional[]>, number>({
       query: (limit) => ({
-        url: `/professionals?limit=${limit}`,
+        url: `/professionals?limit=20000`,
         method: "GET",
       }),
       providesTags: ['Professionals'],
@@ -86,7 +86,7 @@ export const professionalApi = createApi({
     >({
       query: ({ searchCriteria }) => {
         return {
-          url: `/professionals/search?limit=2000`,
+          url: `/professionals/search?limit=20000`,
           method: "POST",
           data: {
             searchCriteria,

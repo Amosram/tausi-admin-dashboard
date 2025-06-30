@@ -6,7 +6,7 @@ import { PartialOrdersTable } from "../components/partial-table";
 import OrdersChart from "@/components/layout/OrdersChart";
 
 const Orders: React.FC = () => {
-  const { data, error, isLoading, refetch } = useGetOrdersQuery(50);
+  const { data, error, isLoading, refetch } = useGetOrdersQuery(50_000);
   const { toast } = useToast();
 
   const ordersData = data?.data || [];

@@ -6,7 +6,7 @@ import { UsersTable } from "../components/users-table";
 
 const Users: React.FC = () => {
   const { toast } = useToast();
-  const { data, error, isLoading, refetch } = useGetUsersQuery(2000);
+  const { data, error, isLoading, refetch } = useGetUsersQuery(20_000);
 
   const [retryCount, setRetryCount] = React.useState(0);
   const maxRetries = 3;
