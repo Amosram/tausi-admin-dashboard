@@ -35,15 +35,15 @@ const MessagingContent = () => {
   const [searchParams] = useSearchParams();
   const { data: users, isLoading, error } = useGetUsersQuery(10000);
   // const {data, } = useGetProfessionalsQuery(10000);
-  const userMetrics = useUserMetrics(users);
+  const userMetrics = useUserMetrics(users?.data);
 
   // const beauticians = data?.data || [];
   const beauticians =
-    users?.filter(
+    users?.data?.filter(
       (user: TausiUser) => user.sessionData?.userTypeSession === "professional"
     ) || [];
   const clients =
-    users?.filter(
+    users?.data?.filter(
       (user: TausiUser) => user.sessionData?.userTypeSession === "client"
     ) || [];
 

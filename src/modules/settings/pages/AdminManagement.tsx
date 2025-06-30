@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AdminUser, User, addNewAdmin, getAllAdmins, getNonAdminUsers, makeUserAdmin, removeAdmin } from '@/app/firebase/adminService';
 import { useToast } from '@/hooks/use-toast';
 import { useAppSelector } from '@/redux/hooks';
@@ -418,8 +417,8 @@ const AdminManagement = () => {
                   )}
                 </div>
                 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={loading || !formik.isValid}
                   className="w-full"
                 >
@@ -455,8 +454,8 @@ const AdminManagement = () => {
                     </PopoverTrigger>
                     <PopoverContent className="w-full p-0">
                       <Command>
-                        <CommandInput 
-                          placeholder="Search user..." 
+                        <CommandInput
+                          placeholder="Search user..."
                           value={searchTerm}
                           onValueChange={setSearchTerm}
                         />
@@ -497,7 +496,7 @@ const AdminManagement = () => {
                   </div>
                 )}
                 
-                <Button 
+                <Button
                   onClick={handleMakeAdmin}
                   disabled={loading || !selectedUser}
                   className="w-full"
@@ -530,4 +529,4 @@ const AdminManagement = () => {
   );
 };
 
-export default AdminManagement; 
+export default AdminManagement;
