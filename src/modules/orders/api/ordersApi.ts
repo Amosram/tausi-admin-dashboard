@@ -38,7 +38,7 @@ export const ordersApi = createApi({
   endpoints: (builder) => ({
     getOrders: builder.query<ApiResponse<Appointment[]>, number>({
       query: (limit) => ({
-        url: `/appointments?limit=${limit}`,
+        url: `/appointments?limit=20000`,
         method: "GET",
       }),
       keepUnusedDataFor: 0,

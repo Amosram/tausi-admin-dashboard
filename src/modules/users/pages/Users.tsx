@@ -8,13 +8,13 @@ import { useNavigate } from "react-router-dom";
 
 const Users: React.FC = () => {
   const { toast } = useToast();
-  const { data, error, isLoading, refetch } = useGetUsersQuery(20000);
+  const { data, error, isLoading, refetch } = useGetUsersQuery(20_000);
   const navigate = useNavigate();
 
   const [retryCount, setRetryCount] = React.useState(0);
   const maxRetries = 3;
 
-  
+
   const usersData =
     data?.data
       ?.map((item) => ({

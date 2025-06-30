@@ -13,7 +13,7 @@ import { toast } from "@/hooks/use-toast";
 import SearchBar from "@/components/ui/Table/SearchBar";
 
 const ProfessionalDashboard = () => {
-  const {data, isLoading, isError, refetch} = useGetProfessionalsQuery(10000);
+  const {data, isLoading, isError, refetch} = useGetProfessionalsQuery(10_000);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const professionalData = data?.data || [];
@@ -62,7 +62,7 @@ const ProfessionalDashboard = () => {
 
   const STATUS_OPTIONS = useMemo(() => {
     if (!data?.data) return [];
-    
+
     const uniqueStatuses = Array.from(
       new Set(data.data.map(item => item.isActive ? "Active" : "Inactive"))
     );
@@ -247,7 +247,7 @@ const ProfessionalDashboard = () => {
           columnLabels={columnLabels}
         />
 
-      
+
         {/**
          * Ensure you maintain how data is being passed to the table
          */}

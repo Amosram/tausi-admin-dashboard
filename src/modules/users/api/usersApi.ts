@@ -12,11 +12,11 @@ export const usersApi = createApi({
   endpoints: (builder) => ({
     getUsers: builder.query<GenericResponse<TausiUser[]>, number>({
       query: (limit) => ({
-        url: `/users?limit=${limit}`,
+        url: `/users?limit=20000`,
         method: "GET",
       }),
       providesTags: ["Users"],
-      keepUnusedDataFor: 0,
+      keepUnusedDataFor: 10000,
     }),
     getUserById: builder.query<GenericResponse<TausiUserDetails>, string>({
       query: (userId) => ({

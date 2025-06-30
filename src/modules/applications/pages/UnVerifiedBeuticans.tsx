@@ -15,7 +15,7 @@ import SearchBar from "@/components/ui/Table/SearchBar";
 
 const VerifiedBeuticans: React.FC = () => {
 
-  const {data, isLoading, isError, refetch} = useGetVerifiedBeauticiansQuery(10000);
+  const {data, isLoading, isError, refetch} = useGetVerifiedBeauticiansQuery(10_000);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const applicationData = data?.data || [];
@@ -26,9 +26,9 @@ const VerifiedBeuticans: React.FC = () => {
   };
 
   const searchableColumns = Object.keys(columnLabels);
-  
+
   const toast = useToast();
-  
+
   const {
     data: displayData,
     isSearchActive,
@@ -65,7 +65,7 @@ const VerifiedBeuticans: React.FC = () => {
 
   const STATUS_OPTIONS = useMemo(() => {
     if (!data?.data) return [];
-    
+
     const uniqueStatuses = Array.from(
       new Set(data.data.map(item => item.verificationData.verificationStatus))
     );
@@ -120,10 +120,10 @@ const VerifiedBeuticans: React.FC = () => {
     originalData: VerifiedBeauticians;
   }> = ({ id, verificationStatus, originalData }) => {
     const [updateVerifiedBeauticians] = useUpdateverifiedBeauticiansMutation();
-  
+
     const handleIdClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
-  
+
       if (verificationStatus === "pending") {
         try {
           await updateVerifiedBeauticians({
@@ -141,11 +141,11 @@ const VerifiedBeuticans: React.FC = () => {
           return;
         }
       }
-  
+
       // Navigate after successful update
       window.location.href = `/dashboard/verifications/${id}`;
     };
-  
+
     return (
       <Link
         to={`/dashboard/verifications/${id}`}
@@ -266,7 +266,7 @@ const VerifiedBeuticans: React.FC = () => {
   if (isLoading || isSearchLoading) {
     return <Loader />;
   }
-    
+
   if (isError) {
     return <div>Error loading Verified Beauticians</div>;
   }
@@ -300,7 +300,7 @@ const VerifiedBeuticans: React.FC = () => {
           columnLabels={columnLabels}
         />
 
-     
+
         {/**
          * Ensure you maintain how data is being passed to the table
          */}

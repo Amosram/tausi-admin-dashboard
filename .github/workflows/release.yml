@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - release/*
+      - main
 
 permissions:
   contents: write
@@ -14,7 +14,7 @@ permissions:
   id-token: write
   packages: write
   actions: write
- 
+
 env:
   CI: true
   VITE_API_URL: ${{ vars.VITE_API_URL }}
@@ -29,7 +29,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-          
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - name: Use Node.js 22.x
@@ -37,7 +37,7 @@ jobs:
         with:
           node-version: 22.x
           cache: 'pnpm'
-      
+
       - name: Cache pnpm
         uses: actions/cache@v4
         with:
@@ -68,4 +68,4 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TAUSI_APP }}
           channelId: live
-          projectId: tausi-app 
+          projectId: tausi-app
