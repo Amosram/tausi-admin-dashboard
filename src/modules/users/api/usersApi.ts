@@ -16,7 +16,7 @@ export const usersApi = createApi({
         method: "GET",
       }),
       providesTags: ["Users"],
-      keepUnusedDataFor: 10000,
+      keepUnusedDataFor: 0,
     }),
     getUserById: builder.query<GenericResponse<TausiUserDetails>, string>({
       query: (userId) => ({
