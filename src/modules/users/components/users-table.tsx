@@ -96,7 +96,7 @@ export const UsersTable = ({ users }: UsersTableProps) => {
           );
           break;
         default:
-          finalFilteredData = timeFilteredData;
+          finalFilteredData = users;
         }
       }
 
