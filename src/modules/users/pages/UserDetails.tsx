@@ -49,6 +49,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/app/firebase";
+import { sendPasswordResetEmail } from "firebase/auth";
 
 const ProfileOverviewCard: React.FC<{ user: TausiUserDetails }> = ({
   user,
@@ -256,6 +257,25 @@ const UserDetails: React.FC = () => {
   const [isReactivateDialogOpen, setIsReactivateDialogOpen] = useState(false);
   const [deactivationReason, setDeactivationReason] = useState("");
   const [isChatAlertOpen, setIsChatAlertOpen] = useState(false);
+  const [isResetPasswordDialogOpen, setIsResetPasswordDialogOpen] = useState(false);
+
+  const handleResetPassword = async () => {
+    try {
+      await sendPasswordResetEmail(auth, user?.email || "");
+      toast({
+        title: "Success",
+        description: "Password reset email sent",
+        variant: "success",
+      });
+      setIsResetPasswordDialogOpen(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to reset password. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleDelete = async () => {
     try {
@@ -433,7 +453,7 @@ const UserDetails: React.FC = () => {
             {user.isActive ? "Active" : "Inactive"}
           </Badge>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
@@ -443,6 +463,16 @@ const UserDetails: React.FC = () => {
             <MessageSquare size={16} />
             <span>Text User</span>
           </Button>
+
+          <Button
+            variant="outline"
+            className="flex items-center space-x-2"
+            onClick={() => setIsResetPasswordDialogOpen(true)}
+          >
+            <User size={16} />
+            <span>Reset User Password</span>
+          </Button>
+
           <Button
             variant="light"
             className="flex items-center space-x-2"
@@ -462,6 +492,31 @@ const UserDetails: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      {/* Reset Password Dialog */}
+      <Dialog
+        open={isResetPasswordDialogOpen}
+        onOpenChange={setIsResetPasswordDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset User Password</DialogTitle>
+          </DialogHeader>
+          <p>Are you sure you want to reset this user's password?</p>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsResetPasswordDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="default" onClick={handleResetPassword}>
+              Reset Password
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
 
       {/* Delete User Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
