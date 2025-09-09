@@ -18,7 +18,7 @@ export const boothsApi = createApi({
   endpoints: (builder) => ({
     getBooths: builder.query<BoothsApiResponse<Booth[]>, void>({
       query: () => ({
-        url: `/booths/admin/dashboard`,
+        url: `/booths/admin`,
         method: "GET",
       }),
       providesTags: ["Booths"],
