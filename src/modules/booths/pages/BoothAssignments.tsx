@@ -8,6 +8,7 @@ import { AssignmentDetailsDialog } from "../components/dialogs/assignment-detail
 import { DeleteBoothAssignmentDialog } from "../components/dialogs/delete-assignment-dialog";
 import { useGetAssignmentQuery } from "../api/boothsApi";
 import { HiArrowLeft } from "react-icons/hi";
+import { BoothAssignmentDetails } from "@/models";
 
 const AssignmentCard = ({ assignment, onOpenDetails }) => {
   const { data: assignmentDetails } = useGetAssignmentQuery(assignment.id, {
@@ -70,17 +71,18 @@ const AssignmentCard = ({ assignment, onOpenDetails }) => {
 const BoothsAssignments = () => {
   const { boothId } = useParams();
   const { assignments, isLoading, isError } = useBoothAssignments(boothId);
-  const [selectedAssignment, setSelectedAssignment] = useState(null);
+  const [selectedAssignment, setSelectedAssignment] =
+    useState<BoothAssignmentDetails | null>(null);
   const [isTerminateDialogOpen, setTerminateDialogOpen] = useState(false);
 
-  const handleOpenDetailsDialog = (assignment) => {
+  const handleOpenDetailsDialog = (assignment: BoothAssignmentDetails) => {
     setSelectedAssignment(assignment);
   };
 
   if (isLoading) return <p>Loading assignments...</p>;
   if (isError) return <p>Error: Failed to load assignments</p>;
 
-  const sortedAssignments = [...assignments].sort(
+  const sortedAssignments = [...(assignments ?? [])].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
@@ -93,7 +95,7 @@ const BoothsAssignments = () => {
         <HiArrowLeft className="mr-2" />
         Go Back
       </Link>
-      {sortedAssignments.length > 0 ? (
+      {sortedAssignments?.length > 0 ? (
         sortedAssignments.map((assignment) => (
           <AssignmentCard
             key={assignment.id}

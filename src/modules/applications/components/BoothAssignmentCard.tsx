@@ -11,7 +11,7 @@ const BoothAssignmentCard = ({ assignment }: BoothAssignmentProps) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-      {assignment.assignments.map((boothAssignment) => (
+      {assignment?.assignments?.map((boothAssignment) => (
         <Card className="mt-6" key={boothAssignment.id}>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">

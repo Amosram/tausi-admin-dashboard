@@ -1,4 +1,4 @@
-import { MapPin, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ interface BoothsAssignmentCardProps {
 
 const AssignmentItem = ({ assignment }) => {
   const { data: assignmentDetails } = useGetAssignmentQuery(assignment.id, {
-    skip: !assignment.id
+    skip: !assignment.id,
   });
 
   const businessName = assignmentDetails?.data?.beautician?.businessName;
@@ -30,7 +30,7 @@ const AssignmentItem = ({ assignment }) => {
       <div className="flex justify-between">
         <div>
           <p className="font-semibold">Beautician</p>
-          <p>{businessName || 'Loading...'}</p>
+          <p>{businessName || "Loading..."}</p>
         </div>
         <div>
           <p className="font-semibold">Assignment Period</p>
@@ -65,14 +65,14 @@ export const BoothsAssignmentCard: React.FC<BoothsAssignmentCardProps> = ({
   handleRefresh,
   isFetching,
 }) => {
-  const recentAssignments = [...currentBooth.assignments]
+  const recentAssignments = [...(currentBooth.assignments ?? [])]
     .sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )
     .slice(0, 2);
 
-    const assignmentsLength = currentBooth?.assignments.length || 0;
+  const assignmentsLength = currentBooth?.assignments?.length || 0;
 
   return (
     <Card className="flex-1 flex flex-col border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
