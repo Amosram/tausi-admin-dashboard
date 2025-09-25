@@ -42,7 +42,7 @@ export const useBoothMetrics = (booths: Booth[] | undefined): BoothMetrics => {
 
     // Safe wrapper for accessing booth properties
     const safeBooth = (booth: Booth) => ({
-      assignments: booth.assignments || [],
+      assignments: booth?.assignments || [],
       numberOfStations: booth.numberOfStations || 0,
       numberOfBeauticians: booth.numberOfBeauticians || 0,
       underMaintenance: booth.underMaintenance || false,
@@ -61,7 +61,7 @@ export const useBoothMetrics = (booths: Booth[] | undefined): BoothMetrics => {
       const safe = safeBooth(booth);
       return (
         safe.occupancyStatus === "occupied" &&
-        safe.assignments.length === safe.numberOfStations
+        safe?.assignments?.length === safe.numberOfStations
       );
     }).length;
 
@@ -69,24 +69,24 @@ export const useBoothMetrics = (booths: Booth[] | undefined): BoothMetrics => {
       const safe = safeBooth(booth);
       return (
         safe.occupancyStatus === "occupied" &&
-        safe.assignments.length > 0 &&
-        safe.assignments.length < safe.numberOfStations
+        safe.assignments?.length > 0 &&
+        safe.assignments?.length < safe.numberOfStations
       );
     }).length;
 
     const boothsEmpty = booths.filter((booth) => {
       const safe = safeBooth(booth);
-      return safe.occupancyStatus === "empty" || safe.assignments.length === 0;
+      return safe.occupancyStatus === "empty" || safe.assignments?.length === 0;
     }).length;
 
     const boothsUnassigned = booths.filter((booth) => {
       const safe = safeBooth(booth);
-      return safe.assignments.length === 0;
+      return safe.assignments?.length === 0;
     }).length;
 
     const boothsAssigned = booths.filter((booth) => {
       const safe = safeBooth(booth);
-      return safe.assignments.length > 0;
+      return safe.assignments?.length > 0;
     }).length;
 
     const activeBooths = booths.filter(
